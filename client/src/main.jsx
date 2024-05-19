@@ -4,6 +4,7 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
+import Error404 from "./pages/NotFound";
 import App from "./App";
 
 import "./index.css";
@@ -11,7 +12,8 @@ import "./index.css";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App/>
+    element: <App/>,
+    errorElement:<Error404/>
   },
 ]);
 
