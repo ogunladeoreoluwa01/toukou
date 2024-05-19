@@ -1,6 +1,7 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const cloudinary = require('cloudinary').v2;
 
 const generateJwt = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
@@ -12,21 +13,27 @@ const registerUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    // Check if user exists
-    let userEmail = await User.findOne({ email });
-    let userName = await User.findOne({ username });
+    // Check if user exists (parallel queries)
+    const [userName, userEmail] = await Promise.all([
+      User.findOne({ username }),
+      User.findOne({ email }),
+    ]);
 
     if (userName) {
       return res.status(400).json({
         message: "User with the username already exists. Try another.",
       });
-    } else if (userEmail) {
-      return res
-        .status(400)
-        .json({ message: "User with the email already exists. Try another." });
     }
 
-    // If user does not exist, create a new user
+    if (userEmail) {
+      return res.status(400).json({
+        message: "User with the email already exists. Try another.",
+      });
+    }
+
+    // Hash the password before saving
+
+    // Create a new user
     const newUser = new User({ username, email, password });
     await newUser.save();
 
@@ -35,12 +42,14 @@ const registerUser = async (req, res) => {
 
     res.status(201).json({
       message: "User registered successfully.",
-      _id: newUser._id,
-      profileImage: newUser.profileImage, // Assuming avatar field exists in the model
-      name: newUser.username,
-      email: newUser.email,
-      verified: newUser.verified,
-      admin: newUser.admin,
+      user: {
+        _id: newUser._id,
+        profileImage: newUser.profileImage,
+        name: newUser.username,
+        email: newUser.email,
+        verified: newUser.verified,
+        admin: newUser.admin,
+      },
       token: token,
     });
   } catch (error) {
@@ -60,36 +69,164 @@ const loginUser = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(400).json({ message: "User with the provided credential does not exist." });
+      return res
+        .status(404)
+        .json({ message: "User with the provided credential does not exist." }); // Use 404 for not found
     }
 
     // Check if password matches
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
-      return res.status(400).json({ message: "Incorrect password." });
+      return res.status(401).json({ message: "Incorrect password" }); // Use 401 for unauthorized
+    } else {
+      // If password matches, generate JWT token
+      const token = generateJwt(user._id);
+
+      // Respond with user data and token
+      res.status(200).json({
+        message: "User logged in successfully.",
+        user: {
+          _id: user._id,
+          profileImage: user.profileImage,
+          name: user.username,
+          email: user.email,
+          verified: user.verified,
+          admin: user.admin,
+        },
+        token: token,
+        suspensions: {
+          banned: user.banned,
+          banReason: user.banReason,
+          softdeleted: user.deleted,
+          softdeletionReason: user.deletionReason,
+        },
+      });
     }
-
-    // If password matches, generate JWT token
-    const token = generateJwt(user._id);
-
-    // Respond with user data and token
-    res.status(200).json({
-      message: "User logged in successfully.",
-      _id: user._id,
-      profileImage: user.profileImage, // Assuming profileImage field exists in the model
-      name: user.username,
-      email: user.email,
-      verified: user.verified,
-      admin: user.admin,
-      token: token,
-    });
   } catch (error) {
-    res.status(500).json({ message: "Internal Server Error", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
   }
 };
 
+const getProfile = async (req, res, next) => {
+  try {
+    let user = await User.findById(req.user._id);
 
-module.exports = { registerUser, loginUser };
+    if (user) {
+      res.status(200).json({
+        message: "User Found.",
+        user: {
+          _id: user._id,
+          profileImage: user.profileImage,
+          name: user.username,
+          email: user.email,
+          verified: user.verified,
+          admin: user.admin,
+          sex: user.sex,
+          bio: user.bio,
+        },
+        suspensions: {
+          banned: user.banned,
+          banReason: user.banReason,
+          softdeleted: user.deleted,
+          softdeletionReason: user.deletionReason,
+        },
+      });
+    } else {
+      let error = new Error("User not found");
+      error.statusCode = 404;
+      next(error); // Pass the error to the error handling middleware
+    }
+  } catch (error) {
+    error.statusCode = 500;
+    next(error); // Pass the error to the error handling middleware
+  }
+};
+
+const updateProfile = async (req, res, next) => {
+  try {
+    let user = await User.findById(req.user._id);
+    if (!user) {
+      res.status(404).json({ message: "Use not found" });
+    }
+    user.username = req.body.username || user.username;
+    user.email = req.body.email || user.email;
+    user.sex = req.body.sex || user.sex;
+    user.bio = req.body.bio || user.bio;
+
+    const updateUserProfile = await user.save();
+
+    res.status(200).json({
+      message: "user Updated",
+      user: {
+        _id: updateUserProfile._id,
+        profileImage: updateUserProfile.profileImage,
+        name: updateUserProfile.username,
+        email: updateUserProfile.email,
+        verified: updateUserProfile.verified,
+        admin: updateUserProfile.admin,
+        sex: updateUserProfile.sex,
+        bio: updateUserProfile.bio,
+      },
+    });
+  } catch (error) {
+    error.statusCode = 500;
+    next(error); // Pass the error to the error handling middleware
+  }
+};
+
+const uploadUserProfilePic = async (req, res, next) => {
+  try {
+    let user = await User.findById(req.user._id);
+    if (!user) {
+      res.status(404).json({ message: "Use not found" });
+    }
+
+    cloudinary.uploader.upload(req.file.path, {
+      gravity: "auto",
+      height: 940,
+      width: 880,
+      crop: "auto",
+    }),
+      function (err, result) {
+        if (err) {
+          res.status(500).json({ message: "failed to upload", error: err });
+        }
+      };
+    let data = { result };
+    console.log(data);
+
+    user.profileImage = req.body.bio || user.profileImage;
+
+    const updateUserProfile = await user.save();
+    res.status(200).json({
+      message: "picture  Updated",
+      testimage: { data },
+      user: {
+        _id: updateUserProfile._id,
+        profileImage: updateUserProfile.profileImage,
+        name: updateUserProfile.username,
+        email: updateUserProfile.email,
+        verified: updateUserProfile.verified,
+        admin: updateUserProfile.admin,
+        sex: updateUserProfile.sex,
+        bio: updateUserProfile.bio,
+      },
+    });
+  } catch (error) {
+    error.statusCode = 500;
+    next(error); // Pass the error to the error handling middleware
+  }
+};
+
+module.exports = {
+  registerUser,
+  loginUser,
+  getProfile,
+  updateProfile,
+  uploadUserProfilePic,
+};
 //   getUsers,
 //   getUser,
 //   addUser,

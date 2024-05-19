@@ -14,9 +14,9 @@ const userSchema = new mongoose.Schema(
     profileImage: { type: String, default: "" },
     bio: { type: String, default: "" },
     banned: { type: Boolean, default: false },
-    banReason: { type: String },
+    banReason: { type: String, default: "" },
     deleted: { type: Boolean, default: false },
-    deletionReason: { type: String },
+    deletionReason: { type: String, default: "" },
   },
   {
     timestamps: true, // Adds `createdAt` and `updatedAt` fields
@@ -35,9 +35,6 @@ userSchema.pre("save", async function (next) {
   }
   return next();
 });
-
-
-
 
 const User = mongoose.model("User", userSchema);
 

@@ -28,7 +28,7 @@ app.use((err, req, res, next) => {
 
 // Connect to MongoDB
 mongoose
-  .connect(process.env.URI, {
+  .connect(process.env.DB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
