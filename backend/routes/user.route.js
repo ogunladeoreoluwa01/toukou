@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const authGuard = require("../middlewares/authMiddleware");
-const upload = require("../middlewares/multer");
 
 const {
   registerUser,
@@ -19,7 +18,7 @@ router.get("/profile", authGuard, getProfile);
 
 router.put("/updateProfile", authGuard, updateProfile);
 
-router.put("/uploadProfileImg", authGuard, upload.single('image'), uploadUserProfilePic);
+router.put("/uploadProfileImg", authGuard, uploadUserProfilePic);
 
 // router.get("/", getUsers);
 
