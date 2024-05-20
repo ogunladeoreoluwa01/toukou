@@ -24,7 +24,7 @@ const FeaturedPost = ({
     
     return (
         <>
-            <Link to={postUrl} className="flex flex-col justify-around h-[430px] md:h-[200px]   hover:scale-95 hover:rotate-[-2.5deg] transition-all duration-300 ease-linear w-full  rounded-lg md:justify-between md:flex-row">
+            <Link to={postUrl} className="flex flex-col justify-around h-[430px] md:h-[200px]   hover:scale-95 hover:rotate-[-0.5deg] transition-all duration-300 ease-linear w-full  rounded-lg md:justify-between md:flex-row">
                 <div className="p-3 md:p-6 flex flex-col gap-2 md:max-w-[30vw] bg-slate-300 dark:bg-slate-600 md:rounded-l-lg  rounded-t-lg">
                     <Link to={authorUrl} className="bg-slate-400 w-fit px-3 rounded-md font-bold md:font-semibold capitalize text-slate-700 scale-90">
                         {authorName}
