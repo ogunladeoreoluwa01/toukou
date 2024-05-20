@@ -154,7 +154,9 @@ const updateProfile = async (req, res, next) => {
 
     // Check if the new username already exists
     if (req.body.username && req.body.username !== user.username) {
-      const existingUsername = await User.findOne({ username: req.body.username });
+      const existingUsername = await User.findOne({
+        username: req.body.username,
+      });
       if (existingUsername) {
         return res.status(400).json({ message: "Username is already taken" });
       }
@@ -196,7 +198,6 @@ const updateProfile = async (req, res, next) => {
     next(error); // Pass the error to the error handling middleware
   }
 };
-
 
 // currecbntly not working dont know why to tired to know
 const uploadUserProfilePic = async (req, res, next) => {
@@ -388,8 +389,8 @@ const banUser = async (req, res, next) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-     // Check if the user is a super admin
-     if (user.superAdmin) {
+    // Check if the user is a super admin
+    if (user.superAdmin) {
       return res.status(403).json({ message: "Cannot ban a super admin" });
     }
 
@@ -398,26 +399,29 @@ const banUser = async (req, res, next) => {
     }
 
     // Check if a valid ban duration is provided
-    const validDurations = ['1h', '1d', '1w', '1m', 'indefinite'];
+    const validDurations = ["1h", "1d", "1w", "1m", "indefinite"];
     if (!banDuration || !validDurations.includes(banDuration)) {
-      return res.status(400).json({ message: "Valid ban duration is required: '1h', '1d', '1w', '1m', 'indefinite'" });
+      return res.status(400).json({
+        message:
+          "Valid ban duration is required: '1h', '1d', '1w', '1m', 'indefinite'",
+      });
     }
 
     // Calculate the ban expiration date based on the duration preset
     let banExpiration = null;
-    if (banDuration !== 'indefinite') {
+    if (banDuration !== "indefinite") {
       banExpiration = new Date();
       switch (banDuration) {
-        case '1h':
+        case "1h":
           banExpiration.setHours(banExpiration.getHours() + 1);
           break;
-        case '1d':
+        case "1d":
           banExpiration.setDate(banExpiration.getDate() + 1);
           break;
-        case '1w':
+        case "1w":
           banExpiration.setDate(banExpiration.getDate() + 7);
           break;
-        case '1m':
+        case "1m":
           banExpiration.setMonth(banExpiration.getMonth() + 1);
           break;
       }
@@ -438,7 +442,6 @@ const banUser = async (req, res, next) => {
     next(error); // Pass the error to the error handling middleware
   }
 };
-
 
 const unbanUser = async (req, res, next) => {
   try {
@@ -484,7 +487,7 @@ const permadelete = async (req, res, next) => {
     }
 
     // Remove the user from the database
-    await user.remove();
+    await user.deleteOne();
 
     // Respond with a success message
     res.status(200).json({
@@ -516,7 +519,7 @@ const makeAdmin = async (req, res, next) => {
     next(error); // Pass the error to the error handling middleware
   }
 };
-const  demoteAdmin = async (req, res, next) => {
+const demoteAdmin = async (req, res, next) => {
   try {
     const { username } = req.body;
 
@@ -559,8 +562,6 @@ const permanentlyDeleteUserBySupAdmin = async (req, res) => {
   }
 };
 
-
-
 module.exports = {
   registerUser,
   loginUser,
@@ -575,6 +576,5 @@ module.exports = {
   permadelete,
   makeAdmin,
   demoteAdmin,
-  permanentlyDeleteUserBySupAdmin 
-  
+  permanentlyDeleteUserBySupAdmin,
 };
