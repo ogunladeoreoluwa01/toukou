@@ -61,11 +61,11 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   try {
-    const { usernameOrEmail, password } = req.body;
+    const { userInfo, password } = req.body;
 
     // Check if the provided credential matches a username or an email
     const user = await User.findOne({
-      $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
+      $or: [{ username: userInfo }, { email: userInfo }],
     });
 
     if (!user) {
@@ -347,10 +347,10 @@ const unSoftDelete = async (req, res, next) => {
     }
 
     // Destructure the password from the request body
-    const { Password } = req.body;
+    const { password } = req.body;
 
     // Check if the provided password matches the current password
-    const passwordMatch = await bcrypt.compare(Password, user.password);
+    const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       return res.status(401).json({ message: "Incorrect password" });
     }
@@ -381,24 +381,49 @@ const unSoftDelete = async (req, res, next) => {
     next(error); // Pass the error to the error handling middleware
   }
 };
+
 const banUser = async (req, res, next) => {
   try {
     const { username, banReason, banDuration } = req.body;
 
+    // Find the user performing the ban action (the admin)
+    let admin = await User.findById(req.user._id);
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    // Ensure only admins can perform the action
+    if (!admin.isAdmin && !admin.superAdmin) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    // Find the user to be banned
     let user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    // Check if the user is a super admin
-    if (user.superAdmin) {
-      return res.status(403).json({ message: "Cannot ban a super admin" });
+
+    // Check if the user performing the ban action is a super admin
+    if (admin.superAdmin) {
+      // Super admins cannot ban other super admins
+      if (user.superAdmin) {
+        return res.status(403).json({ message: "Cannot ban a super admin" });
+      }
+    } else if (admin.isAdmin) {
+      // Regular admins cannot ban other admins or super admins
+      if (user.isAdmin || user.superAdmin) {
+        return res
+          .status(403)
+          .json({ message: "Admins can only ban regular users" });
+      }
     }
 
+    // Ensure ban reason is provided
     if (!banReason) {
       return res.status(400).json({ message: "Ban reason is required" });
     }
 
-    // Check if a valid ban duration is provided
+    // Validate ban duration
     const validDurations = ["1h", "1d", "1w", "1m", "indefinite"];
     if (!banDuration || !validDurations.includes(banDuration)) {
       return res.status(400).json({
@@ -427,6 +452,7 @@ const banUser = async (req, res, next) => {
       }
     }
 
+    // Update the user document with ban details
     user.banned = true;
     user.banReason = banReason;
     user.banExpiration = banExpiration;
@@ -447,15 +473,41 @@ const unbanUser = async (req, res, next) => {
   try {
     const { username } = req.body;
 
+    // Find the user performing the unban action (the admin)
+    let admin = await User.findById(req.user._id);
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    // Ensure only admins can perform the action
+    if (!admin.isAdmin && !admin.superAdmin) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    // Find the user to be unbanned
     let user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // Check if the user performing the unban action is a super admin
+    if (admin.superAdmin) {
+      // Super admins can unban any user
+    } else if (admin.isAdmin) {
+      // Regular admins cannot unban other admins or super admins
+      if (user.isAdmin || user.superAdmin) {
+        return res
+          .status(403)
+          .json({ message: "Admins can only unban regular users" });
+      }
+    }
+
+    // Check if the user is banned
     if (!user.banned) {
       return res.status(400).json({ message: "User is not banned" });
     }
 
+    // Update the user document to unban the user
     user.banned = false;
     user.banReason = null;
     user.banExpiration = null;
@@ -487,7 +539,7 @@ const permadelete = async (req, res, next) => {
     }
 
     // Remove the user from the database
-    await user.deleteOne();
+    await User.deleteOne({ _id: req.user._id });
 
     // Respond with a success message
     res.status(200).json({
@@ -499,7 +551,7 @@ const permadelete = async (req, res, next) => {
   }
 };
 
-const makeAdmin = async (req, res, next) => {
+const makeAdmin = async (req, res, next) => { 
   try {
     const { username } = req.body;
 
@@ -550,7 +602,7 @@ const permanentlyDeleteUserBySupAdmin = async (req, res) => {
     }
 
     // Remove the user from the database
-    await user.remove();
+    await User.deleteOne({ _id: req.user._id });
 
     // Respond with a success message
     res.status(200).json({

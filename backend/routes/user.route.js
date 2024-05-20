@@ -4,6 +4,7 @@ const authGuard = require("../middlewares/authMiddleware");
 const adminGuard = require("../middlewares/adminAuthMiddleware");
 const superAdminGuard = require("../middlewares/superAdminAuthMiddleware");
 const checkBanStatus = require("../middlewares/checkBanStatus");
+const checkSoftDelete = require("../middlewares/softDeleteStatus");
 
 const {
   registerUser,
@@ -27,11 +28,12 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 
 // Protected routes (requires authentication)
-router.get("/profile", authGuard, checkBanStatus, getProfile);
-router.put("/updateProfile", authGuard, checkBanStatus, updateProfile);
+router.get("/profile", authGuard,checkSoftDelete, checkBanStatus, getProfile);
+router.put("/updateProfile", authGuard,checkSoftDelete, checkBanStatus, updateProfile);
 router.put(
   "/uploadProfileImg",
   authGuard,
+  checkSoftDelete,
   checkBanStatus,
   uploadUserProfilePic
 );

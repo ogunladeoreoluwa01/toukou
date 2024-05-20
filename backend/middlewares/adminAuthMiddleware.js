@@ -22,8 +22,8 @@ const adminGuard = async (req, res, next) => {
           .json({ message: "Not authorized, user not found" });
       }
 
-      // Check if the user is an admin
-      if (req.user.isAdmin === false) {
+      // Check if the user is either an admin or a super admin
+      if (!req.user.isAdmin && !req.user.superAdmin) {
         return res
           .status(403)
           .json({ message: "Not authorized, user is not an admin" });
