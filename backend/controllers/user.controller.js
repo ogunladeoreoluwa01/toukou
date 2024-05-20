@@ -146,28 +146,49 @@ const getProfile = async (req, res, next) => {
 
 const updateProfile = async (req, res, next) => {
   try {
+    // Find the user by ID
     let user = await User.findById(req.user._id);
     if (!user) {
-      res.status(404).json({ message: "Use not found" });
+      return res.status(404).json({ message: "User not found" });
     }
+
+    // Check if the new username already exists
+    if (req.body.username && req.body.username !== user.username) {
+      const existingUsername = await User.findOne({ username: req.body.username });
+      if (existingUsername) {
+        return res.status(400).json({ message: "Username is already taken" });
+      }
+    }
+
+    // Check if the new email already exists
+    if (req.body.email && req.body.email !== user.email) {
+      const existingEmail = await User.findOne({ email: req.body.email });
+      if (existingEmail) {
+        return res.status(400).json({ message: "Email is already registered" });
+      }
+    }
+
+    // Update user's profile fields
     user.username = req.body.username || user.username;
     user.email = req.body.email || user.email;
     user.sex = req.body.sex || user.sex;
     user.bio = req.body.bio || user.bio;
 
-    const updateUserProfile = await user.save();
+    // Save the updated user profile
+    const updatedUserProfile = await user.save();
 
+    // Respond with a success message and updated user data
     res.status(200).json({
-      message: "user Updated",
+      message: "User profile updated successfully",
       user: {
-        _id: updateUserProfile._id,
-        profileImage: updateUserProfile.profileImage,
-        name: updateUserProfile.username,
-        email: updateUserProfile.email,
-        verified: updateUserProfile.verified,
-        admin: updateUserProfile.admin,
-        sex: updateUserProfile.sex,
-        bio: updateUserProfile.bio,
+        _id: updatedUserProfile._id,
+        profileImage: updatedUserProfile.profileImage,
+        name: updatedUserProfile.username,
+        email: updatedUserProfile.email,
+        verified: updatedUserProfile.verified,
+        admin: updatedUserProfile.admin,
+        sex: updatedUserProfile.sex,
+        bio: updatedUserProfile.bio,
       },
     });
   } catch (error) {
@@ -175,6 +196,7 @@ const updateProfile = async (req, res, next) => {
     next(error); // Pass the error to the error handling middleware
   }
 };
+
 
 // currecbntly not working dont know why to tired to know
 const uploadUserProfilePic = async (req, res, next) => {
@@ -358,6 +380,186 @@ const unSoftDelete = async (req, res, next) => {
     next(error); // Pass the error to the error handling middleware
   }
 };
+const banUser = async (req, res, next) => {
+  try {
+    const { username, banReason, banDuration } = req.body;
+
+    let user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+     // Check if the user is a super admin
+     if (user.superAdmin) {
+      return res.status(403).json({ message: "Cannot ban a super admin" });
+    }
+
+    if (!banReason) {
+      return res.status(400).json({ message: "Ban reason is required" });
+    }
+
+    // Check if a valid ban duration is provided
+    const validDurations = ['1h', '1d', '1w', '1m', 'indefinite'];
+    if (!banDuration || !validDurations.includes(banDuration)) {
+      return res.status(400).json({ message: "Valid ban duration is required: '1h', '1d', '1w', '1m', 'indefinite'" });
+    }
+
+    // Calculate the ban expiration date based on the duration preset
+    let banExpiration = null;
+    if (banDuration !== 'indefinite') {
+      banExpiration = new Date();
+      switch (banDuration) {
+        case '1h':
+          banExpiration.setHours(banExpiration.getHours() + 1);
+          break;
+        case '1d':
+          banExpiration.setDate(banExpiration.getDate() + 1);
+          break;
+        case '1w':
+          banExpiration.setDate(banExpiration.getDate() + 7);
+          break;
+        case '1m':
+          banExpiration.setMonth(banExpiration.getMonth() + 1);
+          break;
+      }
+    }
+
+    user.banned = true;
+    user.banReason = banReason;
+    user.banExpiration = banExpiration;
+
+    await user.save();
+
+    res.status(200).json({
+      message: "User banned successfully",
+      banExpiration: user.banExpiration,
+    });
+  } catch (error) {
+    error.statusCode = 500;
+    next(error); // Pass the error to the error handling middleware
+  }
+};
+
+
+const unbanUser = async (req, res, next) => {
+  try {
+    const { username } = req.body;
+
+    let user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (!user.banned) {
+      return res.status(400).json({ message: "User is not banned" });
+    }
+
+    user.banned = false;
+    user.banReason = null;
+    user.banExpiration = null;
+
+    await user.save();
+
+    res.status(200).json({
+      message: "User unbanned successfully",
+    });
+  } catch (error) {
+    error.statusCode = 500;
+    next(error); // Pass the error to the error handling middleware
+  }
+};
+
+const permadelete = async (req, res, next) => {
+  try {
+    // Find the authenticated user by ID
+    let user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if the provided password matches the user's password
+    const { password } = req.body;
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Incorrect password" });
+    }
+
+    // Remove the user from the database
+    await user.remove();
+
+    // Respond with a success message
+    res.status(200).json({
+      message: "User deleted permanently",
+    });
+  } catch (error) {
+    error.statusCode = 500;
+    next(error); // Pass the error to the error handling middleware
+  }
+};
+
+const makeAdmin = async (req, res, next) => {
+  try {
+    const { username } = req.body;
+
+    let user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.isAdmin = true;
+    await user.save();
+
+    res.status(200).json({
+      message: "User promoted to admin successfully",
+    });
+  } catch (error) {
+    error.statusCode = 500;
+    next(error); // Pass the error to the error handling middleware
+  }
+};
+const  demoteAdmin = async (req, res, next) => {
+  try {
+    const { username } = req.body;
+
+    let user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.isAdmin = false;
+    await user.save();
+
+    res.status(200).json({
+      message: "User demoted from admin successfully",
+    });
+  } catch (error) {
+    error.statusCode = 500;
+    next(error); // Pass the error to the error handling middleware
+  }
+};
+const permanentlyDeleteUserBySupAdmin = async (req, res) => {
+  try {
+    const { username } = req.body;
+
+    // Find the user by username
+    let user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Remove the user from the database
+    await user.remove();
+
+    // Respond with a success message
+    res.status(200).json({
+      message: "User deleted permanently",
+    });
+  } catch (error) {
+    error.statusCode = 500;
+    next(error); // Pass the error to the error handling middleware
+  }
+};
+
+
 
 module.exports = {
   registerUser,
@@ -368,4 +570,11 @@ module.exports = {
   changePassword,
   unSoftDelete,
   SoftDelete,
+  banUser,
+  unbanUser,
+  permadelete,
+  makeAdmin,
+  demoteAdmin,
+  permanentlyDeleteUserBySupAdmin 
+  
 };
