@@ -109,6 +109,52 @@ const loginUser = async (req, res) => {
   }
 };
 
+const getAllUsers = async (req, res) => {
+  try {
+    // Set up pagination parameters
+    const limit = parseInt(req.query.limit) || 10; // Number of users per page
+    const page = parseInt(req.query.page) || 1; // Current page number
+    const skip = (page - 1) * limit;
+
+    // Fetch users with pagination and the specified fields
+    const users = await User.find(
+      {},
+      "_id username profileImage email noOfPosts verified banned achievements superAdmin isAdmin"
+    )
+      .skip(skip)
+      .limit(limit);
+
+    // Get total number of users for pagination metadata
+    const totalUsers = await User.countDocuments({});
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    // Structure the users in the desired format
+    const formattedUsers = users.map((user) => ({
+      _id: user._id,
+      isAdmin: user.isAdmin,
+      superAdmin: user.superAdmin,
+      username: user.username,
+      profileImage: user.profileImage,
+      email: user.email,
+      noOfPosts: user.noOfPosts,
+      verified: user.verified,
+      banned: user.banned,
+      achievements: user.achievements,
+    }));
+
+    // Send the formatted users along with pagination metadata as a response
+    res.status(200).json({
+      currentPage: page,
+      totalPages: totalPages,
+      totalUsers: totalUsers,
+      users: formattedUsers,
+    });
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 const getProfile = async (req, res, next) => {
   try {
     let user = await User.findById(req.user._id);
@@ -417,7 +463,9 @@ const banUser = async (req, res, next) => {
     } else if (admin.isAdmin) {
       // Regular admins cannot ban other admins or super admins
       if (user.isAdmin || user.superAdmin) {
-        return res.status(403).json({ message: "Admins can only ban regular users" });
+        return res
+          .status(403)
+          .json({ message: "Admins can only ban regular users" });
       }
     }
 
@@ -430,7 +478,8 @@ const banUser = async (req, res, next) => {
     const validDurations = ["1h", "1d", "1w", "1m", "indefinite"];
     if (!banDuration || !validDurations.includes(banDuration)) {
       return res.status(400).json({
-        message: "Valid ban duration is required: '1h', '1d', '1w', '1m', 'indefinite'",
+        message:
+          "Valid ban duration is required: '1h', '1d', '1w', '1m', 'indefinite'",
       });
     }
 
@@ -617,7 +666,7 @@ const demoteAdmin = async (req, res, next) => {
     next(error); // Pass the error to the error handling middleware
   }
 };
-const permanentlyDeleteUserBySupAdmin = async (req, res,next) => {
+const permanentlyDeleteUserBySupAdmin = async (req, res, next) => {
   try {
     const { username } = req.body;
     const admin = await User.findById(req.user._id);
@@ -650,6 +699,7 @@ const permanentlyDeleteUserBySupAdmin = async (req, res,next) => {
 module.exports = {
   registerUser,
   loginUser,
+  getAllUsers,
   getProfile,
   updateProfile,
   uploadUserProfilePic,

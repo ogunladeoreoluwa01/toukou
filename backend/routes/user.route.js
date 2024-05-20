@@ -9,6 +9,7 @@ const checkSoftDelete = require("../middlewares/softDeleteStatus");
 const {
   registerUser,
   loginUser,
+  getAllUsers,
   getProfile,
   updateProfile,
   uploadUserProfilePic,
@@ -21,11 +22,13 @@ const {
   makeAdmin,
   demoteAdmin,
   permanentlyDeleteUserBySupAdmin,
+
 } = require("../controllers/user.controller");
 
 // Public routes
 router.post("/register", registerUser);
 router.post("/login",  loginUser);
+router.get("/all", getAllUsers);
 
 // Protected routes (requires authentication)
 router.get("/profile", authGuard, checkSoftDelete, checkBanStatus, getProfile);

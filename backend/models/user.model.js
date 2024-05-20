@@ -17,6 +17,7 @@ const userSchema = new mongoose.Schema(
     verified: { type: Boolean, default: false },
     verificationCode: { type: String, required: false },
     sex: { type: String, default: "" },
+    noOfPosts: { type: Number, default: 0 },
     profileImage: { type: String, default: "" },
     bio: { type: String, default: "" },
     banned: { type: Boolean, default: false },
