@@ -25,11 +25,17 @@ const {
 
 // Public routes
 router.post("/register", registerUser);
-router.post("/login", loginUser);
+router.post("/login",  loginUser);
 
 // Protected routes (requires authentication)
-router.get("/profile", authGuard,checkSoftDelete, checkBanStatus, getProfile);
-router.put("/updateProfile", authGuard,checkSoftDelete, checkBanStatus, updateProfile);
+router.get("/profile", authGuard, checkSoftDelete, checkBanStatus, getProfile);
+router.put(
+  "/updateProfile",
+  authGuard,
+  checkSoftDelete,
+  checkBanStatus,
+  updateProfile
+);
 router.put(
   "/uploadProfileImg",
   authGuard,

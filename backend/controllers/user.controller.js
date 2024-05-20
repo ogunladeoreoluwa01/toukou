@@ -387,7 +387,7 @@ const banUser = async (req, res, next) => {
     const { username, banReason, banDuration } = req.body;
 
     // Find the user performing the ban action (the admin)
-    let admin = await User.findById(req.user._id);
+    const admin = await User.findById(req.user._id);
     if (!admin) {
       return res.status(404).json({ message: "Admin not found" });
     }
@@ -398,9 +398,14 @@ const banUser = async (req, res, next) => {
     }
 
     // Find the user to be banned
-    let user = await User.findOne({ username });
+    const user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if the admin is trying to ban themselves
+    if (user._id.equals(admin._id)) {
+      return res.status(400).json({ message: "Cannot ban yourself" });
     }
 
     // Check if the user performing the ban action is a super admin
@@ -412,9 +417,7 @@ const banUser = async (req, res, next) => {
     } else if (admin.isAdmin) {
       // Regular admins cannot ban other admins or super admins
       if (user.isAdmin || user.superAdmin) {
-        return res
-          .status(403)
-          .json({ message: "Admins can only ban regular users" });
+        return res.status(403).json({ message: "Admins can only ban regular users" });
       }
     }
 
@@ -427,8 +430,7 @@ const banUser = async (req, res, next) => {
     const validDurations = ["1h", "1d", "1w", "1m", "indefinite"];
     if (!banDuration || !validDurations.includes(banDuration)) {
       return res.status(400).json({
-        message:
-          "Valid ban duration is required: '1h', '1d', '1w', '1m', 'indefinite'",
+        message: "Valid ban duration is required: '1h', '1d', '1w', '1m', 'indefinite'",
       });
     }
 
@@ -551,13 +553,25 @@ const permadelete = async (req, res, next) => {
   }
 };
 
-const makeAdmin = async (req, res, next) => { 
+const makeAdmin = async (req, res, next) => {
   try {
     const { username } = req.body;
+    const admin = await User.findById(req.user._id);
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
 
     let user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user._id.equals(admin._id)) {
+      return res.status(400).json({ message: "Cannot promote yourself" });
+    }
+
+    if (user.isAdmin) {
+      return res.status(403).json({ message: "User is already an admin" });
     }
 
     user.isAdmin = true;
@@ -571,13 +585,25 @@ const makeAdmin = async (req, res, next) => {
     next(error); // Pass the error to the error handling middleware
   }
 };
+
 const demoteAdmin = async (req, res, next) => {
   try {
     const { username } = req.body;
+    const admin = await User.findById(req.user._id);
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
 
     let user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user._id.equals(admin._id)) {
+      return res.status(400).json({ message: "Cannot demote yourself" });
+    }
+    if (!user.isAdmin) {
+      return res.status(403).json({ message: "User is already not an  admin" });
     }
 
     user.isAdmin = false;
@@ -591,14 +617,21 @@ const demoteAdmin = async (req, res, next) => {
     next(error); // Pass the error to the error handling middleware
   }
 };
-const permanentlyDeleteUserBySupAdmin = async (req, res) => {
+const permanentlyDeleteUserBySupAdmin = async (req, res,next) => {
   try {
     const { username } = req.body;
+    const admin = await User.findById(req.user._id);
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
 
-    // Find the user by username
     let user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user._id.equals(admin._id)) {
+      return res.status(400).json({ message: "Cannot demote yourself" });
     }
 
     // Remove the user from the database
