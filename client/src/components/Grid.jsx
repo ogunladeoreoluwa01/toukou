@@ -11,6 +11,9 @@ const Grid = () => {
     <section className=" font-NotoSans my-4 py-6 mx-auto grid max-w-5xl grid-flow-dense grid-cols-12 gap-4  px-4  text-slate-900 dark:text-slate-50 ">
 <div className="col-span-12 row-span-2 md:col-span-6  rounded-lg border  bg-slate-300  dark:bg-slate-600 p-6 hover:rotate-[-2.5deg] hover:scale-[0.9] transition-all duration-300 ease-linear">
 <img
+ loading="lazy"
+ decoding='async'
+ fetchPriority='high'
       src="https://i.pinimg.com/originals/84/a5/f5/84a5f56879a12019e4963241263e505d.jpg"
       alt="avatar"
       className="mb-4 size-20 rounded-full object-scale-down "

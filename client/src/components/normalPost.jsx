@@ -23,26 +23,30 @@ const FeaturedPost = ({
     title = "Designers who changed the web is in the air", 
     time = "July 28, 2022 · 6 min read",
     image = getRandomImage(),
-    dynamicClass="hover:rotate-[.5deg]"
+    dynamicClass="hover:rotate-[.3deg]"
 }) => {
     return ( 
-        <Link to={postUrl} className={`flex  md:flex-col md:justify-around w-screen md:h-[345px] md:w-[260px]  transition-all duration-300 ease-linear rounded-lg md:p-0 m-0 h-[170px] hover:-translate-y-2 ${dynamicClass}`}>
+        <Link to={postUrl} className={` flex  md:flex-col md:justify-around md:h-fit md:w-[234px]  transition-all duration-300 ease-linear rounded-lg md:p-0 m-0 h-[170px] hover:-translate-y-2 ${dynamicClass}`}>
             <div>
-                <img className="md:h-[180px] h-[170px] max-w-[170px] md:max-w-full  rounded-t-lg md:w-full object-cover" src={image} alt={image} />
+                <img 
+                loading="lazy"
+                decoding='async'
+                fetchPriority='high'
+                className=" object-cover object-center md:h-[162px] h-[170px] max-w-[140px] md:max-w-full  rounded-l-md md:rounded-t-lg md:w-full " src={image} alt={image} />
             </div>
-            <div className="p-3 md:p-4 flex flex-col w-[70%] gap-2 md:gap-0 md:w-full bg-slate-300  dark:bg-slate-600 rounded-b-lg">
+            <div className="p-2 md:p-4 md:h-[151px] flex flex-col w-[70%] gap-2 md:gap-0 md:w-full bg-slate-300  dark:bg-slate-600 rounded-r-md md:rounded-b-lg">
                 <span className="flex justify-between">
-                <Link to={authorUrl} className="bg-slate-400 w-fit text-[0.75rem] md:text-sm px-2  md:px-3 rounded-md font-bold capitalize text-slate-700">
+                <Link to={authorUrl} className="bg-slate-400 w-fit text-[0.75rem]  px-2  md:px-3 rounded-md font-bold capitalize text-slate-700">
                     {authorName}
                 </Link>
                 {authorRole && (
-  <span  className="bg-slate-400 w-fit text-[0.65rem] md:text-sm px-2 md:px-3 rounded-md font-bold capitalize text-slate-700">
+  <span  className="bg-slate-400 w-fit text-[0.65rem]  px-2 md:px-3 rounded-md font-bold capitalize text-slate-700">
     {authorRole}
   </span>
 )}
                 </span>
                
-                <h1 className="md:w-full sm:text-lg text-xl leading-5 md:text-2xl h-[100px] md:h-[100px] font-medium text-ellipsis line-clamp-4 whitespace-normal">
+                <h1 className="md:w-full sm:text-lg text-xl leading-5 md:text-xl md:leading-[1.5rem] h-[100px] md:h-[100px] font-medium text-ellipsis line-clamp-4 whitespace-normal">
                     {title}
                 </h1>
                 <p className="font-bold text-slate-500 dark:text-slate-400 text-xs">

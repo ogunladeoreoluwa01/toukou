@@ -10,17 +10,24 @@ const postSchema = new mongoose.Schema(
     content: { type: String, required: true },
     authorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     authorName: { type: String },
-    imageUrls: { type: String, default: "" },
-    tags: { type: [String], default: [] },
-    likes: { type: Number, default: 0 },
-
-    comments: { type: [Comment], default: [] },
+    authorProfileImg: {
+      authorProfileImgUrl: { type: String, default: "" },
+      authorProfileImgId: { type: String, default: "" },
+      authorProfileImgName: { type: String, default: "" },
+    },
+    postImage: {
+      postImgUrl: { type: String, default: "" },
+      postImgId: { type: String, default: "" },
+      postImgName: { type: String, default: "" },
+    },
+    likes: { type: Schema.Types.ObjectId, ref: "User", default: [] },
+    dislikes: { type: Schema.Types.ObjectId, ref: "User", default: [] },
+    comments: [{ type: Schema.Types.ObjectId, ref: "Comment", default: [] }],
   },
   {
     timestamps: true, // Adds `createdAt` and `updatedAt` fields
   }
 );
-
 
 const Post = mongoose.model("Post", postSchema);
 

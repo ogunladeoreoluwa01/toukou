@@ -45,6 +45,7 @@ const registerUser = async (req, res) => {
       user: {
         _id: newUser._id,
         profileImage: newUser.profileImage,
+        bannerImage: newUser.bannerImage,
         name: newUser.username,
         email: newUser.email,
         verified: newUser.verified,
@@ -88,6 +89,7 @@ const loginUser = async (req, res) => {
         user: {
           _id: user._id,
           profileImage: user.profileImage,
+          bannerImage: user.bannerImage,
           name: user.username,
           email: user.email,
           verified: user.verified,
@@ -116,10 +118,10 @@ const getAllUsers = async (req, res) => {
     const page = parseInt(req.query.page) || 1; // Current page number
     const skip = (page - 1) * limit;
 
-    // Fetch users with pagination and the specified fields
+    // Fetch users with pagination, excluding banned users, and retrieve specified fields
     const users = await User.find(
-      {},
-      "_id username profileImage email noOfPosts verified banned achievements superAdmin isAdmin"
+      { banned: false }, // Exclude users with the banned field set to true
+      "_id username profileImage email noOfPosts verified achievements superAdmin isAdmin"
     )
       .skip(skip)
       .limit(limit);
@@ -135,6 +137,7 @@ const getAllUsers = async (req, res) => {
       superAdmin: user.superAdmin,
       username: user.username,
       profileImage: user.profileImage,
+      bannerImage: user.bannerImage,
       email: user.email,
       noOfPosts: user.noOfPosts,
       verified: user.verified,
@@ -165,10 +168,12 @@ const getProfile = async (req, res, next) => {
         user: {
           _id: user._id,
           profileImage: user.profileImage,
+          bannerImage: user.bannerImage,
           name: user.username,
           email: user.email,
           verified: user.verified,
-          admin: user.admin,
+          admin: user.isAdmin,
+          superAdmin: user.superAdmin,
           sex: user.sex,
           bio: user.bio,
         },
@@ -229,12 +234,14 @@ const updateProfile = async (req, res, next) => {
     res.status(200).json({
       message: "User profile updated successfully",
       user: {
-        _id: updatedUserProfile._id,
-        profileImage: updatedUserProfile.profileImage,
         name: updatedUserProfile.username,
         email: updatedUserProfile.email,
+        _id: updatedUserProfile._id,
+        profileImage: updatedUserProfile.profileImage,
+        bannerImage: updatedUserProfile.bannerImage,
         verified: updatedUserProfile.verified,
-        admin: updatedUserProfile.admin,
+        admin: updatedUserProfile.isAdmin,
+        superAdmin: updatedUserProfile.superAdmin,
         sex: updatedUserProfile.sex,
         bio: updatedUserProfile.bio,
       },
@@ -245,7 +252,6 @@ const updateProfile = async (req, res, next) => {
   }
 };
 
-// currecbntly not working dont know why to tired to know
 const uploadUserProfilePic = async (req, res, next) => {
   try {
     let user = await User.findById(req.user._id);
@@ -253,62 +259,136 @@ const uploadUserProfilePic = async (req, res, next) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    if (!req.file) {
-      return res.status(400).json({ message: "No file uploaded" });
-    }
+    let imgFolder = `${user.username},${user._id},profile image`;
 
     const result = await cloudinary.uploader.upload(req.file.path, {
-      folder: "uploaded",
-      use_filename: true,
-      unique_filename: false,
+      folder: imgFolder,
     });
 
-    if (result.secure_url) {
-      user.profileImage = result.secure_url;
-    } else {
-      return res.status(400).json({ message: "Error uploading image" });
+    if (!result) {
+      return res.status(500).json({ message: "File upload failed" });
     }
 
-    const updatedUserProfile = await user.save();
+    user.profileImage.profileImgUrl =
+      result.secure_url || user.profileImage.profileImgUrl;
+    user.profileImage.profileImgId =
+      result.public_id || user.profileImage.profileImgId;
+    user.profileImage.profileImgName =
+      result.original_filename || user.profileImage.profileImgName;
+
+    // Save the updated user profile
+    const updatedUserProfileImage = await user.save();
 
     res.status(200).json({
-      message: "Profile picture updated",
+      message: "User profileImage updated successfully",
       user: {
-        _id: updatedUserProfile._id,
-        profileImage: updatedUserProfile.profileImage,
-        name: updatedUserProfile.username,
-        email: updatedUserProfile.email,
-        verified: updatedUserProfile.verified,
-        admin: updatedUserProfile.admin,
-        sex: updatedUserProfile.sex,
-        bio: updatedUserProfile.bio,
+        _id: user._id,
+        profileImage: updatedUserProfileImage.profileImage,
+        bannerImage: user.bannerImage,
+        name: user.username,
+        email: user.email,
+        verified: user.verified,
+        admin: user.isAdmin,
+        superAdmin: user.superAdmin,
+        sex: user.sex,
+        bio: user.bio,
       },
     });
   } catch (error) {
     error.statusCode = 500;
-    next(error); // Pass the error to the error handling middleware
+    next(error);
+  }
+};
+const uploadUserBannerPic = async (req, res, next) => {
+  try {
+    let user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    let imgFolder = `${user.username},${user._id},banner image`;
+
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: imgFolder,
+    });
+
+    if (!result) {
+      return res.status(500).json({ message: "File upload failed" });
+    }
+
+    user.bannerImage.bannerImgUrl =
+      result.secure_url || user.bannerImage.bannerImgUrl;
+    user.bannerImage.bannerImgId =
+      result.public_id || user.bannerImage.bannerImgId;
+    user.bannerImage.bannerImgName =
+      result.original_filename || user.bannerImage.bannerImgName;
+
+    // Save the updated user profile
+    const updatedUserBannerImage = await user.save();
+
+    res.status(200).json({
+      message: "User bannerImage updated successfully",
+      user: {
+        _id: user._id,
+        profileImage: user.profileImage,
+        bannerImage: updatedUserBannerImage.bannerImage,
+        name: user.username,
+        email: user.email,
+        verified: user.verified,
+        admin: user.isAdmin,
+        superAdmin: user.superAdmin,
+        sex: user.sex,
+        bio: user.bio,
+      },
+    });
+  } catch (error) {
+    error.statusCode = 500;
+    next(error);
   }
 };
 
 const changePassword = async (req, res, next) => {
   try {
     // Find the user by ID
-    let user = await User.findById(req.user._id);
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     // Destructure the old and new passwords from the request body
-    const { old_Password, new_Password } = req.body;
+    const { oldPassword, newPassword } = req.body;
 
     // Check if the old password matches the current password
-    const passwordMatch = await bcrypt.compare(old_Password, user.password);
+    const passwordMatch = await bcrypt.compare(oldPassword, user.password);
     if (!passwordMatch) {
       return res.status(401).json({ message: "Incorrect password" });
     }
 
+    // Check if the new password is the same as the current password
+    const samePasswordMatch = await bcrypt.compare(newPassword, user.password);
+    if (samePasswordMatch) {
+      return res.status(401).json({ message: "Please change your password" });
+    }
+
+    // Check if the new password has been used previously
+    const isOldPassword = await Promise.all(
+      user.oldPassword.map(
+        async (oldPwd) => await bcrypt.compare(newPassword, oldPwd)
+      )
+    ).then((results) => results.includes(true));
+
+    if (isOldPassword) {
+      return res
+        .status(401)
+        .json({ message: "Cannot use an already used password" });
+    }
+
     // Set the new password (this will be hashed by the pre-save hook)
-    user.password = new_Password;
+    user.oldPassword.push(user.password); // Save the current password to the oldPassword array
+    user.password = newPassword; // The new password will be hashed in the pre-save hook
+
+    // Generate a new JWT token
+    const token = generateJwt(user._id);
 
     // Save the updated user profile
     const updatedUserProfile = await user.save();
@@ -319,17 +399,20 @@ const changePassword = async (req, res, next) => {
       user: {
         _id: updatedUserProfile._id,
         profileImage: updatedUserProfile.profileImage,
+        bannerImage: updatedUserProfile.bannerImage,
         name: updatedUserProfile.username,
         email: updatedUserProfile.email,
         verified: updatedUserProfile.verified,
-        admin: updatedUserProfile.admin,
+        admin: updatedUserProfile.isAdmin,
+        superAdmin: updatedUserProfile.superAdmin,
         sex: updatedUserProfile.sex,
         bio: updatedUserProfile.bio,
       },
+      token: token,
     });
   } catch (error) {
-    error.statusCode = 500;
-    next(error); // Pass the error to the error handling middleware
+    console.error(error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
@@ -342,15 +425,17 @@ const SoftDelete = async (req, res, next) => {
     }
 
     // Destructure the password and delete reason from the request body
-    const { Password, deleteReason } = req.body;
+    const { password, deleteReason } = req.body;
 
     // Check if deleteReason is provided
     if (!deleteReason) {
-      return res.status(400).json({ message: "Delete reason is required" });
+      return res
+        .status(400)
+        .json({ message: "Soft Delete reason is required" });
     }
 
     // Check if the provided password matches the current password
-    const passwordMatch = await bcrypt.compare(Password, user.password);
+    const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       return res.status(401).json({ message: "Incorrect password" });
     }
@@ -365,18 +450,6 @@ const SoftDelete = async (req, res, next) => {
     // Respond with a success message
     res.status(200).json({
       message: "User soft deleted successfully",
-      user: {
-        _id: updatedUserProfile._id,
-        profileImage: updatedUserProfile.profileImage,
-        name: updatedUserProfile.username,
-        email: updatedUserProfile.email,
-        verified: updatedUserProfile.verified,
-        admin: updatedUserProfile.admin,
-        sex: updatedUserProfile.sex,
-        bio: updatedUserProfile.bio,
-        deleted: updatedUserProfile.deleted,
-        deletionReason: updatedUserProfile.deletionReason,
-      },
     });
   } catch (error) {
     error.statusCode = 500;
@@ -404,6 +477,7 @@ const unSoftDelete = async (req, res, next) => {
     // Unmark the user as deleted and clear the deletion reason
     user.deleted = false;
     user.deletionReason = "";
+    const token = generateJwt(user._id);
 
     // Save the updated user profile
     const updatedUserProfile = await user.save();
@@ -411,16 +485,7 @@ const unSoftDelete = async (req, res, next) => {
     // Respond with a success message
     res.status(200).json({
       message: "User restored successfully",
-      user: {
-        _id: updatedUserProfile._id,
-        profileImage: updatedUserProfile.profileImage,
-        name: updatedUserProfile.username,
-        email: updatedUserProfile.email,
-        verified: updatedUserProfile.verified,
-        admin: updatedUserProfile.admin,
-        sex: updatedUserProfile.sex,
-        bio: updatedUserProfile.bio,
-      },
+      Token: token,
     });
   } catch (error) {
     error.statusCode = 500;
@@ -703,6 +768,7 @@ module.exports = {
   getProfile,
   updateProfile,
   uploadUserProfilePic,
+  uploadUserBannerPic,
   changePassword,
   unSoftDelete,
   SoftDelete,

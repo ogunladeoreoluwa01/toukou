@@ -7,18 +7,29 @@ const achievementSchema = new mongoose.Schema({
   badge_url: { type: String, required: true },
 });
 
+// Define the user schema
 const userSchema = new mongoose.Schema(
   {
     username: { type: String, required: true, unique: true },
     email: { type: String, required: true },
     password: { type: String, required: true },
+    oldPassword: { type: [String], default: [] },
     isAdmin: { type: Boolean, default: false },
     superAdmin: { type: Boolean, default: false },
     verified: { type: Boolean, default: false },
     verificationCode: { type: String, required: false },
     sex: { type: String, default: "" },
     noOfPosts: { type: Number, default: 0 },
-    profileImage: { type: String, default: "" },
+    profileImage: {
+      profileImgUrl: { type: String, default: "" },
+      profileImgId: { type: String, default: "" },
+      profileImgName: { type: String, default: "" },
+    },
+    bannerImage: {
+      bannerImgUrl: { type: String, default: "" },
+      bannerImgId: { type: String, default: "" },
+      bannerImgName: { type: String, default: "" },
+    },
     bio: { type: String, default: "" },
     banned: { type: Boolean, default: false },
     banReason: { type: String, default: "" },
@@ -32,11 +43,16 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+// Pre-save middleware to hash the password
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
     try {
+      // Hash the new password
       const hashedPassword = await bcrypt.hash(this.password, 10);
+      
+      // Update the password with the hashed one
       this.password = hashedPassword;
+
       return next();
     } catch (error) {
       return next(error);

@@ -6,27 +6,21 @@ const mongoose = require("mongoose");
 const expressPino = require("pino-http");
 const logger = require("./logger.js");
 
-const fileUpload = require("express-fileupload");
 const userRoute = require("./routes/user.route.js");
+const postRoute = require("./routes/post.route.js");
 
 const app = express();
 const Port = process.env.PORT || 3000;
 const expressLogger = expressPino({ logger });
 
 // Middleware
-app.use(
-  fileUpload({
-    useTempFiles: true,
-    limits: { fileSize: 50 * 1024 * 1024 },
-  })
-);
-
 app.use(express.json());
 app.use(expressLogger);
 app.use(express.urlencoded({ extended: false }));
 
 // Routes
 app.use("/api/users", userRoute);
+app.use("/api/posts", postRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
