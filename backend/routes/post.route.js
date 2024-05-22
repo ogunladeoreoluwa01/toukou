@@ -2,10 +2,8 @@ const express = require("express");
 const router = express.Router();
 const authGuard = require("../middlewares/authMiddleware");
 const adminGuard = require("../middlewares/adminAuthMiddleware");
-
 const checkBanStatus = require("../middlewares/checkBanStatus");
 const checkSoftDelete = require("../middlewares/softDeleteStatus");
-
 const upload = require("../middlewares/upload");
 
 const {
@@ -21,7 +19,7 @@ const {
 
 // Route for creating a new post
 router.post(
-  "/posts",
+  "/create",
   upload.single("image"),
   authGuard,
   checkSoftDelete,
@@ -31,7 +29,7 @@ router.post(
 
 // Route for retrieving a specific post
 router.get(
-  "/posts/:postId",
+  "/register/:postId",
   authGuard,
   checkSoftDelete,
   checkBanStatus,
@@ -40,7 +38,7 @@ router.get(
 
 // Route for editing a post
 router.put(
-  "/posts/:postId",
+  "/edit/:postId",
   upload.single("image"),
   authGuard,
   checkSoftDelete,
@@ -50,7 +48,7 @@ router.put(
 
 // Route for retrieving all posts by a specific user
 router.get(
-  "/users/:authorId/posts",
+  "/postUsers/:authorId",
   authGuard,
   checkSoftDelete,
   checkBanStatus,
@@ -59,7 +57,7 @@ router.get(
 
 // Route for retrieving all posts with filters
 router.get(
-  "/posts",
+  "/postsFilters",
   authGuard,
   checkSoftDelete,
   checkBanStatus,
@@ -68,7 +66,7 @@ router.get(
 
 // Route for liking a post
 router.post(
-  "/posts/:postId/like",
+  "/like/:postId",
   authGuard,
   checkSoftDelete,
   checkBanStatus,
@@ -77,7 +75,7 @@ router.post(
 
 // Route for disliking a post
 router.post(
-  "/posts/:postId/dislike",
+  "/dislike/:postId",
   authGuard,
   checkSoftDelete,
   checkBanStatus,
@@ -86,7 +84,7 @@ router.post(
 
 // Route for deleting a post
 router.delete(
-  "/posts/:postId",
+  "/delete/:postId",
   adminGuard,
   checkSoftDelete,
   checkBanStatus,

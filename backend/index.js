@@ -8,6 +8,7 @@ const logger = require("./logger.js");
 
 const userRoute = require("./routes/user.route.js");
 const postRoute = require("./routes/post.route.js");
+const commentRoute = require("./routes/comment.route.js");
 
 const app = express();
 const Port = process.env.PORT || 3000;
@@ -21,6 +22,7 @@ app.use(express.urlencoded({ extended: false }));
 // Routes
 app.use("/api/users", userRoute);
 app.use("/api/posts", postRoute);
+app.use("/api/comment", commentRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
