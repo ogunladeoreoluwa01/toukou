@@ -20,8 +20,20 @@ const postSchema = new mongoose.Schema(
       postImgId: { type: String, default: "" },
       postImgName: { type: String, default: "" },
     },
-    likes: { type: Schema.Types.ObjectId, ref: "User", default: [] },
-    dislikes: { type: Schema.Types.ObjectId, ref: "User", default: [] },
+    likes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        default: [],
+      },
+    ],
+    dislikes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+        default: [],
+      },
+    ],
     comments: [{ type: Schema.Types.ObjectId, ref: "Comment", default: [] }],
   },
   {

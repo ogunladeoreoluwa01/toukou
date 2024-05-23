@@ -1,15 +1,11 @@
 const User = require("../models/user.model");
 const Post = require("../models/post.model");
 const cloudinary = require("../utils/cloudinaryConfig");
+const Comment = require("../models/comment.model");
 
 const createPost = async (req, res, next) => {
   try {
-    const { title, content, tags } = req.body;
-
-    // Ensure tags is an array
-    if (!Array.isArray(tags)) {
-      return res.status(400).json({ message: "Tags must be an array" });
-    }
+    const { title, content } = req.body;
 
     // Find the user by ID
     const user = await User.findById(req.user._id);
@@ -25,11 +21,10 @@ const createPost = async (req, res, next) => {
       authorId: req.user._id,
       authorName: user.username,
       authorProfileImg: {
-        authorProfileImgUrl: user.profileImgUrl,
-        authorProfileImgId: user.profileImgId,
-        authorProfileImgName: user.profileImgName,
+        authorProfileImgUrl: user.profileImage?.profileImgUrl || "",
+        authorProfileImgId: user.profileImage?.profileImgId || "",
+        authorProfileImgName: user.profileImage?.profileImgName || "",
       },
-      tags,
     });
 
     // Check if a file is provided in the request
@@ -120,7 +115,7 @@ const editPost = async (req, res, next) => {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    if (post.authorId !== user._id) {
+    if (!post.authorId.equals(req.user._id)) {
       return res
         .status(403)
         .json({ message: "Only post author allowed to edit their post" });
@@ -130,7 +125,6 @@ const editPost = async (req, res, next) => {
     post.authorName = req.body.authorName || post.authorName;
     post.title = req.body.title || post.title;
     post.content = req.body.content || post.content;
-    post.tags = req.body.tags || post.tags;
 
     // Handle image upload if file exists in request
     if (req.file) {
@@ -192,6 +186,9 @@ const getAllPostByAUser = async (req, res) => {
         select: "text", // Select the text field from comments
       });
 
+    // Organize posts as an object with postId as key
+    const organizedPosts = posts;
+
     // Get total number of posts for pagination metadata
     const totalPosts = await Post.countDocuments({ authorId: authorId });
     const totalPages = Math.ceil(totalPosts / limit);
@@ -201,7 +198,7 @@ const getAllPostByAUser = async (req, res) => {
       currentPage: page,
       totalPages: totalPages,
       totalPosts: totalPosts,
-      posts: posts,
+      posts: [organizedPosts],
     });
   } catch (error) {
     console.error("Error fetching posts:", error);
@@ -224,10 +221,14 @@ const getAllPostsFilters = async (req, res) => {
 
     // Check if filter parameters are provided in the query
     if (req.query.date) {
-      filterCriteria.createdAt = new Date(req.query.date); // Filter by date
-    }
-    if (req.query.tags) {
-      filterCriteria.tags = { $in: req.query.tags.split(",") }; // Filter by tags
+      const date = new Date(req.query.date);
+      const nextDay = new Date(date);
+      nextDay.setDate(date.getDate() + 1);
+
+      filterCriteria.createdAt = {
+        $gte: date,
+        $lt: nextDay,
+      };
     }
     if (req.query.title) {
       filterCriteria.title = { $regex: req.query.title, $options: "i" }; // Filter by title (case-insensitive)
@@ -288,6 +289,9 @@ const getAllPostsFilters = async (req, res) => {
       },
     ]);
 
+    // Organize the posts by post ID
+    const organizedPosts = posts;
+
     // Get total number of posts for pagination metadata
     const totalPosts = await Post.countDocuments(filterCriteria);
     const totalPages = Math.ceil(totalPosts / limit);
@@ -297,7 +301,7 @@ const getAllPostsFilters = async (req, res) => {
       currentPage: page,
       totalPages: totalPages,
       totalPosts: totalPosts,
-      posts: posts,
+      posts:organizedPosts,
     });
   } catch (error) {
     console.error("Error fetching posts:", error);
@@ -406,38 +410,38 @@ const dislikeAPost = async (req, res, next) => {
 const deleteAPost = async (req, res, next) => {
   try {
     // Find the user by ID
-    let user = await User.findById(req.user._id);
+    const user = await User.findById(req.user._id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     const { postId } = req.params;
 
-    let post = await Post.findById(postId);
-
+    // Find the post by ID
+    const post = await Post.findById(postId);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    // Check if the user is the author of the post
-    if (post.authorId.toString() !== req.user._id.toString()) {
+    // Check if the user is the author of the post or has admin privileges
+    if (
+      post.authorId.equals(req.user._id) ||
+      req.user.isAdmin ||
+      req.user.superAdmin
+    ) {
+      // Delete all comments related to the post
+      await Comment.deleteMany({ _id: { $in: post.comments } });
+
+      // Delete the post
+      await Post.deleteOne({ _id: postId });
+
+      // Respond with appropriate message
+      res.status(200).json({ message: "Post deleted" });
+    } else {
       return res
         .status(403)
         .json({ message: "You are not authorized to delete this post" });
     }
-
-    // Delete all comments related to the post
-    for (let i = 0; i < post.comments.length; i++) {
-      await Comment.deleteOne({ _id: post.comments[i]._id });
-    }
-
-    // Delete the post
-    await Post.deleteOne({ _id: postId });
-
-    // Respond with appropriate message
-    res.status(200).json({
-      message: "Post deleted",
-    });
   } catch (error) {
     console.error("Error deleting post:", error);
     error.statusCode = error.statusCode || 500;

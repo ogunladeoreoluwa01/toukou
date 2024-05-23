@@ -130,33 +130,37 @@ const getAllUsers = async (req, res) => {
     const totalUsers = await User.countDocuments({});
     const totalPages = Math.ceil(totalUsers / limit);
 
-    // Structure the users in the desired format
-    const formattedUsers = users.map((user) => ({
-      _id: user._id,
-      isAdmin: user.isAdmin,
-      superAdmin: user.superAdmin,
-      username: user.username,
-      profileImage: user.profileImage,
-      bannerImage: user.bannerImage,
-      email: user.email,
-      noOfPosts: user.noOfPosts,
-      verified: user.verified,
-      banned: user.banned,
-      achievements: user.achievements,
-    }));
+    // Organize the users in the desired format
+    const organizedUsers = users.reduce((acc, user) => {
+      acc[user._id] = {
+        _id: user._id,
+        isAdmin: user.isAdmin,
+        superAdmin: user.superAdmin,
+        username: user.username,
+        profileImage: user.profileImage,
+        bannerImage: user.bannerImage,
+        email: user.email,
+        noOfPosts: user.noOfPosts,
+        verified: user.verified,
+        banned: user.banned,
+        achievements: user.achievements,
+      };
+      return acc;
+    }, {});
 
-    // Send the formatted users along with pagination metadata as a response
+    // Send the organized users along with pagination metadata as a response
     res.status(200).json({
       currentPage: page,
       totalPages: totalPages,
       totalUsers: totalUsers,
-      users: formattedUsers,
+      users: organizedUsers,
     });
   } catch (error) {
     console.error("Error fetching users:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
 
 const getProfile = async (req, res, next) => {
   try {

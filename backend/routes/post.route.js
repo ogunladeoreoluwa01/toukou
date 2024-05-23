@@ -15,7 +15,7 @@ const {
   likeAPost,
   dislikeAPost,
   deleteAPost,
-} = require("../controllers/postController");
+} = require("../controllers/post.controller");
 
 // Route for creating a new post
 router.post(
@@ -29,7 +29,7 @@ router.post(
 
 // Route for retrieving a specific post
 router.get(
-  "/register/:postId",
+  "/getpost/:postId",
   authGuard,
   checkSoftDelete,
   checkBanStatus,
@@ -48,7 +48,7 @@ router.put(
 
 // Route for retrieving all posts by a specific user
 router.get(
-  "/postUsers/:authorId",
+  "/postallUsers/:authorId",
   authGuard,
   checkSoftDelete,
   checkBanStatus,
