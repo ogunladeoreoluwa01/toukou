@@ -1,3 +1,4 @@
+import Footer from "../components/footer";
 import { Link } from "react-router-dom";
 const Error404 = () => {
     return ( <>
@@ -9,7 +10,8 @@ const Error404 = () => {
 <Link to="/">go bac</Link>
 
         </div>
-        </section></> );
+        </section>
+        <Footer/></> );
 }
  
 export default Error404;

@@ -4,7 +4,7 @@ import SectionHeader from './components/SectionHeader';
 import FeaturedPost from './components/FeaturedPost';
 import NormalPost from './components/normalPost'
 import Grid from './components/Grid'
-
+import Footer from './components/footer';
 function App() {
 
 
@@ -18,7 +18,7 @@ function App() {
           </section>
           <div className='flex flex-col gap-4 my-6'>
           <SectionHeader/>
-          <div className='grid md:grid-cols-3 lg:grid-cols-5 auto-rows-auto justify-items-center grid-flow-row grid-cols-1  justify-center items-center gap-4'>
+          <div className='flex flex-wrap  justify-center items-center gap-5'>
         <NormalPost/>
         <NormalPost/>
         <NormalPost/>
@@ -40,7 +40,7 @@ function App() {
        
         </main>
         
-
+        <Footer/>
     </>
   )
 }

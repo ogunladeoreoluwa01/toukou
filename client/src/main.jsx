@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import Error404 from "./pages/NotFound";
 import AboutMePage from "./pages/aboutme";
+import ContactUs from "./pages/contact";
 import App from "./App";
 
 import "./index.css";
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
   {
     path: "/about",
     element: <AboutMePage />,
+  },
+  {
+    path: "/contact",
+    element: <ContactUs/>,
   },
 ]);
 

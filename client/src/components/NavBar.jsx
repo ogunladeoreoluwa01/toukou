@@ -91,7 +91,7 @@ const navContainer = {
             exit="hidden"
             variants={navContainer}
           >
-            <section className='h-[87vh] overflow-hidden  flex flex-col  justify-around'> 
+            <section className='h-[87vh] overflow-hidden   flex flex-col mx-auto w-[350px]  justify-around'> 
 <ul className='flex flex-col   items-start px-5 py-10 gap-5 '>
                       {Navlinks.map((link, index) => (
                           <li key={index} className='py-1'>
