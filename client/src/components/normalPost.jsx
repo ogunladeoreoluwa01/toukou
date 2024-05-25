@@ -15,7 +15,7 @@ const getRandomImage = () => {
     return dummyImages[randomIndex];
 }
 
-const FeaturedPost = ({ 
+const PostCard = ({ 
     postUrl = "/post", 
     authorUrl = "/author", 
     authorName = "author", 
@@ -57,4 +57,4 @@ const FeaturedPost = ({
     );
 }
 
-export default FeaturedPost;
+export default PostCard;
