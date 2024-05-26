@@ -10,7 +10,7 @@ const ContactUs = () => {
   <div className="bg-slate-900 w-full max-h-[400px] rounded-lg">
   <img loading="lazy"
                   decoding='async'
-                  fetchPriority='high'
+                  fetchpriority='high'
                    src="https://i.pinimg.com/originals/1e/9c/6b/1e9c6b3f315ee469d3c9ae452979b548.gif" alt="https://i.pinimg.com/originals/a5/f5/f5/a5f5f510384ddb7540a8d19f0e0dd887.gif"  className="w-full rounded-lg h-[400px] object-cover object-center  md:opacity-50 "/>
         </div>
         <div className="hidden md:block absolute bottom-5 left-5 text-slate-50">

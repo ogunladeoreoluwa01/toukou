@@ -11,14 +11,20 @@ import LoginPage from "./pages/login";
 import RegisterPage from "./pages/register";
 import App from "./App";
 import store from "./stores";
-import {Provider} from "react-redux"
+import { Provider } from "react-redux";
 import "./index.css";
 import AllBlogs from "./pages/allBlogs";
 import Blogs from "./pages/blogView";
 import AuthorsProfilePage from "./pages/userPage";
 import UserProfilePage from "./pages/userDashboard";
 import Admindashboard from "./pages/adminDashboard";
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query';
 
+
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
   {
@@ -32,42 +38,44 @@ const router = createBrowserRouter([
   },
   {
     path: "/contact",
-    element: <ContactUs/>,
+    element: <ContactUs />,
   },
   {
     path: "/login",
-    element: <LoginPage/>,
+    element: <LoginPage />,
   },
   {
     path: "/register",
-    element: <RegisterPage/>,
+    element: <RegisterPage />,
   },
   {
     path: "/allblogs",
-    element: <AllBlogs/>,
+    element: <AllBlogs />,
   },
-  { 
+  {
     path: "/blogview/:blogId",
-    element: <Blogs/>,
+    element: <Blogs />,
   },
-  { 
+  {
     path: "/authorsprofile/:authorId",
-    element: <AuthorsProfilePage/>,
+    element: <AuthorsProfilePage />,
   },
-  { 
+  {
     path: "/userprofile",
-    element: <UserProfilePage/>,
+    element: <UserProfilePage />,
   },
-  { 
+  {
     path: "/admindashboard",
-    element: <Admindashboard/>,
+    element: <Admindashboard />,
   },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
-    <RouterProvider router={router} />
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
     </Provider>
   </React.StrictMode>
 );

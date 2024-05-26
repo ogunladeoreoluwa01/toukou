@@ -24,7 +24,7 @@ const UserProfilePage = () => {
               <img
                 loading="lazy"
                 decoding="async"
-                fetchPriority="high"
+                fetchpriority="high"
                 className="h-[125px] md:h-[180px] lg:h-[250px]  w-full object-cover rounded-lg"
                 src="https://i.pinimg.com/originals/3e/39/ea/3e39ea31fe681926c8c9a5c6afba4791.jpg"
                 alt=""
@@ -33,7 +33,7 @@ const UserProfilePage = () => {
               <img
                 loading="lazy"
                 decoding="async"
-                fetchPriority="high"
+                fetchpriority="high"
                 className="h-[100px] w-[100px] md:h-[160px]  md:w-[160px] rounded-full object-cover   "
                 src="https://i.pinimg.com/originals/b6/d8/ab/b6d8ab853ebc2bbedab990364332be8b.jpg"
                 alt=""

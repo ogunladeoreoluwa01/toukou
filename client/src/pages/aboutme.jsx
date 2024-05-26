@@ -10,7 +10,7 @@ const AboutMePage = () => {
 <div className="bg-slate-900 w-full max-h-[400px] rounded-lg">
 <img loading="lazy"
                 decoding='async'
-                fetchPriority='high'
+                fetchpriority='high'
                  src="https://i.pinimg.com/originals/98/33/5f/98335fcd764b32cae3780b1e1d5d39b4.gif" alt="https://i.pinimg.com/originals/98/33/5f/98335fcd764b32cae3780b1e1d5d39b4.gif"  className="w-full rounded-lg h-[400px] object-cover object-center  md:opacity-50 "/>
       </div>
       <div className="hidden md:block absolute bottom-5 left-5 text-slate-50">

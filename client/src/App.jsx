@@ -7,6 +7,8 @@ import Grid from './components/Grid'
 import Footer from './components/footer';
 import MakeaPost from './components/makeapost';
 import ToAdminDash from './components/adminDashboardButton';
+import { FaRegUser } from "react-icons/fa";
+import { IoLogOut } from "react-icons/io5";
 function App() {
 
 
@@ -39,6 +41,9 @@ function App() {
           
         <Grid/>
         </div>
+
+
+       
         
         <MakeaPost/>
         <ToAdminDash/>

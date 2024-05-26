@@ -1,8 +1,23 @@
-import {configureStore} from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
+import { userReducer } from "./reducers/userReducer";
 
-const store =configureStore({
-    reducer:{}
-})
+// Function to retrieve initial state
+const getInitialState = () => {
+    const userInfoFromStorage = localStorage.getItem('account') ?   JSON.parse(localStorage.getItem('account')) : null;
+    return {
+        user: { userInfo: userInfoFromStorage }
+    };
+};
 
+// Get initial state
+const initialState = getInitialState();
 
-export default store
+// Configure store
+const store = configureStore({
+    reducer: {
+        user: userReducer,
+    },
+    preloadedState: initialState
+});
+
+export default store;

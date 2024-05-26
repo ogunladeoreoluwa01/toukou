@@ -1,14 +1,22 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import NavBarComp from "../components/NavBar";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import signup from "../services/index/users";
+import { Toaster, toast } from 'sonner'
+import { useDispatch,useSelector } from "react-redux";
+import { userAction } from "../stores/reducers/userReducer";
 
 const RegisterPage = () => {
+  const dispatch =useDispatch()
+  const userState =useSelector(state =>state.user)
+  const navigate =useNavigate()
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
     watch,
   } = useForm({
     defaultValues: {
@@ -20,8 +28,35 @@ const RegisterPage = () => {
     mode: "onChange",
   });
 
+  const password = watch("password");
+
+  const mutation = useMutation({
+    mutationFn: signup,
+    onSuccess: (data) => {
+      toast.success(`welcome ${data.message}`)
+      dispatch(userAction.setUserInfo(data.user))
+      localStorage.setItem('account',JSON.stringify(data.user))
+      console.log("User registered successfully:", data.user);
+    },
+    onError: (error) => {
+      toast.error(error.message)
+      console.error("Error registering user:", error);
+    },
+  });
+
+  useEffect(() => {
+    if (userState.userInfo) {
+      navigate("/");
+    }
+  }, [navigate, userState.userInfo]);
+
+
+
+
   const SubmitHandler = (data) => {
-    console.log(data);
+    const { username, email, password } = data;
+    mutation.mutate({ username, email, password });
+    
   };
 
   const [passwordToggle, setPasswordToggle] = useState(false);
@@ -30,13 +65,10 @@ const RegisterPage = () => {
     setPasswordToggle((prevState) => !prevState);
   };
 
-  const password = watch("password");
-
   return (
     <>
-      <main className="h-screen ">
+      <main className="h-screen">
         <NavBarComp />
-
         <section className="flex justify-center mx-auto mt-10 md:mt-20">
           <section className="flex flex-col gap-5 p-5 w-fit rounded-md bg-slate-300 dark:bg-slate-800">
             <h2 className="text-2xl font-bold mb-4">Register</h2>
@@ -170,14 +202,16 @@ const RegisterPage = () => {
               </div>
               <button
                 type="submit"
-                className="px-6 py-2 w-full rounded-md font-bold dark:bg-slate-100 dark:hover:bg-slate-200 transition-all duration-300 hover:bg-slate-800 dark:text-slate-900 bg-slate-900 text-slate-50 uppercase"
+                disabled={!isValid || mutation.isLoading}
+                className=" disabled:opacity-70  px-6 py-2 w-full rounded-md font-bold dark:bg-slate-100 dark:hover:bg-slate-200 transition-all duration-300 hover:bg-slate-800 dark:text-slate-900 bg-slate-900 text-slate-50 uppercase"
               >
-                Register
+                {mutation.isLoading ? 'Registering...' : 'Register'}
               </button>
             </form>
           </section>
         </section>
       </main>
+      <Toaster richColors position="top-right" expand={true} closeButton />
     </>
   );
 };

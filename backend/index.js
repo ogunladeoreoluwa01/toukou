@@ -13,8 +13,10 @@ const commentRoute = require("./routes/comment.route.js");
 const app = express();
 const Port = process.env.PORT || 3000;
 const expressLogger = expressPino({ logger });
+const cors = require("cors");
 
 // Middleware
+app.use(cors());
 app.use(express.json());
 app.use(expressLogger);
 app.use(express.urlencoded({ extended: false }));

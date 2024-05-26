@@ -49,9 +49,10 @@ const registerUser = async (req, res) => {
         name: newUser.username,
         email: newUser.email,
         verified: newUser.verified,
-        admin: newUser.admin,
+        isAdmin: newUser.isAdmin,
+        superAdmin: newUser.superAdmin,
+        token: token,
       },
-      token: token,
     });
   } catch (error) {
     res
@@ -93,9 +94,11 @@ const loginUser = async (req, res) => {
           name: user.username,
           email: user.email,
           verified: user.verified,
-          admin: user.admin,
+          isAdmin: user.isAdmin,
+          superAdmin: user.superAdmin,
+          token: token,
         },
-        token: token,
+       
         suspensions: {
           banned: user.banned,
           banReason: user.banReason,
@@ -160,7 +163,6 @@ const getAllUsers = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
 
 const getProfile = async (req, res, next) => {
   try {

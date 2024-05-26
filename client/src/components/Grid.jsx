@@ -13,7 +13,7 @@ const Grid = () => {
 <img
  loading="lazy"
  decoding='async'
- fetchPriority='high'
+ fetchpriority='high'
       src="https://i.pinimg.com/originals/84/a5/f5/84a5f56879a12019e4963241263e505d.jpg"
       alt="avatar"
       className="mb-4 size-20 rounded-full object-scale-down "
@@ -94,7 +94,7 @@ const Grid = () => {
         type="submit"
         className="flex items-center gap-2 whitespace-nowrap rounded bg-slate-900 dark:bg-slate-100 px-3 py-2 text-sm font-medium text-slate-50 dark:text-slate-900  hover:bg-slate-800 dark:hover:bg-slate-200 transition-all duration-300 ease-linear"
       >
-        <FiMail /> Send me an Email
+        <FiMail /> <span className="hidden md:inline">Send me an Email</span> 
       </button>
     </form>
 </div>

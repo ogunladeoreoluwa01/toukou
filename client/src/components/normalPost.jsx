@@ -31,7 +31,7 @@ const PostCard = ({
                 <img 
                 loading="lazy"
                 decoding='async'
-                fetchPriority='high'
+                fetchpriority='high'
                 className=" object-cover object-center md:h-[162px] h-[170px] max-w-[140px] md:max-w-full  rounded-l-md md:rounded-t-lg md:w-full " src={image} alt={image} />
             </div>
             <div className="p-2 md:p-4 md:h-[151px] flex flex-col w-[70%] gap-2 md:gap-0 md:w-full bg-slate-300  dark:bg-slate-600 rounded-r-md md:rounded-b-lg">
