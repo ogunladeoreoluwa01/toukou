@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link,useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
 import { FaRegUser } from "react-icons/fa";
@@ -15,6 +15,8 @@ const NavBarComp = () => {
 
     // Redux dispatch function to dispatch actions
     const dispatch = useDispatch();
+
+    const navigate = useNavigate();
 
     // Navigation links data
     const Navlinks = [
@@ -34,6 +36,7 @@ const NavBarComp = () => {
     // Function to handle user logout
     const logOutHandler = () => {
         dispatch(logOut());
+        navigate("/");
     };
 
     // Animation variants for the mobile navigation menu
@@ -81,7 +84,7 @@ const NavBarComp = () => {
                         <>
                             {/* User Profile Link */}
                             <li className='font-medium'>
-                                <Link to={`/userprofile/${userState.userInfo.username}`} className='flex items-center hover:bg-slate-200 dark:hover:bg-slate-700 transform py-1 px-3 rounded-md transition-colors duration-200 border-r-4 border-transparent'>
+                                <Link to="/userprofile" className='flex items-center hover:bg-slate-200 dark:hover:bg-slate-700 transform py-1 px-3 rounded-md transition-colors duration-200 border-r-4 border-transparent'>
                                     <div className="mr-3">
                                         <FaRegUser />
                                     </div>
@@ -172,7 +175,7 @@ const NavBarComp = () => {
                                     {userState.userInfo ? (
                                         <>
                                             {/* User Profile Link */}
-                                            <NavLink to={`/userprofile/${userState.userInfo.username}`} className="px-6 py-2 rounded-md w-[350px] font-bold dark:bg-slate-100 dark:hover:bg-slate-200 transition-all duration-300 hover:bg-slate-800 dark:text-slate-900 bg-slate-900 text-slate-50 uppercase flex items-center">
+                                            <NavLink to="/userprofile" className="px-6 py-2 rounded-md w-[350px] font-bold dark:bg-slate-100 dark:hover:bg-slate-200 transition-all duration-300 hover:bg-slate-800 dark:text-slate-900 bg-slate-900 text-slate-50 uppercase flex items-center">
                                                 <div className="mr-3">
                                                     <FaRegUser />
                                                 </div>

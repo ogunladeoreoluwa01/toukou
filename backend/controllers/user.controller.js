@@ -18,23 +18,178 @@ const registerUser = async (req, res) => {
       User.findOne({ username }),
       User.findOne({ email }),
     ]);
+    const bannerImg = [
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752762/banners/rumelxnrqxqw3xqfibjv.jpg",
+        imgName: "Banner Image 1",
+        imgId: "banner_img_1",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752757/banners/bd4ljls4skpvdqukga1m.jpg",
+        imgName: "Banner Image 2",
+        imgId: "banner_img_2",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752755/banners/gqwmj7n0vayf7nhjdxfk.jpg",
+        imgName: "Banner Image 3",
+        imgId: "banner_img_3",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752754/banners/ty6hxccdvsaq5oxgpdc0.jpg",
+        imgName: "Banner Image 4",
+        imgId: "banner_img_4",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752753/banners/mfryrl6ogrxqj9m5hr5s.jpg",
+        imgName: "Banner Image 5",
+        imgId: "banner_img_5",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752753/banners/nzj31j3lpn9zf6d4emjr.jpg",
+        imgName: "Banner Image 6",
+        imgId: "banner_img_6",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752753/banners/nzsyjkdabvrgetufgsjt.jpg",
+        imgName: "Banner Image 7",
+        imgId: "banner_img_7",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752753/banners/jibp5rfg46cs0vgszyts.jpg",
+        imgName: "Banner Image 8",
+        imgId: "banner_img_8",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752752/banners/krtd7r8c3rcnc3sf085y.jpg",
+        imgName: "Banner Image 9",
+        imgId: "banner_img_9",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752752/banners/avmn70pzbixfrwxk9ndn.jpg",
+        imgName: "Banner Image 10",
+        imgId: "banner_img_10",
+      },
+    ];
+
+    const profileImg = [
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752761/profiles/tkytmwlikk5opl0mdqsp.jpg",
+        imgName: "Profile Image 1",
+        imgId: "profile_img_1",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752761/profiles/mj56mtoceqwmjp1ijtmj.jpg",
+        imgName: "Profile Image 2",
+        imgId: "profile_img_2",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752761/profiles/yq2yafktjskh0pxiek2z.jpg",
+        imgName: "Profile Image 3",
+        imgId: "profile_img_3",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752761/profiles/deyvxq1lbjjocmwxm7k8.jpg",
+        imgName: "Profile Image 4",
+        imgId: "profile_img_4",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752759/profiles/twpnyrbumjssxcyvnwfl.jpg",
+        imgName: "Profile Image 5",
+        imgId: "profile_img_5",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752758/profiles/y4zfictsmzfhsk9gpeu7.jpg",
+        imgName: "Profile Image 6",
+        imgId: "profile_img_6",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752758/profiles/stkxrm0cfjh4kvjaoubg.jpg",
+        imgName: "Profile Image 7",
+        imgId: "profile_img_7",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752757/profiles/cshxb5nllzlw0wcpcsog.jpg",
+        imgName: "Profile Image 8",
+        imgId: "profile_img_8",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752757/profiles/jrkypeb7xxnn1dq6ovyv.jpg",
+        imgName: "Profile Image 9",
+        imgId: "profile_img_9",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752756/profiles/mobd90fwxwo533rmadmh.jpg",
+        imgName: "Profile Image 10",
+        imgId: "profile_img_10",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752756/profiles/kftgxuglthk0bkzcwoxr.jpg",
+        imgName: "Profile Image 11",
+        imgId: "profile_img_11",
+      },
+    ];
 
     if (userName) {
       return res.status(400).json({
-        message: "User with the username already exists. Try another.",
+        message: "User with the username already exists. Try another username.",
       });
     }
 
     if (userEmail) {
       return res.status(400).json({
-        message: "User with the email already exists. Try another.",
+        message: "User with the email already exists. Try another email.",
       });
     }
+
+    
+
+    const randomBannerIndex = Math.floor(Math.random() * bannerImg.length);
+    // Randomly select an index for the profile image
+    const randomProfileIndex = Math.floor(Math.random() * profileImg.length);
+
+    // Retrieve the randomly selected banner and profile images
+    const randomBanner = bannerImg[randomBannerIndex];
+    const randomProfile = profileImg[randomProfileIndex];
 
     // Hash the password before saving
 
     // Create a new user
-    const newUser = new User({ username, email, password });
+    const newUser = new User({
+      username,
+      email,
+      password,
+      profileImage: {
+        profileImgUrl: randomProfile.imgUrl,
+        profileImgId: randomProfile.imgId,
+        profileImgName: randomProfile.imgName,
+      },
+      bannerImage: {
+        bannerImgUrl: randomBanner.imgUrl,
+        bannerImgId: randomBanner.imgId,
+        bannerImgName: randomBanner.imgName,
+      },
+    });
     await newUser.save();
 
     // Generate JWT token for the newly registered user
@@ -51,6 +206,10 @@ const registerUser = async (req, res) => {
         verified: newUser.verified,
         isAdmin: newUser.isAdmin,
         superAdmin: newUser.superAdmin,
+        bio: newUser.bio,
+        createdAt: newUser.createdAt,
+        achievments: newUser.achievements,
+        sex: newUser.sex,
         token: token,
       },
     });
@@ -91,14 +250,18 @@ const loginUser = async (req, res) => {
           _id: user._id,
           profileImage: user.profileImage,
           bannerImage: user.bannerImage,
-          name: user.username,
+          username: user.username,
           email: user.email,
           verified: user.verified,
           isAdmin: user.isAdmin,
           superAdmin: user.superAdmin,
+          bio: user.bio,
+          createdAt: user.createdAt,
+          achievments: user.achievements,
+          sex: user.sex,
           token: token,
         },
-       
+
         suspensions: {
           banned: user.banned,
           banReason: user.banReason,
@@ -147,6 +310,9 @@ const getAllUsers = async (req, res) => {
         verified: user.verified,
         banned: user.banned,
         achievements: user.achievements,
+        bio: user.bio,
+        createdAt: user.createdAt,
+        sex: user.sex,
       };
       return acc;
     }, {});
@@ -182,6 +348,8 @@ const getProfile = async (req, res, next) => {
           superAdmin: user.superAdmin,
           sex: user.sex,
           bio: user.bio,
+          createdAt: user.createdAt,
+          achievments: user.achievements,
         },
         suspensions: {
           banned: user.banned,
@@ -413,8 +581,9 @@ const changePassword = async (req, res, next) => {
         superAdmin: updatedUserProfile.superAdmin,
         sex: updatedUserProfile.sex,
         bio: updatedUserProfile.bio,
+        token: token,
       },
-      token: token,
+      
     });
   } catch (error) {
     console.error(error);
@@ -491,7 +660,7 @@ const unSoftDelete = async (req, res, next) => {
     // Respond with a success message
     res.status(200).json({
       message: "User restored successfully",
-      Token: token,
+      token: token,
     });
   } catch (error) {
     error.statusCode = 500;

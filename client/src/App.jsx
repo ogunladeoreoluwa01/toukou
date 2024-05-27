@@ -7,8 +7,8 @@ import Grid from './components/Grid'
 import Footer from './components/footer';
 import MakeaPost from './components/makeapost';
 import ToAdminDash from './components/adminDashboardButton';
-import { FaRegUser } from "react-icons/fa";
-import { IoLogOut } from "react-icons/io5";
+import NormalPostLoader from './components/loaders/normalPostLoader';
+import FtPostLoader from './components/loaders/ftPostLoader';
 function App() {
 
 
@@ -44,7 +44,9 @@ function App() {
 
 
        
-        
+
+       
+        <FtPostLoader/>
         <MakeaPost/>
         <ToAdminDash/>
         </main>

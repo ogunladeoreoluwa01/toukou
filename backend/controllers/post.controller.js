@@ -186,8 +186,13 @@ const getAllPostByAUser = async (req, res) => {
         select: "text", // Select the text field from comments
       });
 
-    // Organize posts as an object with postId as key
-    const organizedPosts = posts;
+    // If no posts found, return a message indicating no posts
+    if (posts.length === 0) {
+      return res.status(200).json({
+        message: "No posts found",
+        posts: [],
+      });
+    }
 
     // Get total number of posts for pagination metadata
     const totalPosts = await Post.countDocuments({ authorId: authorId });
@@ -198,7 +203,7 @@ const getAllPostByAUser = async (req, res) => {
       currentPage: page,
       totalPages: totalPages,
       totalPosts: totalPosts,
-      posts: [organizedPosts],
+      posts: posts, // Sending the actual posts instead of an array with a single element
     });
   } catch (error) {
     console.error("Error fetching posts:", error);
@@ -290,7 +295,12 @@ const getAllPostsFilters = async (req, res) => {
     ]);
 
     // Organize the posts by post ID
-    const organizedPosts = posts;
+    if (posts.length === 0) {
+      return res.status(200).json({
+        message: "No posts found",
+        posts: [],
+      });
+    }
 
     // Get total number of posts for pagination metadata
     const totalPosts = await Post.countDocuments(filterCriteria);
@@ -301,7 +311,7 @@ const getAllPostsFilters = async (req, res) => {
       currentPage: page,
       totalPages: totalPages,
       totalPosts: totalPosts,
-      posts:organizedPosts,
+      posts: posts,
     });
   } catch (error) {
     console.error("Error fetching posts:", error);
