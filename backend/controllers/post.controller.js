@@ -241,7 +241,7 @@ const getAllPostsFilters = async (req, res) => {
 
     // Check if a sorting parameter is provided in the query
     if (req.query.sortBy) {
-      switch (req.query.sortBy) {
+      switch (req.querypso.sortBy) {
         case "comments": // Sort by number of comments
           sortCriteria = { commentsCount: -1 };
           break;

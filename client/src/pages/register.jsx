@@ -1,31 +1,21 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import NavBarComp from "../components/NavBar";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import signup from "../services/index/users";
-import { Toaster, toast } from 'sonner'
-import { useDispatch,useSelector } from "react-redux";
+import signup from "../services/index/userServices/users";
+import { Toaster, toast } from 'sonner';
+import { useDispatch, useSelector } from "react-redux";
 import { userAction } from "../stores/reducers/userReducer";
 
 const RegisterPage = () => {
-  const dispatch =useDispatch()
-  const userState =useSelector(state =>state.user)
-  const navigate =useNavigate()
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isValid },
-    watch,
-  } = useForm({
-    defaultValues: {
-      username: "",
-      email: "",
-      password: "",
-      confirm_password: "",
-    },
-    mode: "onChange",
+  const dispatch = useDispatch();
+  const userState = useSelector(state => state.user);
+  const navigate = useNavigate();
+
+  const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm({
+    mode: "onChange"
   });
 
   const password = watch("password");
@@ -33,14 +23,13 @@ const RegisterPage = () => {
   const mutation = useMutation({
     mutationFn: signup,
     onSuccess: (data) => {
-      toast.success(`welcome ${data.message}`)
-      dispatch(userAction.setUserInfo(data.user))
-      localStorage.setItem('account',JSON.stringify(data.user))
-      console.log("User registered successfully:", data.user);
+      toast.success(`Welcome ${data.message}`);
+      dispatch(userAction.setUserInfo(data.user));
+      localStorage.setItem('account', JSON.stringify(data.user));
+      navigate("/");
     },
     onError: (error) => {
-      toast.error(error.message)
-      console.error("Error registering user:", error);
+      toast.error(error.message);
     },
   });
 
@@ -50,32 +39,33 @@ const RegisterPage = () => {
     }
   }, [navigate, userState.userInfo]);
 
-
-
-
-  const SubmitHandler = (data) => {
+  const submitHandler = (data) => {
     const { username, email, password } = data;
     mutation.mutate({ username, email, password });
-    
   };
 
   const [passwordToggle, setPasswordToggle] = useState(false);
 
-  const PasswordToggle = () => {
-    setPasswordToggle((prevState) => !prevState);
+  const passwordToggleHandler = () => {
+    setPasswordToggle(prevState => !prevState);
   };
 
   return (
     <>
       <main className="h-screen">
-        <NavBarComp />
-        <section className="flex justify-center mx-auto mt-10 md:mt-20">
-          <section className="flex flex-col gap-5 p-5 w-fit rounded-md bg-slate-300 dark:bg-slate-800">
-            <h2 className="text-2xl font-bold mb-4">Register</h2>
+        <section className="flex justify-center items-center relative w-screen h-[90vh] bg-black">
+        <img loading="lazy"
+                  decoding='async'
+                  fetchpriority='high'
+                   src="https://i.pinimg.com/originals/9b/42/05/9b42059d8a17648c903c67979604dd76.gif"  
+                   className="w-full rounded-lg h-full object-cover object-center  opacity-40 "/>
+          <section className="flex absolute  flex-col gap-5 p-5 w-fit rounded-md bg-slate-300/40 dark:bg-slate-800/40 ">
+          
             <form
-              onSubmit={handleSubmit(SubmitHandler)}
-              className="w-[300px] md:w-[400px] transition-all duration-300 ease-linear"
+              onSubmit={handleSubmit(submitHandler)}
+              className="w-[300px] md:w-[400px] transition-all duration-300 ease-linear backdrop-blur-sm "
             >
+                <h2 className="text-2xl font-bold mb-4 text-slate-50">Register</h2>
               <div className="relative mb-1">
                 <input
                   type="text"
@@ -106,7 +96,7 @@ const RegisterPage = () => {
                   {...register("email", {
                     required: "Email is required",
                     pattern: {
-                      value: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                       message: "Please enter a valid email",
                     },
                   })}
@@ -150,8 +140,8 @@ const RegisterPage = () => {
                   } w-full rounded border placeholder:text-slate-900 dark:placeholder:text-slate-400 bg-slate-300 dark:bg-slate-600 px-3 py-1.5 focus:outline-0 transition-all duration-300 ease-linear`}
                 />
                 <span
-                  className="absolute right-2 top-[15%]  md:top-[18%] cursor-pointer"
-                  onClick={PasswordToggle}
+                  className="absolute right-2 top-[15%] cursor-pointer"
+                  onClick={passwordToggleHandler}
                 >
                   {passwordToggle ? (
                     <FaEyeSlash className="text-slate-900 dark:text-slate-400 text-2xl" />
@@ -168,7 +158,7 @@ const RegisterPage = () => {
                   type={passwordToggle ? "text" : "password"}
                   placeholder="Confirm Password"
                   {...register("confirm_password", {
-                    required: true,
+                    required: "Confirm Password is required",
                     validate: (value) => value === password || "Your passwords do not match",
                   })}
                   className={`${
@@ -190,7 +180,6 @@ const RegisterPage = () => {
                   Forgot password?
                 </Link>
                 <p className="my-4">
-                  {" "}
                   Already have an account?{" "}
                   <Link
                     to="/login"
@@ -203,7 +192,7 @@ const RegisterPage = () => {
               <button
                 type="submit"
                 disabled={!isValid || mutation.isLoading}
-                className=" disabled:opacity-70  px-6 py-2 w-full rounded-md font-bold dark:bg-slate-100 dark:hover:bg-slate-200 transition-all duration-300 hover:bg-slate-800 dark:text-slate-900 bg-slate-900 text-slate-50 uppercase"
+                className="disabled:opacity-70 px-6 py-2 w-full rounded-md font-bold dark:bg-slate-100 dark:hover:bg-slate-200 transition-all duration-300 hover:bg-slate-800 dark:text-slate-900 bg-slate-900 text-slate-50 uppercase"
               >
                 {mutation.isLoading ? 'Registering...' : 'Register'}
               </button>

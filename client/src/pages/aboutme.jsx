@@ -4,7 +4,7 @@ import Footer from "../components/footer";
 const AboutMePage = () => {
     return ( <>
       <NavBarComp/>
-      <main className="mx-auto">
+      <main className="mx-auto px-4">
 <section className="border-b border-spacing-y-5 pb-6 md:pb-8 border-slate-900 dark:border-slate-100">
 <div className="w-full max-h-[400px] scale-90 relative">
 <div className="bg-slate-900 w-full max-h-[400px] rounded-lg">

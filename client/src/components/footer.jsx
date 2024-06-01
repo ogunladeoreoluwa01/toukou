@@ -20,7 +20,7 @@ const Footer = () => {
     ];
 
     return ( <>
-    <footer className="border-t-2 border-spacing-y-5  border-slate-900 dark:border-slate-100 ">
+    <footer className="p-4 border-t-2 border-spacing-y-5  border-slate-900 dark:border-slate-100 ">
 
 <section className="text-slate-700 dark:text-slate-400  justify-center items-start flex flex-col gap-8 my-4 md:flex-row md:flex-wrap ">
 <div className="md:w-1/4">

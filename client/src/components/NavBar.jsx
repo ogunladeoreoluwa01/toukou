@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { NavLink, Link,useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from "framer-motion";
 import { useSelector, useDispatch } from "react-redux";
-import { FaRegUser } from "react-icons/fa";
+import { FaUser } from "react-icons/fa";
 import { IoLogOut } from "react-icons/io5";
+import { RiAdminFill } from "react-icons/ri";
 import logOut from '../stores/actions/userAction';
 
 const NavBarComp = () => {
@@ -22,7 +23,7 @@ const NavBarComp = () => {
     const Navlinks = [
         { url: "/", urlName: "Home" },
         { url: "/about", urlName: "About" },
-        { url: "/blogs", urlName: "Blogs" },
+        { url: "/allblogs", urlName: "Blogs" },
         { url: "/faq", urlName: "FAQ" },
         { url: "/contact", urlName: "Contact" },
     ];
@@ -62,7 +63,7 @@ const NavBarComp = () => {
     return (
         <>
             {/* Desktop Navigation */}
-            <nav className='md:flex border-b-2 border-spacing-y-2 border-slate-900 dark:border-slate-100 justify-between items-end hidden py-3'>
+            <nav className='md:flex border-b-2 border-spacing-y-2 border-slate-900 dark:border-slate-100 justify-between items-end hidden py-3 '>
                 <NavLink to="/" className="font-black text-3xl uppercase">
                     <span>toukou</span><span>投稿</span>
                 </NavLink>
@@ -84,13 +85,23 @@ const NavBarComp = () => {
                         <>
                             {/* User Profile Link */}
                             <li className='font-medium'>
-                                <Link to="/userprofile" className='flex items-center hover:bg-slate-200 dark:hover:bg-slate-700 transform py-1 px-3 rounded-md transition-colors duration-200 border-r-4 border-transparent'>
+                                <Link to={`/yourprofile/${userState?.userInfo?.username}`} className='flex items-center hover:bg-slate-200 dark:hover:bg-slate-700 transform py-1 px-3 rounded-md transition-colors duration-200 border-r-4 border-transparent'>
                                     <div className="mr-3">
-                                        <FaRegUser />
+                                    <FaUser />
                                     </div>
                                     Profile
                                 </Link>
                             </li>
+
+                            {userState.userInfo.isAdmin || userState.userInfo.superAdmin?<li className='font-medium'>
+                                <Link to="/admindashboard" className='flex items-center hover:bg-slate-200 dark:hover:bg-slate-700 transform py-1 px-3 rounded-md transition-colors duration-200 border-r-4 border-transparent'>
+                                    <div className="mr-3">
+                                    <RiAdminFill />
+                                    </div>
+                                    Admin Dashboard
+                                </Link>
+                            </li>:<></>}
+                            
                             {/* Logout Button */}
                             <li className='font-medium'>
                                 <button onClick={logOutHandler} className='flex items-center text-red-500 hover:text-red-700 hover:font-bold hover:bg-red-400 transform py-1 px-3 rounded-md transition-colors duration-200 border-r-4 border-transparent'>
@@ -120,8 +131,8 @@ const NavBarComp = () => {
             </nav>
 
             {/* Mobile Navigation */}
-            <nav className='flex flex-col md:hidden'>
-                <section className='border-b-2 border-spacing-y-2 border-slate-900 dark:border-slate-100 justify-between items-end flex py-3'>
+            <nav className='flex flex-col md:hidden relative p-4 top-0 z-50  dark:bg-slate-900 bg-slate-100 w-full'>
+                <section className='border-b-2 border-spacing-y-2 border-slate-900 dark:border-slate-100 justify-between items-center w-full px-2 flex py-3'>
                     <NavLink to="/" className="font-black text-2xl uppercase">
                         <span>投稿</span>
                     </NavLink>
@@ -154,9 +165,12 @@ const NavBarComp = () => {
                             variants={navContainer}
                         >
                             <section className='h-[87vh] overflow-hidden flex flex-col mx-auto w-[350px] justify-around'>
-                                <ul className='flex flex-col items-start px-5 py-10 gap-5'>
+                                <ul className='flex flex-col items-start  py-10 gap-5'>
                                     {Navlinks.map((link, index) => (
-                                        <li key={index} className='py-1'>
+                                        <li key={index}
+                                        onClick={()=>{ document.body.classList.remove('overflow-hidden');}}
+                                         className='py-1'>
+                                            
                                             <NavLink
                                                 to={link.url}
                                                 className={({ isActive }) => isActive
@@ -169,15 +183,19 @@ const NavBarComp = () => {
                                     ))}
                                 </ul>
                                 <div className='flex flex-col gap-3'>
-                                    <NavLink to="/admindashboard" className="px-6 py-2 rounded-md w-[350px] font-bold dark:bg-slate-100 dark:hover:bg-slate-200 transition-all duration-300 hover:bg-slate-800 dark:text-slate-900 bg-slate-900 text-slate-50 uppercase">
-                                        Admin Dashboard
-                                    </NavLink>
+                               
+                                    
                                     {userState.userInfo ? (
                                         <>
+                                         {userState.userInfo.isAdmin || userState.userInfo.superAdmin?<NavLink to="/admindashboard" className="px-6 items-center flex py-2 rounded-md w-[350px] font-bold dark:bg-slate-100 dark:hover:bg-slate-200 transition-all duration-300 hover:bg-slate-800 dark:text-slate-900 bg-slate-900 text-slate-50 uppercase">
+                                    <div className="mr-3">
+                                    <RiAdminFill />
+                                                </div> Admin Dashboard
+                                    </NavLink>:<></>}
                                             {/* User Profile Link */}
-                                            <NavLink to="/userprofile" className="px-6 py-2 rounded-md w-[350px] font-bold dark:bg-slate-100 dark:hover:bg-slate-200 transition-all duration-300 hover:bg-slate-800 dark:text-slate-900 bg-slate-900 text-slate-50 uppercase flex items-center">
+                                            <NavLink to={`/yourprofile/${userState?.userInfo?.username}`} className="px-6 py-2 rounded-md w-[350px] font-bold dark:bg-slate-100 dark:hover:bg-slate-200 transition-all duration-300 hover:bg-slate-800 dark:text-slate-900 bg-slate-900 text-slate-50 uppercase flex items-center">
                                                 <div className="mr-3">
-                                                    <FaRegUser />
+                                                <FaUser />
                                                 </div>
                                                 Profile
                                             </NavLink>
@@ -186,7 +204,7 @@ const NavBarComp = () => {
                                                 <div className="mr-3">
                                                     <IoLogOut />
                                                 </div>
-                                                Logout
+                                                LOGOUT
                                             </button>
                                         </>
                                     ) : (

@@ -62,7 +62,7 @@ const checkBanStatusLogin = async (req, res, next) => {
         banMessage += `. Reason: ${user.banReason}`;
       }
 
-      return res.status(403).json({ message: banMessage });
+      return res.status(451).json({ message: banMessage });
     }
 
     // If the user is not banned, continue to the next middleware/controller

@@ -5,13 +5,13 @@ const FtPostLoader = () => {
     <div className="p-2 h-[200px]  pt-5  md:h-[150px] flex flex-col w-full md:w-[30%] gap-2 md:gap-0  bg-slate-300   rounded-r-md md:rounded-b-lg">
                 <span className="bg-slate-400 w-[70px] mb-2 h-[23px] rounded-md">
                 </span>
-                <span className="bg-slate-400 w-[260px] h-[25px] md:h-[23px]  md:mb-2  rounded-md">
+                <span className="bg-slate-400 w-[90%] h-[25px] md:h-[23px]  md:mb-2  rounded-md">
                 </span>
-                <span className="bg-slate-400 w-[280px] h-[25px] md:h-[23px] md:mb-2   rounded-md">
+                <span className="bg-slate-400 w-[80%] h-[25px] md:h-[23px] md:mb-2   rounded-md">
                 </span>
-                <span className="bg-slate-400 w-[300px] h-[25px] md:h-[23px] md:mb-2   rounded-md">
+                <span className="bg-slate-400 w-[95%] h-[25px] md:h-[23px] md:mb-2   rounded-md">
                 </span>
-                <span className="bg-slate-400 w-[280px] h-[25px] md:h-[23px] rounded-md md:hidden">
+                <span className="bg-slate-400 w-[70%] h-[25px] md:h-[23px] rounded-md md:hidden">
                 </span>
                
               

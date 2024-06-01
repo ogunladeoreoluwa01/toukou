@@ -18,7 +18,7 @@ const checkSoftDelete = async (req, res, next) => {
         deleteMessage += ` Reason: ${user.deletionReason}`;
       }
 
-      return res.status(403).json({ message: deleteMessage });
+      return res.status(452).json({ message: deleteMessage });
     }
 
     next();

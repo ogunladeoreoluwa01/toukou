@@ -1,60 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import NavBarComp from "../components/NavBar";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useParams,useNavigate } from "react-router-dom";
 import PostCard from '../components/normalPost';
-import { TbEditCircle } from "react-icons/tb";
-import { MdDelete } from "react-icons/md";
-import { useSelector } from 'react-redux';
 import { GiCrownedExplosion, GiCrenelCrown, GiSpikedSnail } from "react-icons/gi";
 import { useQuery } from '@tanstack/react-query';
 import getPostData from "../services/index/postServices/getPostData";
 import getUserData from "../services/index/userServices/getUserData";
 import { Toaster, toast } from 'sonner';
 import NormalPostLoader from '../components/loaders/normalPostLoader';
+import { useSelector } from 'react-redux';
 import PageLoader from '../components/loaders/pageLoader';
-import UpdateUserModal from '../components/updateUserModal';
-import { createPortal } from "react-dom";
-import DeleteUserModal from '../components/DeleteUser';
 
-const UserProfile = () => {
+const GetUsersProfile = () => {
   const user = useSelector(state => state.user);
-  const navigate =useNavigate()
+  const navigate = useNavigate()
+  const { userId } = useParams();
   const [authorRole, setAuthorRole] = useState("user");
-  const [openEditModal, setOpenEditModal] = useState(false);
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [day, setDay] = useState("");
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
-  const [postData, setPostData] = useState([]);
   const [roleBadge, setRoleBadge] = useState("bg-slate-400 text-slate-700");
 
-const openEditModalHandler = () =>{
-  setOpenEditModal(true)
-  document.body.classList.add('overflow-hidden');
-}
-
-const openDeleteModalHandler = () =>{
-  setOpenDeleteModal(true)
-  document.body.classList.add('overflow-hidden');
-}
-
   const userQuery = useQuery({
-    queryFn: () => getUserData(user.userInfo.token, user.userInfo._id),
-    queryKey: ["user", user.userInfo._id]
-  });
-
-  const postQuery = useQuery({
-    queryFn: () => getPostData( user.userInfo._id),
-    queryKey: ["post",  user.userInfo._id]
+    queryFn: () => getUserData(user.userInfo.token, userId),
+    queryKey: ["user", userId]
   });
 
   useEffect(() => {
     if (!user.userInfo) {
       navigate("/login");
     }
-  }, [navigate, user.userInfo]);
- 
-  
+  }, [navigate,user]);
+  const postQuery = useQuery({
+    queryFn: () => getPostData(userId),
+    queryKey: ["post", userId]
+  });
+
   useEffect(() => {
     console.log(postQuery.data)
   }, [postQuery]);
@@ -93,11 +74,8 @@ const openDeleteModalHandler = () =>{
 
   return (
     <>
-
-    
-    {openDeleteModal && createPortal(<DeleteUserModal  setOpenDeleteModal={setOpenDeleteModal} />,document.getElementById("portal")) }
-    {openEditModal && createPortal(<UpdateUserModal  setOpenEditModal={setOpenEditModal} />,document.getElementById("portal")) }
       <NavBarComp />
+      
       <main className='px-4'>
       {userQuery.isError ? (
           <div>Oops, there is an error. Please try again.</div>
@@ -153,13 +131,11 @@ const openDeleteModalHandler = () =>{
                 </div>
               </div>
             </section>
-           
             <div className='flex flex-col gap-1 mt-12 md:mt-24 md:pl-7 border-b'>
-            <div className='flex justify-between items-center'><span className='flex gap-3'>
+              <span className='flex gap-3'>
                 <h1 className='text-base font-semibold'>{userQuery.data?.user.username}</h1>
                 {userQuery.data?.user.verified && <p className={`${roleBadge} w-fit p-1 rounded-full font-bold md:font-semibold capitalize scale-90`}><GiCrownedExplosion /></p>}
-              </span>  <span onClick={openEditModalHandler} className='cursor-pointer text-2xl hover:scale-105 mx-1 transition-all duration-300 ease-linear flex items-center gap-2 justify-center px-2 py-[0.5px] rounded-md font-bold dark:bg-slate-100 dark:hover:bg-slate-200  hover:bg-slate-800 dark:text-slate-900 bg-slate-900 text-slate-50'><TbEditCircle /> <span className="text-lg">Edit</span></span></div>
-              
+              </span>
               <h1 className='text-sm text-slate-400 dark:text-slate-500 font-semibold'>{userQuery.data?.user.email}</h1>
               <p className='my-2'>
                 <span>bio</span><br />
@@ -169,10 +145,7 @@ const openDeleteModalHandler = () =>{
                 <p className='bg-slate-400 w-fit px-3 rounded-md font-bold md:font-semibold capitalize text-slate-700 scale-90'>
                   joined&nbsp;{year}&nbsp;{month}&nbsp;{day}
                 </p>
-                <span className='flex'>
-            
-              <span onClick={openDeleteModalHandler} className=' cursor-pointer text-3xl hover:scale-105 text-red-500 hover:text-red-600 mx-1 transition-all duration-300 ease-linear'><MdDelete /></span>
-            </span>
+                
               </div>
             </div>
             <section className='flex flex-col gap-3 my-4'>
@@ -201,4 +174,4 @@ const openDeleteModalHandler = () =>{
   );
 }
 
-export default UserProfile;
+export default GetUsersProfile;

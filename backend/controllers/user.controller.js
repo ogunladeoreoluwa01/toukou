@@ -162,8 +162,6 @@ const registerUser = async (req, res) => {
       });
     }
 
-    
-
     const randomBannerIndex = Math.floor(Math.random() * bannerImg.length);
     // Randomly select an index for the profile image
     const randomProfileIndex = Math.floor(Math.random() * profileImg.length);
@@ -201,7 +199,7 @@ const registerUser = async (req, res) => {
         _id: newUser._id,
         profileImage: newUser.profileImage,
         bannerImage: newUser.bannerImage,
-        name: newUser.username,
+        username: newUser.username,
         email: newUser.email,
         verified: newUser.verified,
         isAdmin: newUser.isAdmin,
@@ -341,7 +339,7 @@ const getProfile = async (req, res, next) => {
           _id: user._id,
           profileImage: user.profileImage,
           bannerImage: user.bannerImage,
-          name: user.username,
+          username: user.username,
           email: user.email,
           verified: user.verified,
           admin: user.isAdmin,
@@ -366,6 +364,87 @@ const getProfile = async (req, res, next) => {
   } catch (error) {
     error.statusCode = 500;
     next(error); // Pass the error to the error handling middleware
+  }
+};
+
+const getUserProfile = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+
+    let user = await User.findById(userId);
+
+    if (user) {
+      res.status(200).json({
+        message: "User Found.",
+        user: {
+          _id: user._id,
+          profileImage: user.profileImage,
+          bannerImage: user.bannerImage,
+          username: user.username,
+          email: user.email,
+          verified: user.verified,
+          admin: user.isAdmin,
+          superAdmin: user.superAdmin,
+          sex: user.sex,
+          bio: user.bio,
+          createdAt: user.createdAt,
+          achievements: user.achievements,
+        },
+        suspensions: {
+          banned: user.banned,
+          banReason: user.banReason,
+          softdeleted: user.deleted,
+          softdeletionReason: user.deletionReason,
+        },
+      });
+    } else {
+      let error = new Error("User not found");
+      error.statusCode = 404;
+      next(error); // Pass the error to the error handling middleware
+    }
+  } catch (error) {
+    error.statusCode = 500;
+    next(error); // Pass the error to the error handling middleware
+  }
+};
+const getUserProfileByName = async (req, res, next) => {
+  try {
+    const { username } = req.body;
+
+    let user = await User.findOne({ username: username });
+
+    if (user) {
+      res.status(200).json({
+        message: "User Found.",
+        user: {
+          _id: user._id,
+          profileImage: user.profileImage,
+          bannerImage: user.bannerImage,
+          username: user.username,
+          email: user.email,
+          verified: user.verified,
+          admin: user.isAdmin,
+          superAdmin: user.superAdmin,
+          sex: user.sex,
+          bio: user.bio,
+          createdAt: user.createdAt,
+          achievements: user.achievements,
+        },
+        suspensions: {
+          banned: user.banned,
+          banReason: user.banReason,
+          softdeleted: user.deleted,
+          softdeletionReason: user.deletionReason,
+        },
+      });
+    } else {
+      let error = new Error("User not found");
+      error.statusCode = 404;
+      next(error);
+    }
+  } catch (error) {
+    error.statusCode = 500;
+    next(error);
   }
 };
 
@@ -401,6 +480,7 @@ const updateProfile = async (req, res, next) => {
     user.sex = req.body.sex || user.sex;
     user.bio = req.body.bio || user.bio;
 
+    const token = generateJwt(user._id);
     // Save the updated user profile
     const updatedUserProfile = await user.save();
 
@@ -408,7 +488,7 @@ const updateProfile = async (req, res, next) => {
     res.status(200).json({
       message: "User profile updated successfully",
       user: {
-        name: updatedUserProfile.username,
+        username: updatedUserProfile.username,
         email: updatedUserProfile.email,
         _id: updatedUserProfile._id,
         profileImage: updatedUserProfile.profileImage,
@@ -418,6 +498,7 @@ const updateProfile = async (req, res, next) => {
         superAdmin: updatedUserProfile.superAdmin,
         sex: updatedUserProfile.sex,
         bio: updatedUserProfile.bio,
+        token: token,
       },
     });
   } catch (error) {
@@ -450,6 +531,7 @@ const uploadUserProfilePic = async (req, res, next) => {
     user.profileImage.profileImgName =
       result.original_filename || user.profileImage.profileImgName;
 
+    const token = generateJwt(user._id);
     // Save the updated user profile
     const updatedUserProfileImage = await user.save();
 
@@ -459,13 +541,14 @@ const uploadUserProfilePic = async (req, res, next) => {
         _id: user._id,
         profileImage: updatedUserProfileImage.profileImage,
         bannerImage: user.bannerImage,
-        name: user.username,
+        username: user.username,
         email: user.email,
         verified: user.verified,
         admin: user.isAdmin,
         superAdmin: user.superAdmin,
         sex: user.sex,
         bio: user.bio,
+        token: token,
       },
     });
   } catch (error) {
@@ -496,7 +579,7 @@ const uploadUserBannerPic = async (req, res, next) => {
       result.public_id || user.bannerImage.bannerImgId;
     user.bannerImage.bannerImgName =
       result.original_filename || user.bannerImage.bannerImgName;
-
+    const token = generateJwt(user._id);
     // Save the updated user profile
     const updatedUserBannerImage = await user.save();
 
@@ -506,13 +589,14 @@ const uploadUserBannerPic = async (req, res, next) => {
         _id: user._id,
         profileImage: user.profileImage,
         bannerImage: updatedUserBannerImage.bannerImage,
-        name: user.username,
+        username: user.username,
         email: user.email,
         verified: user.verified,
         admin: user.isAdmin,
         superAdmin: user.superAdmin,
         sex: user.sex,
         bio: user.bio,
+        token: token,
       },
     });
   } catch (error) {
@@ -574,7 +658,7 @@ const changePassword = async (req, res, next) => {
         _id: updatedUserProfile._id,
         profileImage: updatedUserProfile.profileImage,
         bannerImage: updatedUserProfile.bannerImage,
-        name: updatedUserProfile.username,
+        username: updatedUserProfile.username,
         email: updatedUserProfile.email,
         verified: updatedUserProfile.verified,
         admin: updatedUserProfile.isAdmin,
@@ -583,7 +667,6 @@ const changePassword = async (req, res, next) => {
         bio: updatedUserProfile.bio,
         token: token,
       },
-      
     });
   } catch (error) {
     console.error(error);
@@ -760,6 +843,46 @@ const banUser = async (req, res, next) => {
   }
 };
 
+const getBannedUsers = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 10 } = req.query;
+
+    // Ensure page and limit are numbers
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
+
+    if (isNaN(pageNumber) || isNaN(limitNumber)) {
+      return res.status(400).json({ message: "Invalid pagination parameters" });
+    }
+
+    // Calculate the number of documents to skip
+    const skip = (pageNumber - 1) * limitNumber;
+
+    // Query the banned users
+    const bannedUsers = await User.find({ banned: true })
+      .skip(skip)
+      .limit(limitNumber)
+      .select("-password"); // Exclude sensitive information such as password
+
+    // Get the total count of banned users
+    const totalBannedUsers = await User.countDocuments({ banned: true });
+
+    // Calculate total pages
+    const totalPages = Math.ceil(totalBannedUsers / limitNumber);
+
+    res.status(200).json({
+      page: pageNumber,
+      limit: limitNumber,
+      totalPages,
+      totalBannedUsers,
+      users: bannedUsers,
+    });
+  } catch (error) {
+    error.statusCode = 500;
+    next(error); // Pass the error to the error handling middleware
+  }
+};
+
 const unbanUser = async (req, res, next) => {
   try {
     const { username } = req.body;
@@ -909,22 +1032,27 @@ const demoteAdmin = async (req, res, next) => {
 const permanentlyDeleteUserBySupAdmin = async (req, res, next) => {
   try {
     const { username } = req.body;
+
+    // Find the admin making the request
     const admin = await User.findById(req.user._id);
+    
     if (!admin) {
       return res.status(404).json({ message: "Admin not found" });
     }
 
-    let user = await User.findOne({ username });
+    // Find the user to be deleted
+    const user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // Ensure the admin is not trying to delete themselves
     if (user._id.equals(admin._id)) {
-      return res.status(400).json({ message: "Cannot demote yourself" });
+      return res.status(400).json({ message: "Cannot delete yourself" });
     }
 
     // Remove the user from the database
-    await User.deleteOne({ _id: req.user._id });
+    await User.deleteOne({ _id: user._id });
 
     // Respond with a success message
     res.status(200).json({
@@ -941,6 +1069,8 @@ module.exports = {
   loginUser,
   getAllUsers,
   getProfile,
+  getUserProfile,
+  getUserProfileByName,
   updateProfile,
   uploadUserProfilePic,
   uploadUserBannerPic,
@@ -948,6 +1078,7 @@ module.exports = {
   unSoftDelete,
   SoftDelete,
   banUser,
+  getBannedUsers,
   unbanUser,
   permadelete,
   makeAdmin,

@@ -14,6 +14,8 @@ const {
   loginUser,
   getAllUsers,
   getProfile,
+  getUserProfile,
+  getUserProfileByName,
   updateProfile,
   uploadUserProfilePic,
   uploadUserBannerPic,
@@ -21,6 +23,7 @@ const {
   unSoftDelete,
   SoftDelete,
   banUser,
+  getBannedUsers,
   unbanUser,
   permadelete,
   makeAdmin,
@@ -35,6 +38,14 @@ router.get("/all", getAllUsers);
 
 // Protected routes (requires authentication)
 router.get("/profile", authGuard, checkSoftDelete, checkBanStatus, getProfile);
+router.get(
+  "/getuser/:userId",
+  authGuard,
+  checkSoftDelete,
+  checkBanStatus,
+  getUserProfile
+);
+router.get("/getuserbyname", adminGuard, getUserProfileByName);
 router.put(
   "/updateProfile",
   authGuard,
@@ -78,17 +89,26 @@ router.put("/unSoftDelete", authGuard, checkBanStatus, unSoftDelete);
 // Admin routes (requires additional authorization, ensure you have an admin guard)
 
 router.post("/ban", adminGuard, checkBanStatus, checkSoftDelete, banUser);
+
+router.get(
+  "/getbannedUser",
+  adminGuard,
+  checkBanStatus,
+  checkSoftDelete,
+  getBannedUsers
+);
+
 router.post("/unban", adminGuard, checkBanStatus, checkSoftDelete, unbanUser);
 // superAdmin routes (requires additional authorization, ensure you have an admin guard)
 router.put(
-  "/makeAdmin",
+  "/makeadmin",
   superAdminGuard,
   checkBanStatus,
   checkSoftDelete,
   makeAdmin
 );
 router.put(
-  "/demoteAdmin",
+  "/demoteadmin",
   superAdminGuard,
   checkBanStatus,
   checkSoftDelete,
@@ -97,8 +117,6 @@ router.put(
 router.delete(
   "/deleteSupAdmin",
   superAdminGuard,
-  checkBanStatus,
-  checkSoftDelete,
   permanentlyDeleteUserBySupAdmin
 );
 

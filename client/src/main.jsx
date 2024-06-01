@@ -15,13 +15,18 @@ import { Provider } from "react-redux";
 import "./index.css";
 import AllBlogs from "./pages/allBlogs";
 import Blogs from "./pages/blogView";
-import AuthorsProfilePage from "./pages/userPage";
+import GetUsersProfile from "./pages/usersPage";
 import UserProfilePage from "./pages/userDashboard";
 import Admindashboard from "./pages/adminDashboard";
+import BanUser from "./pages/adminDashboardPages/banUser";
 import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
+import UnBanUser from "./pages/adminDashboardPages/unbanUser";
+import MakeAdmin from "./pages/adminDashboardPages/promoteAdmin";
+import DemoteAdmin from "./pages/adminDashboardPages/demoteAdmin";
+import DeleteUserBySupAdmin from "./pages/adminDashboardPages/deleteUser";
 
 
 const queryClient = new QueryClient();
@@ -57,16 +62,38 @@ const router = createBrowserRouter([
     element: <Blogs />,
   },
   {
-    path: "/authorsprofile/:authorId",
-    element: <AuthorsProfilePage />,
+    path: "/user/:userId",
+    element: <GetUsersProfile />,
   },
   {
-    path: "/userprofile",
+    path: "/yourprofile/:username",
     element: <UserProfilePage />,
   },
   {
     path: "/admindashboard",
     element: <Admindashboard />,
+    children:[
+      {
+        path: "/admindashboard/ban-user",
+    element:<BanUser /> ,
+      },
+      {
+        path: "/admindashboard/unban-user",
+    element:<UnBanUser />,
+      },
+      {
+        path: "/admindashboard/promote-admin",
+    element:<MakeAdmin />,
+      },
+      {
+        path: "/admindashboard/demote-admin",
+    element:<DemoteAdmin/>,
+      },
+      {
+        path: "/admindashboard/delete-user",
+    element:<DeleteUserBySupAdmin/>,
+      },
+    ]
   },
 ]);
 

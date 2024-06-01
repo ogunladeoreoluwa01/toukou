@@ -1,5 +1,5 @@
-import api from "../api";
-const getAuthorProfile = async ({ userInfo, password }) => {
+import api from "../../api";
+const login = async ({ userInfo, password }) => {
   try {
     const { data } = await api.post("/api/users/login", {
       userInfo,
@@ -13,4 +13,4 @@ const getAuthorProfile = async ({ userInfo, password }) => {
     throw new Error(error.message);
   }
 };
-export default getAuthorProfile;
+export default login;

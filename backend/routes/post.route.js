@@ -30,9 +30,6 @@ router.post(
 // Route for retrieving a specific post
 router.get(
   "/getpost/:postId",
-  authGuard,
-  checkSoftDelete,
-  checkBanStatus,
   getAPost
 );
 
@@ -49,18 +46,12 @@ router.put(
 // Route for retrieving all posts by a specific user
 router.get(
   "/postallUsers/:authorId",
-  authGuard,
-  checkSoftDelete,
-  checkBanStatus,
   getAllPostByAUser
 );
 
 // Route for retrieving all posts with filters
 router.get(
   "/postsFilters",
-  authGuard,
-  checkSoftDelete,
-  checkBanStatus,
   getAllPostsFilters
 );
 
