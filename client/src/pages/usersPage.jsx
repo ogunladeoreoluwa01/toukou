@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import NavBarComp from "../components/NavBar";
-import { Link, useParams,useNavigate } from "react-router-dom";
-import PostCard from '../components/normalPost';
+import { Link, useParams, useNavigate } from "react-router-dom";
+import BlogCard from '../components/BlogCard';
 import { GiCrownedExplosion, GiCrenelCrown, GiSpikedSnail } from "react-icons/gi";
 import { useQuery } from '@tanstack/react-query';
 import getPostData from "../services/index/postServices/getPostData";
@@ -13,12 +13,22 @@ import PageLoader from '../components/loaders/pageLoader';
 
 const GetUsersProfile = () => {
   const user = useSelector(state => state.user);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { userId } = useParams();
-  const [authorRole, setAuthorRole] = useState("user");
-  const [day, setDay] = useState("");
+  const [authorRole, setAuthorRole] = useState();
+  
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
+   // Add date acronyms (st, nd, rd, th) to the day
+   let dayAcronym = "th";
+   if (newDay === 1 || newDay === 21 || newDay === 31) {
+       dayAcronym = "st";
+   } else if (newDay === 2 || newDay === 22) {
+       dayAcronym = "nd";
+   } else if (newDay === 3 || newDay === 23) {
+       dayAcronym = "rd";
+   }
+   setDay(`${newDay}${dayAcronym}`);
   const [roleBadge, setRoleBadge] = useState("bg-slate-400 text-slate-700");
 
   const userQuery = useQuery({
@@ -30,15 +40,12 @@ const GetUsersProfile = () => {
     if (!user.userInfo) {
       navigate("/login");
     }
-  }, [navigate,user]);
+  }, [navigate, user]);
+
   const postQuery = useQuery({
     queryFn: () => getPostData(userId),
     queryKey: ["post", userId]
   });
-
-  useEffect(() => {
-    console.log(postQuery.data)
-  }, [postQuery]);
 
   useEffect(() => {
     if (userQuery.data) {
@@ -49,6 +56,7 @@ const GetUsersProfile = () => {
       setYear(newYear);
       setMonth(newMonth);
       setDay(newDay.toString());
+      
 
       if (userQuery.data.user.superAdmin) {
         setAuthorRole("Lord");
@@ -75,9 +83,8 @@ const GetUsersProfile = () => {
   return (
     <>
       <NavBarComp />
-      
       <main className='px-4'>
-      {userQuery.isError ? (
+        {userQuery.isError ? (
           <div>Oops, there is an error. Please try again.</div>
         ) : !userQuery.isLoading ? (
           <>
@@ -88,10 +95,10 @@ const GetUsersProfile = () => {
                 </p>
               </div>
               <div className='relative mb-5'>
-                <span className={`${roleBadge} w-fit px-3 rounded-md font-extrabold capitalize opacity-100 z-50 scale-90 absolute right-4 top-4 flex items-center`}>
+                <span className={`${roleBadge} scale-75 w-fit px-3 rounded-md font-extrabold capitalize opacity-100 z-50  absolute right-1 top-2 flex items-center`}>
                   <span className='text-3xl font-extrabold'>
-                    {userQuery.data?.user.isAdmin && <GiSpikedSnail className="pr-2" />}
                     {userQuery.data?.user.superAdmin && <GiCrenelCrown className="pr-2" />}
+                    {userQuery.data?.user.isAdmin && <GiSpikedSnail className="pr-2" />}
                   </span>
                   <span>{authorRole}</span>
                 </span>
@@ -145,7 +152,6 @@ const GetUsersProfile = () => {
                 <p className='bg-slate-400 w-fit px-3 rounded-md font-bold md:font-semibold capitalize text-slate-700 scale-90'>
                   joined&nbsp;{year}&nbsp;{month}&nbsp;{day}
                 </p>
-                
               </div>
             </div>
             <section className='flex flex-col gap-3 my-4'>
@@ -156,7 +162,7 @@ const GetUsersProfile = () => {
                 ) : postQuery.isError ? (
                   <h1 className='text-center text-xl font-bold md:mx-6'>Error loading posts</h1>
                 ) : postQuery.data?.posts.length > 0 ? (
-                  postQuery.data.posts.map((post, index) => <PostCard key={index} post={post} />)
+                  postQuery.data.posts.map((post, index) => <BlogCard key={index}  postUrl={`/blogview/${post._id }`} currentUser={userQuery.data.user.username} authorUrl={`/user/${post.authorId}`} authorName={post.authorName} title={post.title} date={post.createdAt} image={post.postImage.postImgUrl}  />)
                 ) : (
                   <h1 className='text-center text-xl font-bold md:mx-6'>No posts here</h1>
                 )}
@@ -166,8 +172,6 @@ const GetUsersProfile = () => {
         ) : (
           <PageLoader />
         )}
-
-       
         <Toaster richColors position="top-right" expand={false} closeButton />
       </main>
     </>

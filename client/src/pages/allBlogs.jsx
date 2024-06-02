@@ -1,7 +1,7 @@
 import NavBarComp from "../components/NavBar";
 import SectionHeader from '../components/SectionHeader';
 import FeaturedPost from '../components/FeaturedPost';
-import NormalPost from '../components/normalPost'
+import NormalPost from '../components/BlogCard'
 import NormalPostLoader from '../components/loaders/normalPostLoader';
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";

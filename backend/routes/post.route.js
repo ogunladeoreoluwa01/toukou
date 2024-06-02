@@ -11,6 +11,7 @@ const {
   getAPost,
   editPost,
   getAllPostByAUser,
+  uploadPostImage,
   getAllPostsFilters,
   likeAPost,
   dislikeAPost,
@@ -18,25 +19,21 @@ const {
 } = require("../controllers/post.controller");
 
 // Route for creating a new post
-router.post(
-  "/create",
+router.post("/create", authGuard, checkSoftDelete, checkBanStatus, createPost);
+router.put(
+  "/uploadpostimg/:postId",
   upload.single("image"),
   authGuard,
-  checkSoftDelete,
-  checkBanStatus,
-  createPost
+  uploadPostImage
 );
 
+
 // Route for retrieving a specific post
-router.get(
-  "/getpost/:postId",
-  getAPost
-);
+router.get("/getpost/:postId", getAPost);
 
 // Route for editing a post
 router.put(
   "/edit/:postId",
-  upload.single("image"),
   authGuard,
   checkSoftDelete,
   checkBanStatus,
@@ -44,16 +41,10 @@ router.put(
 );
 
 // Route for retrieving all posts by a specific user
-router.get(
-  "/postallUsers/:authorId",
-  getAllPostByAUser
-);
+router.get("/postallUsers/:authorId", getAllPostByAUser);
 
 // Route for retrieving all posts with filters
-router.get(
-  "/postsFilters",
-  getAllPostsFilters
-);
+router.get("/postsFilters", getAllPostsFilters);
 
 // Route for liking a post
 router.post(

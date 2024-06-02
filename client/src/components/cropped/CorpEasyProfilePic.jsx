@@ -6,7 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Toaster, toast } from 'sonner';
 import {useSelector } from "react-redux";
 import { HiOutlineSave } from "react-icons/hi";
-import uploadProfilePic from "../../services/index/userServices/updateProfilePic";
+import uploadPostBanner from "../../services/index/userServices/updateProfilePic";
 
 const CropEasyProfile = ({ photo, setOpenCropProfilePic, setSelectedProfileImg }) => {
     const [crop, setCrop] = useState({ x: 0, y: 0 });

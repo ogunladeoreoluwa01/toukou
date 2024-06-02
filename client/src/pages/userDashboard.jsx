@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import NavBarComp from "../components/NavBar";
 import { Link,useNavigate } from "react-router-dom";
-import PostCard from '../components/normalPost';
+import BlogCard from '../components/BlogCard';
 import { TbEditCircle } from "react-icons/tb";
 import { MdDelete } from "react-icons/md";
 import { useSelector } from 'react-redux';
@@ -16,6 +16,7 @@ import UpdateUserModal from '../components/updateUserModal';
 import { createPortal } from "react-dom";
 import DeleteUserModal from '../components/DeleteUser';
 
+
 const UserProfile = () => {
   const user = useSelector(state => state.user);
   const navigate =useNavigate()
@@ -25,7 +26,6 @@ const UserProfile = () => {
   const [day, setDay] = useState("");
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
-  const [postData, setPostData] = useState([]);
   const [roleBadge, setRoleBadge] = useState("bg-slate-400 text-slate-700");
 
 const openEditModalHandler = () =>{
@@ -67,8 +67,17 @@ const openDeleteModalHandler = () =>{
       const newDay = date.getDate();
       setYear(newYear);
       setMonth(newMonth);
-      setDay(newDay.toString());
-
+       // Add date acronyms (st, nd, rd, th) to the day
+       let dayAcronym = "th";
+       if (newDay === 1 || newDay === 21 || newDay === 31) {
+           dayAcronym = "st";
+       } else if (newDay === 2 || newDay === 22) {
+           dayAcronym = "nd";
+       } else if (newDay === 3 || newDay === 23) {
+           dayAcronym = "rd";
+       }
+       setDay(`${newDay}${dayAcronym}`);
+      console.log(userQuery.data.user)
       if (userQuery.data.user.superAdmin) {
         setAuthorRole("Lord");
         setRoleBadge("bg-emerald-300 text-emerald-700");
@@ -110,7 +119,7 @@ const openDeleteModalHandler = () =>{
                 </p>
               </div>
               <div className='relative mb-5'>
-                <span className={`${roleBadge} w-fit px-3 rounded-md font-extrabold capitalize opacity-100 z-50 scale-90 absolute right-4 top-4 flex items-center`}>
+                <span className={`${roleBadge} scale-[0.7] w-fit px-3 rounded-md font-extrabold capitalize opacity-100 z-50  absolute right-1 top-2 flex items-center`}>
                   <span className='text-3xl font-extrabold'>
                     {userQuery.data?.user.isAdmin && <GiSpikedSnail className="pr-2" />}
                     {userQuery.data?.user.superAdmin && <GiCrenelCrown className="pr-2" />}
@@ -158,7 +167,7 @@ const openDeleteModalHandler = () =>{
             <div className='flex justify-between items-center'><span className='flex gap-3'>
                 <h1 className='text-base font-semibold'>{userQuery.data?.user.username}</h1>
                 {userQuery.data?.user.verified && <p className={`${roleBadge} w-fit p-1 rounded-full font-bold md:font-semibold capitalize scale-90`}><GiCrownedExplosion /></p>}
-              </span>  <span onClick={openEditModalHandler} className='cursor-pointer text-2xl hover:scale-105 mx-1 transition-all duration-300 ease-linear flex items-center gap-2 justify-center px-2 py-[0.5px] rounded-md font-bold dark:bg-slate-100 dark:hover:bg-slate-200  hover:bg-slate-800 dark:text-slate-900 bg-slate-900 text-slate-50'><TbEditCircle /> <span className="text-lg">Edit</span></span></div>
+              </span>  <span onClick={openEditModalHandler} className='scale-[0.7] cursor-pointer text-2xl hover:scale-[0.75] mx-1 transition-all duration-300 ease-linear flex items-center gap-2 justify-center px-2 py-[0.5px] rounded-md font-bold dark:bg-slate-100 dark:hover:bg-slate-200  hover:bg-slate-800 dark:text-slate-900 bg-slate-900 text-slate-50'><TbEditCircle /> <span className="text-lg">Edit</span></span></div>
               
               <h1 className='text-sm text-slate-400 dark:text-slate-500 font-semibold'>{userQuery.data?.user.email}</h1>
               <p className='my-2'>
@@ -171,19 +180,19 @@ const openDeleteModalHandler = () =>{
                 </p>
                 <span className='flex'>
             
-              <span onClick={openDeleteModalHandler} className=' cursor-pointer text-3xl hover:scale-105 text-red-500 hover:text-red-600 mx-1 transition-all duration-300 ease-linear'><MdDelete /></span>
+              <span onClick={openDeleteModalHandler} className=' cursor-pointer text-3xl hover:scale-90 scale-[0.8] text-red-500 hover:text-red-600 mx-1 transition-all duration-300 ease-linear'><MdDelete /></span>
             </span>
               </div>
             </div>
             <section className='flex flex-col gap-3 my-4'>
-              <h1 className='text-xl font-bold border-b-2 py-2 md:py-4'>Your Posts</h1>
-              <div className='flex flex-wrap justify-start items-center gap-4 md:gap-2'>
+              <h1 className='text-xl font-bold border-b-2 py-2 md:py-4  '>Your Posts</h1>
+              <div className='flex flex-wrap justify-evenly items-center gap-4 md:gap-2 md:w-full'>
                 {postQuery.isLoading ? (
                   Array(10).fill(0).map((_, index) => <NormalPostLoader key={index} />)
                 ) : postQuery.isError ? (
                   <h1 className='text-center text-xl font-bold md:mx-6'>Error loading posts</h1>
                 ) : postQuery.data?.posts.length > 0 ? (
-                  postQuery.data.posts.map((post, index) => <PostCard key={index} post={post} />)
+                  postQuery.data.posts.map((post, index) => <BlogCard key={index}  postUrl={`/blogview/${post._id }`} currentUser={userQuery.data.user.username} authorUrl={`/user/${post.authorId}`} authorName={post.authorName} title={post.title} date={post.createdAt} image={post.postImage.postImgUrl}  />)
                 ) : (
                   <h1 className='text-center text-xl font-bold md:mx-6'>No posts here</h1>
                 )}

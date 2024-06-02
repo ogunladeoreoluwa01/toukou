@@ -27,6 +27,9 @@ import UnBanUser from "./pages/adminDashboardPages/unbanUser";
 import MakeAdmin from "./pages/adminDashboardPages/promoteAdmin";
 import DemoteAdmin from "./pages/adminDashboardPages/demoteAdmin";
 import DeleteUserBySupAdmin from "./pages/adminDashboardPages/deleteUser";
+import CreatePost from "./pages/createPostPage";
+import AddPostImage from "./pages/addPostImage";
+import Demos from "./pages/demos";
 
 
 const queryClient = new QueryClient();
@@ -36,6 +39,10 @@ const router = createBrowserRouter([
     path: "/",
     element: <App />,
     errorElement: <Error404 />,
+  },
+  {
+    path: "/demos",
+    element: <Demos />,
   },
   {
     path: "/about",
@@ -93,7 +100,16 @@ const router = createBrowserRouter([
         path: "/admindashboard/delete-user",
     element:<DeleteUserBySupAdmin/>,
       },
-    ]
+    ],
+   
+  },
+  {
+    path: "/createpost",
+element:<CreatePost/>,
+  },
+  {
+    path: "/addpostImage/:postId",
+element:<AddPostImage/>,
   },
 ]);
 

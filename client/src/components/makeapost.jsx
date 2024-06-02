@@ -3,7 +3,7 @@ import { FaPenAlt } from "react-icons/fa";
 const MakeaPost = () => {
     return ( <>
     
-    <Link to="/makepost" className="fixed bottom-[5%] right-[4.5%] z-30 "> 
+    <Link to="/createpost" className="fixed bottom-[5%] right-[4.5%] z-30 "> 
     <button
     href="/"
     className="group flex justify-center p-3  drop-shadow-xl  font-semibold rounded-full transition-all duration-500 bg-slate-700 dark:bg-slate-500"

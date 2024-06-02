@@ -13,7 +13,72 @@ const createPost = async (req, res, next) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    const postImg = [
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752762/banners/rumelxnrqxqw3xqfibjv.jpg",
+        imgName: "Banner Image 1",
+        imgId: "banner_img_1",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752757/banners/bd4ljls4skpvdqukga1m.jpg",
+        imgName: "Banner Image 2",
+        imgId: "banner_img_2",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752755/banners/gqwmj7n0vayf7nhjdxfk.jpg",
+        imgName: "Banner Image 3",
+        imgId: "banner_img_3",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752754/banners/ty6hxccdvsaq5oxgpdc0.jpg",
+        imgName: "Banner Image 4",
+        imgId: "banner_img_4",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752753/banners/mfryrl6ogrxqj9m5hr5s.jpg",
+        imgName: "Banner Image 5",
+        imgId: "banner_img_5",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752753/banners/nzj31j3lpn9zf6d4emjr.jpg",
+        imgName: "Banner Image 6",
+        imgId: "banner_img_6",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752753/banners/nzsyjkdabvrgetufgsjt.jpg",
+        imgName: "Banner Image 7",
+        imgId: "banner_img_7",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752753/banners/jibp5rfg46cs0vgszyts.jpg",
+        imgName: "Banner Image 8",
+        imgId: "banner_img_8",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752752/banners/krtd7r8c3rcnc3sf085y.jpg",
+        imgName: "Banner Image 9",
+        imgId: "banner_img_9",
+      },
+      {
+        imgUrl:
+          "https://res.cloudinary.com/dnmwhbb15/image/upload/v1716752752/banners/avmn70pzbixfrwxk9ndn.jpg",
+        imgName: "Banner Image 10",
+        imgId: "banner_img_10",
+      },
+    ];
 
+    const randomPostIndex = Math.floor(Math.random() * postImg.length);
+
+    const randomPost = postImg[randomPostIndex];
     // Create a new post instance
     const post = new Post({
       title,
@@ -25,7 +90,51 @@ const createPost = async (req, res, next) => {
         authorProfileImgId: user.profileImage?.profileImgId || "",
         authorProfileImgName: user.profileImage?.profileImgName || "",
       },
+      postImage: {
+        postImgUrl: randomPost.imgUrl,
+        postImgId: randomPost.imgId,
+        postImgName: randomPost.imgName,
+      },
     });
+
+    // Increment the user's post count and save the user
+    user.noOfPosts++;
+    await user.save();
+
+    // Save the post
+    const savedPost = await post.save();
+
+    // Respond with the saved post information
+    res
+      .status(201)
+      .json({ message: "Post created successfully", post: savedPost });
+  } catch (error) {
+    console.error("Error creating post:", error);
+    error.statusCode = error.statusCode || 500;
+    next(error);
+  }
+};
+
+const uploadPostImage = async (req, res, next) => {
+  try {
+    const { postId } = req.params;
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+      console.log("error in user");
+    }
+
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+      console.log("error in post");
+    }
+
+    if (post.authorId.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
 
     // Check if a file is provided in the request
     if (!req.file) {
@@ -52,19 +161,15 @@ const createPost = async (req, res, next) => {
       postImgName: result.original_filename,
     };
 
-    // Increment the user's post count and save the user
-    user.noOfPosts++;
-    await user.save();
-
     // Save the updated post
     const updatedPost = await post.save();
 
     // Respond with the updated post information
     res
-      .status(201)
-      .json({ message: "Post created successfully", post: updatedPost });
+      .status(200)
+      .json({ message: "Image uploaded successfully", post: updatedPost });
   } catch (error) {
-    console.error("Error creating post:", error);
+    console.error("Error uploading post image:", error);
     error.statusCode = error.statusCode || 500;
     next(error);
   }
@@ -126,28 +231,12 @@ const editPost = async (req, res, next) => {
     post.title = req.body.title || post.title;
     post.content = req.body.content || post.content;
 
-    // Handle image upload if file exists in request
-    if (req.file) {
-      let imgFolder = `${user.username},${user._id},${post._id},${post.title},post image`;
-      const result = await cloudinary.uploader.upload(req.file.path, {
-        folder: imgFolder,
-      });
-
-      post.postImage = {
-        postImgUrl: result.secure_url || post.postImage.postImgUrl,
-        postImgId: result.public_id || post.postImage.postImgId,
-        postImgName: result.original_filename || post.postImage.postImgName,
-      };
-    }
-
     // Save the updated post
     const updatedPost = await post.save();
 
     // Respond with appropriate message and updated post data
     res.status(200).json({
-      message: req.file
-        ? "Post updated with an image"
-        : "Post updated without an image",
+      message: "Post updated ",
       post: updatedPost,
     });
   } catch (error) {
@@ -463,6 +552,7 @@ module.exports = {
   createPost,
   getAPost,
   editPost,
+  uploadPostImage,
   getAllPostByAUser,
   getAllPostsFilters,
   likeAPost,

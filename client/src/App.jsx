@@ -2,7 +2,7 @@ import { useState } from 'react'
 import NavBarComp from "./components/NavBar";
 import SectionHeader from './components/SectionHeader';
 import FeaturedPost from './components/FeaturedPost';
-import NormalPost from './components/normalPost'
+import NormalPost from './components/BlogCard'
 import Grid from './components/Grid'
 import Footer from './components/footer';
 import MakeaPost from './components/makeapost';

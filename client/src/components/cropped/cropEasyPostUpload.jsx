@@ -6,28 +6,28 @@ import { useMutation } from "@tanstack/react-query";
 import { Toaster, toast } from 'sonner';
 import {useSelector } from "react-redux";
 import { HiOutlineSave } from "react-icons/hi";
-import uploadBannerpic from "../../services/index/userServices/updateUserBannerPic";
+import uploadPostPic from "../../services/index/postServices/uploadPostPic";
 
-const CropEasyBanner = ({ photo, setOpenCropBannerPic, setSelectedBannerImg }) => {
+const CropEasyPost = ({ photo, setOpenCropPostPic, setSelectedPostImg,postId }) => {
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
     const user = useSelector((state) => state.user);
 
     const token = user.userInfo.token;
-
     const mutation = useMutation({
-        mutationFn: ({ token, formData }) => {
-            return uploadBannerpic({
-                token: token,
-                formData: formData
+        mutationFn: ({ token, formData,postId}) => {
+            return uploadPostPic({
+                token,
+                formData,
+                postId,
             });
         },
         onSuccess: () => {
-            toast.success('Banner picture updated successfully');
-            setOpenCropBannerPic(false)
+            toast.success('post updated successfully');
+            setOpenCropPostPic(false)
             setTimeout(() => {
-                setSelectedBannerImg(null)
+                setSelectedPostImg(null)
             }, 3500);
             
 
@@ -36,8 +36,8 @@ const CropEasyBanner = ({ photo, setOpenCropBannerPic, setSelectedBannerImg }) =
             toast.error(error.message);
             
             setTimeout(() => {
-                setOpenCropBannerPic(false)
-                setSelectedBannerImg(null)
+                setOpenCropPostPic(false)
+                setSelectedPostImg(null)
             }, 2000);
         },
     });
@@ -53,7 +53,7 @@ const CropEasyBanner = ({ photo, setOpenCropBannerPic, setSelectedBannerImg }) =
 
             const formData = new FormData();
             formData.append("image", file);
-            mutation.mutate({ token, formData });
+            mutation.mutate({ token, formData, postId });
         } catch (error) {
             toast.error(error.message);
         }
@@ -93,9 +93,9 @@ const CropEasyBanner = ({ photo, setOpenCropBannerPic, setSelectedBannerImg }) =
                     <div className="flex justify-between items-center p-3 gap-2 flex-wrap">
                     <button
                        onClick={() => {
-                        setOpenCropBannerPic(false);
+                        setOpenCropPostPic(false);
                         setTimeout(() => {
-                            setSelectedBannerImg(null);
+                            setSelectedPostImg(null);
                         }, 2000);
                     }}
                         disabled={mutation.isLoading}
@@ -125,4 +125,4 @@ const CropEasyBanner = ({ photo, setOpenCropBannerPic, setSelectedBannerImg }) =
     );
 };
 
-export default CropEasyBanner;
+export default CropEasyPost;

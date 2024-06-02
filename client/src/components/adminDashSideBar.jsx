@@ -80,7 +80,7 @@ const AdminSideBar = () => {
                         <ul className='flex flex-col items-start gap-3'>
                             {adminActions.filter(action => 
                                 adminRole === "lord" || 
-                                !["/admindashboard/create-admin", "/admindashboard/demote-admin"].includes(action.url)
+                                !["/admindashboard/promote-admin", "/admindashboard/demote-admin","/admindashboard/delete-user"].includes(action.url)
                             ).map((action, index) => (
                                 <li key={index} className='py-1'>
                                     <NavLink
@@ -132,9 +132,11 @@ const AdminSideBar = () => {
                                 <ul className='flex flex-col items-start py-10 gap-5'>
                                     {adminActions.filter(action => 
                                         adminRole === "lord" || 
-                                        !["/admindashboard/create-admin", "/admindashboard/demote-admin"].includes(action.url)
+                                        !["/admindashboard/promote-admin", "/admindashboard/demote-admin","/admindashboard/delete-user"].includes(action.url)
                                     ).map((action, index) => (
-                                        <li key={index} className='py-1'>
+                                        <li
+                                        onClick={handleToggle}
+                                        key={index} className='py-1'>
                                             <NavLink
                                                 to={action.url}
                                                 className={({ isActive }) => isActive
