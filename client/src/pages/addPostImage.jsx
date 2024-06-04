@@ -8,6 +8,7 @@ import { createPortal } from "react-dom";
 import { IoMdCloseCircle } from "react-icons/io";
 import { useNavigate,useParams } from "react-router-dom";
 import CropEasyPostPic from "../components/cropped/cropEasyPostUpload"
+import NavBarComp from "../components/NavBar";
 
 
 
@@ -39,13 +40,21 @@ const AddPostImage = () => {
       };
     return ( <>
       {openCropPostPic && createPortal(<CropEasyPostPic photo={postPhoto} postId={postId} setOpenCropPostPic={setOpenCropPostPic} setSelectedPostImg={setSelectedPostImg}/>, document.getElementById("portal"))}
+     
+     
       <main className="h-screen relative">
+<div className="relative z-[10000]">
+<NavBarComp />
+</div>
+
+    
+  
                 <img
                     loading="lazy"
                     decoding="async"
                     fetchpriority="high"
                     src="https://i.pinimg.com/originals/79/28/79/7928798bbdeda1d1cb82adb1f14e99cf.gif"
-                    className="w-full h-full object-cover object-center opacity-40"
+                    className="w-full h-full object-cover object-center opacity-30"
                 />
                 <section className="flex items-center justify-center absolute inset-0 bg-black bg-opacity-50">
                     <section className="flex flex-col gap-5 md:p-5 mx-2 w-full  rounded-md bg-slate-300/80 dark:bg-slate-800/60">
@@ -111,7 +120,7 @@ const AddPostImage = () => {
                >
                  <IoMdCloseCircle />
                </button>
-               <div className="w-full md:w-[400px] h-[140px] md:h-[200px] border absolute p-1 bottom-0 rounded-lg">
+               <div className="w-full h-full border absolute p-1 bottom-0 rounded-lg">
                  <img
                    loading="lazy"
                    decoding="async"

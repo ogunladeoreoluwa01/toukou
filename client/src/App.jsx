@@ -22,20 +22,7 @@ function App() {
         <FeaturedPost/>
           </section>
           <div className='flex flex-col gap-4 my-6 '>
-          <SectionHeader/>
-          <div className='flex flex-wrap  justify-center items-center gap-4 md:gap-2'>
-        <NormalPost/>
-        <NormalPost/>
-        <NormalPost/>
-        <NormalPost/>
-        <NormalPost/>
-        <NormalPost/>
-        <NormalPost/>
-        <NormalPost/>
-        <NormalPost/>
-        <NormalPost/>
-        
-        </div>
+         
           </div>
        
         <div className='my-6'>

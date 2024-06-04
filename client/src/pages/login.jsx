@@ -8,8 +8,11 @@ import login from '../services/index/userServices/login';
 import { Toaster, toast } from 'sonner';
 import { useDispatch, useSelector } from "react-redux";
 import { userAction } from "../stores/reducers/userReducer";
+import { ReloadIcon } from "@radix-ui/react-icons"
+import { Button } from "@/components/ui/button"
 
 const LoginPage = () => {
+ 
   const dispatch = useDispatch();
   const userState = useSelector(state => state.user);
   const navigate = useNavigate();
@@ -30,14 +33,15 @@ const LoginPage = () => {
     mutationFn: login,
     onSuccess: (data) => {
       console.log("Login successful. Data received:", data);
-      toast.success(`Welcome ${data.message}`);
-      dispatch(userAction.setUserInfo(data.user));
-      localStorage.setItem('account', JSON.stringify(data.user));
-      console.log("User logged in successfully and dispatched:", data.user);
+        toast.success(`Welcome ${data.message}`);
+        dispatch(userAction.setUserInfo(data.user));
+        localStorage.setItem('account', JSON.stringify(data.user));
+        console.log("User logged in successfully and dispatched:", data.user);
     },
     onError: (error) => {
       toast.error(error.message);
       console.error("Error logging in user:", error);
+      
     },
   });
 
@@ -49,6 +53,7 @@ const LoginPage = () => {
 
   const submitHandler = (data) => {
     const { userInfo, password } = data;
+    setLoader(true)
     mutation.mutate({ userInfo, password });
   };
 
@@ -140,9 +145,12 @@ const LoginPage = () => {
                   </Link>
                 </p>
               </div>
-              <button type="submit" disabled={!isValid || mutation.isLoading} className="disabled:opacity-70 px-6 py-2 w-full rounded-md font-bold dark:bg-slate-100 dark:hover:bg-slate-200 transition-all duration-300 hover:bg-slate-800 dark:text-slate-900 bg-slate-900 text-slate-50 uppercase">
-                {mutation.isLoading ? 'Logging in...' : 'Login'}
-              </button>
+              { mutation.isLoading ? <Button disabled className="w-full px-6 py-2 font-bold">
+      <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+      Please wait
+    </Button> :  <Button type="submit" disabled={!isValid || mutation.isLoading} className="disabled:opacity-70 px-6 py-2 w-full   transition-all duration-300 uppercase">
+                login
+              </Button>}
             </form>
           </section>
         </section>

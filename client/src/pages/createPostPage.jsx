@@ -7,11 +7,12 @@ import { useState, useEffect } from "react";
 import { IoMdCloseCircle } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import NavBarComp from "../components/NavBar";
+import { ReloadIcon } from "@radix-ui/react-icons"
+import { Button } from "@/components/ui/button"
 
 const CreatePost = () => {
-    const [openCropPostPic, setOpenCropPostPic] = useState(false);
-    const [postPhoto, setPostPhoto] = useState(null);
-    const [selectedPostImg, setSelectedPostImg] = useState();
+ 
+   
     const user = useSelector((state) => state.user);
     const navigate = useNavigate();
     const [postId, setPostId] = useState(null);
@@ -63,7 +64,7 @@ const CreatePost = () => {
                         loading="lazy"
                         decoding="async"
                         fetchpriority="high"
-                        src="https://i.pinimg.com/originals/c1/fc/9d/c1fc9d7f6ae08d56f2b84e81799790a5.gif"
+                        src="https://i.pinimg.com/originals/f1/2a/ad/f12aadea1709f04579d023beed5348b9.gif"
                         className="w-full h-full object-cover object-center opacity-40"
                     />
                     <section className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 overflow-hidden">
@@ -95,9 +96,12 @@ const CreatePost = () => {
                                         {errors.content && <p className="text-red-500">{errors.content.message}</p>}
                                     </div>
                                 </section>
-                                <button disabled={mutation.isLoading} type="submit" className="disabled:opacity-70 px-3 py-[0.5px] rounded-md font-bold dark:bg-slate-100 dark:hover:bg-slate-200 transition-all duration-300 hover:bg-slate-800 dark:text-slate-900 bg-slate-900 text-slate-50 uppercase">
-                                    Create Post
-                                </button>
+                                { mutation.isLoading ? <Button disabled className="w-full px-6 py-2 font-bold">
+      <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+      Please wait
+    </Button> :  <Button type="submit" disabled={ mutation.isLoading} className="disabled:opacity-70 px-6 py-2 w-full fontbold   transition-all duration-300   uppercase">
+                Create Post
+              </Button>}
                             </form>
                         </section>
                     </section>

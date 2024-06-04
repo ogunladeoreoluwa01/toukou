@@ -8,8 +8,11 @@ import signup from "../services/index/userServices/users";
 import { Toaster, toast } from 'sonner';
 import { useDispatch, useSelector } from "react-redux";
 import { userAction } from "../stores/reducers/userReducer";
+import { ReloadIcon } from "@radix-ui/react-icons"
+import { Button } from "@/components/ui/button"
 
 const RegisterPage = () => {
+  
   const dispatch = useDispatch();
   const userState = useSelector(state => state.user);
   const navigate = useNavigate();
@@ -27,9 +30,11 @@ const RegisterPage = () => {
       dispatch(userAction.setUserInfo(data.user));
       localStorage.setItem('account', JSON.stringify(data.user));
       navigate("/");
+     
     },
     onError: (error) => {
       toast.error(error.message);
+     
     },
   });
 
@@ -41,6 +46,7 @@ const RegisterPage = () => {
 
   const submitHandler = (data) => {
     const { username, email, password } = data;
+    setLoader(true)
     mutation.mutate({ username, email, password });
   };
 
@@ -53,6 +59,7 @@ const RegisterPage = () => {
   return (
     <>
       <main className="h-screen">
+        <NavBarComp/>
         <section className="flex justify-center items-center relative w-screen h-[90vh] bg-black">
         <img loading="lazy"
                   decoding='async'
@@ -189,13 +196,12 @@ const RegisterPage = () => {
                   </Link>
                 </p>
               </div>
-              <button
-                type="submit"
-                disabled={!isValid || mutation.isLoading}
-                className="disabled:opacity-70 px-6 py-2 w-full rounded-md font-bold dark:bg-slate-100 dark:hover:bg-slate-200 transition-all duration-300 hover:bg-slate-800 dark:text-slate-900 bg-slate-900 text-slate-50 uppercase"
-              >
-                {mutation.isLoading ? 'Registering...' : 'Register'}
-              </button>
+              {mutation.isLoading ? <Button disabled className="w-full px-6 py-2 font-bold">
+      <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+      Please wait
+    </Button> :  <Button type="submit" disabled={!isValid || mutation.isLoading} className="disabled:opacity-70 px-6 py-2 w-full fontbold   transition-all duration-300   uppercase">
+                Register
+              </Button>}
             </form>
           </section>
         </section>

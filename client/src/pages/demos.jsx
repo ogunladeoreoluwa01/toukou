@@ -7,7 +7,7 @@ import {
     CardTitle,
   } from "@/components/ui/card"
 
-  import BlogCard from "@/components/blogCard";
+
   
 
 const Demos = () => {
@@ -17,7 +17,7 @@ const Demos = () => {
 
     <main className=" flex items-center justify-center w-[100vw] h-[100vh]">
 
-<BlogCard/>
+
 
     <Card className="w-[270px]  ">
   <CardHeader>

@@ -6,6 +6,7 @@ import { FaUser } from "react-icons/fa";
 import { IoLogOut } from "react-icons/io5";
 import { RiAdminFill } from "react-icons/ri";
 import logOut from '../stores/actions/userAction';
+import { Button } from "@/components/ui/button"
 
 const NavBarComp = () => {
     // State to manage the toggle state of the mobile navigation menu
@@ -103,26 +104,28 @@ const NavBarComp = () => {
                             </li>:<></>}
                             
                             {/* Logout Button */}
-                            <li className='font-medium'>
-                                <button onClick={logOutHandler} className='flex items-center text-red-500 hover:text-red-700 hover:font-bold hover:bg-red-400 transform py-1 px-3 rounded-md transition-colors duration-200 border-r-4 border-transparent'>
+                            <li className='font-medium mr-2'>
+                                <Button size="sm" variant="destructive" onClick={logOutHandler} className='flex items-center  hover:text-red-700 hover:font-bold hover:bg-red-400 transform py-1 px-3 rounded-md transition-colors duration-200 border-r-4 border-transparent'>
                                     <div className="mr-3">
                                         <IoLogOut />
                                     </div>
                                     Logout
-                                </button>
+                                </Button>
                             </li>
                         </>
                     ) : (
                         <>
                             {/* Login and Signup Links */}
                             <li>
-                                <NavLink to="/login" className="px-6 py-1 rounded-lg dark:bg-slate-100 dark:hover:bg-slate-200 transition-all duration-300 hover:bg-slate-800 dark:text-slate-900 bg-slate-900 text-slate-50 uppercase">
-                                    Login
+                                <NavLink to="/login" >
+                                   <Button variant="secondary" size="sm" className="py-[0px] px-6">Login</Button>
+                                   
+                                    
                                 </NavLink>
                             </li>
-                            <li>
-                                <NavLink to="/register" className="px-6 py-1 rounded-lg dark:bg-slate-100 dark:hover:bg-slate-200 transition-all duration-300 hover:bg-slate-800 dark:text-slate-900 bg-slate-900 text-slate-50 uppercase">
-                                    Signup
+                            <li className="mr-2">
+                                <NavLink to="/register" >
+                                <Button size="sm" className="py-[0px] px-5">Signup</Button>
                                 </NavLink>
                             </li>
                         </>
@@ -187,35 +190,46 @@ const NavBarComp = () => {
                                     
                                     {userState.userInfo ? (
                                         <>
-                                         {userState.userInfo.isAdmin || userState.userInfo.superAdmin?<NavLink to="/admindashboard" className="px-6 items-center flex py-2 rounded-md w-[350px] font-bold dark:bg-slate-100 dark:hover:bg-slate-200 transition-all duration-300 hover:bg-slate-800 dark:text-slate-900 bg-slate-900 text-slate-50 uppercase">
-                                    <div className="mr-3">
+                                         {userState.userInfo.isAdmin || userState.userInfo.superAdmin?
+                                         
+                                         <NavLink to="/admindashboard">
+                                         <Button size="sm"  className="px-6 py-2 rounded-md w-[350px] font-bold text-lg transition-all duration-300 ">
+                                         <div className="mr-3">
                                     <RiAdminFill />
                                                 </div> Admin Dashboard
-                                    </NavLink>:<></>}
+                                         </Button>
+                                         </NavLink>
+                                        :<></>}
                                             {/* User Profile Link */}
-                                            <NavLink to={`/yourprofile/${userState?.userInfo?.username}`} className="px-6 py-2 rounded-md w-[350px] font-bold dark:bg-slate-100 dark:hover:bg-slate-200 transition-all duration-300 hover:bg-slate-800 dark:text-slate-900 bg-slate-900 text-slate-50 uppercase flex items-center">
-                                                <div className="mr-3">
-                                                <FaUser />
-                                                </div>
-                                                Profile
+                                            <NavLink to={`/yourprofile/${userState?.userInfo?.username}`}>
+                                            <Button size="sm"  className="px-6 py-2 rounded-md w-[350px] font-bold text-lg transition-all duration-300 ">
+                                            Profile
+                                            </Button>
                                             </NavLink>
+                                            
                                             {/* Logout Button */}
-                                            <button onClick={logOutHandler} className="px-6 py-2 rounded-md w-[350px] font-bold text-red-700 hover:font-bold bg-red-400 transition-all duration-300 capitalize flex items-center">
+                                            <Button size="sm" variant="destructive" onClick={logOutHandler} className="px-6 py-2 rounded-md w-[350px] font-bold hover:font-bold  transition-all duration-300 capitalize flex items-center">
                                                 <div className="mr-3">
                                                     <IoLogOut />
                                                 </div>
                                                 LOGOUT
-                                            </button>
+                                            </Button>
                                         </>
                                     ) : (
                                         <>
                                             {/* Login and Signup Links */}
-                                            <NavLink to="/login" className="px-6 py-2 rounded-md w-[350px] font-bold dark:bg-slate-100 dark:hover:bg-slate-200 transition-all duration-300 hover:bg-slate-800 dark:text-slate-900 bg-slate-900 text-slate-50 uppercase">
+                                            <NavLink to="/login">
+                                            <Button size="sm" variant="secondary" className="px-6 py-2 rounded-md w-[350px] font-bold text-lg transition-all duration-300">
                                                 Login
+                                            </Button>
                                             </NavLink>
-                                            <NavLink to="/register" className="px-6 py-2 rounded-md w-[350px] font-bold dark:bg-slate-100 dark:hover:bg-slate-200 transition-all duration-300 hover:bg-slate-800 dark:text-slate-900 bg-slate-900 text-slate-50 uppercase">
-                                                Signup
+                                            
+                                            <NavLink to="/register">
+                                            <Button size="sm"  className="px-6 py-2 rounded-md w-[350px] font-bold text-lg transition-all duration-300">
+                                            Signup
+                                            </Button>
                                             </NavLink>
+                                           
                                         </>
                                     )}
                                 </div>

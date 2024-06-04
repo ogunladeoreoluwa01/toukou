@@ -1,23 +1,25 @@
 import api from "../../api";
 
-// Function to fetch post data given a token and an authorId
-const getPostData = async ( authorId) => {
+// Function to fetch post data given an authorId and an optional pageParam
+const getPostData = async ({ authorId, pageParam = 1 }) => {
+  const limit = 10; // Define your limit here
+
   try {
-   
     // Making the GET request to the API endpoint with the specified authorId and configuration
-    const { data } = await api.get(`/api/posts/postallUsers/${authorId}`, );
-    
+    const { data } = await api.get(
+      `/api/posts/postallUsers/${authorId}?limit=${limit}&page=${pageParam}`
+    );
+
     // Returning the data received from the API
     return data;
   } catch (error) {
-    // Enhanced error handling to provide more detailed error messages
-    if (error.response && error.response.data && error.response.data.message) {
-      throw new Error(error.response.data.message);
-    } else if (error.response) {
-      throw new Error(`Error: ${error.response.status} ${error.response.statusText}`);
-    } else {
-      throw new Error(error.message);
-    }
+
+    const errorMessage =
+      error.response?.data?.message ||
+      `Error: ${error.response?.status} ${error.response?.statusText}` ||
+      error.message;
+
+    throw new Error(errorMessage);
   }
 };
 

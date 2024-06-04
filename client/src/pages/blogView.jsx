@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import NavBarComp from '../components/NavBar';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams,useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import CommentCard from '../components/commentsCard';
 import { TbEditCircle } from 'react-icons/tb';
@@ -10,6 +10,9 @@ import getAPostData from '../services/index/postServices/getablogsdata';
 import getPostData from '../services/index/postServices/getPostData';
 import { useSelector } from 'react-redux';
 import PageLoader from '../components/loaders/pageLoader';
+import UpdatePostModal from '@/components/updatePostModal';
+import { createPortal } from "react-dom";
+import DeletePostModal from '@/components/deletePostModal';
 // import submitComment from '../services/index/postServices/submitComment';
 
 const Blog = () => {
@@ -20,19 +23,34 @@ const Blog = () => {
   const [year, setYear] = useState('');
   const [blogData, setBlogData] = useState();
   const [userCheck, setUserCheck] = useState(false);
+  const [openPostModal, setOpenPostModal] = useState(false);
+  const [openPostDeleteModal, setOpenPostDeleteModal] = useState(false);
   const { blogId } = useParams();
   const queryClient = useQueryClient();
+  const navigate =useNavigate()
+
+
+
+const openEditModalHandler = () =>{
+  setOpenPostModal(true)
+  document.body.classList.add('overflow-hidden');
+}
+
+const openDeleteModalHandler = () =>{
+  setOpenPostDeleteModal(true)
+  document.body.classList.add('overflow-hidden');
+}
+
 
   const blogQuery = useQuery({
     queryFn: () => getAPostData(blogId),
     queryKey: ['blog', blogId]
   });
 
-  const postQuery = useQuery({
-    queryFn: () => getPostData(blogQuery.data?.post.authorId),
-    queryKey: ['post', blogQuery.data?.post.authorId],
-    enabled: !!blogQuery.data?.post.authorId // Only fetch when authorId is available
-  });
+  // const postQuery = useQuery({
+  //   queryFn: () => getPostData(blogQuery.data?.post.authorId),
+  //   queryKey: ['post', blogQuery.data?.post.authorId],
+  // });
 
   useEffect(() => {
     if (blogQuery.data?.post) {
@@ -71,18 +89,34 @@ const Blog = () => {
     setShowComments(prevState => !prevState);
   };
 
-  if (blogQuery.isLoading || postQuery.isLoading) return <PageLoader />;
-  if (!blogData) return <div>No blog data available</div>;
+
+
+  useEffect(() => {
+    if (!blogData) {
+      const timer = setTimeout(() => {
+        navigate('/notfound');
+      }, 3000);
+
+      return () => clearTimeout(timer); // Cleanup the timer on component unmount
+    }
+  }, [blogData, navigate]);
+
+  useEffect(() => {
+    if (!user.userInfo) {
+      navigate("/login");
+    }
+  }, [navigate, user]);
+  if (blogQuery.isLoading ) return <PageLoader />;
+  if (!blogData){
+    return <div>No blog data available</div>;} 
 
   const commentsToDisplay = showComments ? blogData.comments : blogData.comments.slice(0, 3);
 
-  // Get the 5 most recent posts by the author
-  const recentPosts = postQuery.data?.posts
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .slice(0, 5);
 
   return (
     <>
+     {openPostDeleteModal && createPortal(<DeletePostModal  setOpenPostDeleteModal={setOpenPostDeleteModal }  postId={blogId}/>,document.getElementById("portal")) }
+    {openPostModal && createPortal(<UpdatePostModal   setOpenPostModal={setOpenPostModal} postId={blogId} />,document.getElementById("portal")) }
       <NavBarComp />
       <main className="mx-6">
         <div className="w-full">
@@ -98,8 +132,8 @@ const Blog = () => {
               <img
                 loading="lazy"
                 decoding="async"
-                fetchPriority="high"
-                className="h-[200px] lg:h-[350px] lg:w-[60vw] w-full object-cover rounded-lg"
+                fetchpriority="high"
+                className="h-[200px] lg:h-[350px] lg:w-[85vw] w-full object-cover rounded-lg"
                 src={blogData.postImage.postImgUrl}
                 alt={blogData.postImage.postImgName}
               />
@@ -112,15 +146,23 @@ const Blog = () => {
                     <Link to="/author" className="flex items-center">{blogData.authorName}</Link>&nbsp;&#9679;&nbsp; {year}&nbsp; {month}&nbsp; {day}
                   </span>
 
-                  {userCheck && (
+                  
                     <span className="flex">
-                      <span className="text-xl hover:scale-105 mx-1 transition-all duration-300 ease-linear"><TbEditCircle /></span>
-                      <span className="text-xl hover:scale-105 text-red-500 hover:text-red-600 mx-1 transition-all duration-300 ease-linear"><MdDelete /></span>
-                    </span>
-                  )}
+    {userCheck && (
+        <span onClick={openEditModalHandler} className="cursor-pointer text-xl hover:scale-105 mx-1 transition-all duration-300 ease-linear">
+            <TbEditCircle />
+        </span>
+    )}
+    {(userCheck || user.userInfo.isAdmin || user.userInfo.superAdmin) && (
+        <span onClick={openDeleteModalHandler} className="cursor-pointer text-xl hover:scale-105 text-red-500 hover:text-red-600 mx-1 transition-all duration-300 ease-linear">
+            <MdDelete />
+        </span>
+    )}
+</span>
+
                 </p>
 
-                <div className="min-h-[30vh]">
+                <div className="min-h-[30vh] lg:w-[85vw]">
                   <h1 className="text-2xl font-semibold">{blogData.title}</h1>
                   <p className="text-base">{blogData.content}</p>
                 </div>
@@ -140,7 +182,7 @@ const Blog = () => {
                   </button>
                 </form>
 
-                <section className="lg:w-[60vw] w-full flex flex-col justify-start gap-4 mt-4">
+                <section className="lg:w-[60vw] w-full flex flex-col justify-start gap-4 mt-4 min-h-[200px]">
                   <div className="flex justify-between">
                     <h1 className="text-xl font-bold">Comments ({blogData.comments.length})</h1>
                     {blogData.comments.length > 3 && (
@@ -157,18 +199,6 @@ const Blog = () => {
               </div>
             </div>
           </section>
-
-          <aside className="lg:w-[25vw] w-full min-h-[200px] flex flex-col p-2 lg:p-4 gap-3 bg-slate-200 dark:bg-slate-800 rounded-lg">
-            <h1 className="text-sm capitalize font-semibold">Recent Articles by {blogData.authorName}</h1>
-            {recentPosts.map(post => (
-              <Link key={post.id} to={`/post/${post.id}`} className="flex gap-3 items-center bg-slate-300 dark:bg-slate-600 p-2 rounded-lg hover:-translate-y-1 transition-all duration-300 ease-linear">
-                <img src={post.thumbnailUrl} alt={post.title} className="w-20 h-20 rounded-lg scale-90 lg:scale-100" />
-                <div className="flex flex-col justify-between h-20 py-2 scale-90 lg:scale-100">
-                  <h1 className="text-base font-semibold line-clamp-2 lg:line-clamp-3">{post.title}</h1>
-                </div>
-              </Link>
-            ))}
-          </aside>
         </section>
       </main>
     </>

@@ -1,6 +1,6 @@
-import api from '../../api';
+import api from "../../api";
 
-const createPost = async ({ token, title, content }) => {
+const updatePost = async ({ postId, postData, token }) => {
   try {
     const config = {
       headers: {
@@ -8,11 +8,11 @@ const createPost = async ({ token, title, content }) => {
       },
     };
 
-    const { data } = await api.post("/api/posts/create", { 
-      title,
-      content,
-    }, config);
-
+    const { data } = await api.put(
+      `/api/posts/edit/${postId}`,
+      postData,
+      config
+    );
     return data;
   } catch (error) {
     if (error.response && error.response.data.message) {
@@ -22,4 +22,4 @@ const createPost = async ({ token, title, content }) => {
   }
 };
 
-export default createPost;
+export { updatePost }; // Correct export statement

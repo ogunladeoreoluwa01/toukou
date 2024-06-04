@@ -227,7 +227,6 @@ const editPost = async (req, res, next) => {
     }
 
     // Update post properties based on request data
-    post.authorName = req.body.authorName || post.authorName;
     post.title = req.body.title || post.title;
     post.content = req.body.content || post.content;
 

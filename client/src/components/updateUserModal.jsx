@@ -13,6 +13,8 @@ import { userAction } from "../stores/reducers/userReducer";
 import CropEasyProfilePic from "./cropped/CorpEasyProfilePic"
 import CropEasyBannerPic from "./cropped/CorpEasyBannerPic"
 import { createPortal } from "react-dom";
+import { ReloadIcon } from "@radix-ui/react-icons"
+import { Button } from "@/components/ui/button"
 
 const UpdateUserModal = ({setOpenEditModal}) => {
   const [openCropProfilePic, setOpenCropProfilePic] = useState(false);
@@ -22,6 +24,7 @@ const UpdateUserModal = ({setOpenEditModal}) => {
 
 
   const [selectedBannerImg, setSelectedBannerImg] = useState();
+ 
  
   const [selectedProfileImg, setSelectedProfileImg] = useState();
   const user = useSelector((state) => state.user);
@@ -53,9 +56,11 @@ const queryClient = useQueryClient();
       queryClient.invalidateQueries(["user"])
       localStorage.setItem('account',JSON.stringify(userData.user))
       console.log("User registered successfully:", userData.user);
+      setLoader(false)
     },
     onError: (error) => {
       toast.error(error.message);
+      setLoader(false)
     },
   });
 
@@ -66,7 +71,6 @@ const queryClient = useQueryClient();
   const submitHandler = (userData) => {
     const { username, email, bio } = userData;
 
-   
 
     mutation.mutate({ userData, token: user.userInfo.token });
   };
@@ -109,16 +113,19 @@ const queryClient = useQueryClient();
           <span className="flex gap-4 items-center">
             <button
             onClick={closeModal}
-              className="w-fit h-fit rounded-full text-2xl hover:scale-105 transition-all duration-300 ease-linear hover:bg-slate-400 z-20"
+              className="w-fit h-fit rounded-full text-2xl hover:scale-105 transition-all duration-300 ease-linear hover:bg-red-500 z-20"
               type="button"
             >
               <IoClose />
             </button>
             <h1 className="font-bold text-lg">Edit Profile</h1>
           </span>
-          <button disabled={mutation.isLoading} type="submit" className="disabled:opacity-70  px-3 py-[0.5px] rounded-md font-bold dark:bg-slate-100 dark:hover:bg-slate-200 transition-all duration-300 hover:bg-slate-800 dark:text-slate-900 bg-slate-900 text-slate-50 uppercase">
-            Save
-          </button>
+          {mutation.isLoading ? <Button disabled className="px-3 py-[0.5px]font-bold">
+      <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+      Saving
+    </Button> :  <Button type="submit" size="sm" disabled={mutation.isLoading} className="disabled:opacity-70 px-5 py-[0.5px]  transition-all duration-300 capitalize">
+                Save
+              </Button>}
         </section>
         <section className="mb-2">
           <section className="relative">
