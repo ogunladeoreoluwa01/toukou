@@ -44,7 +44,7 @@ const UserPostComponent = ({ authorId, username }) => {
 
   return (
     <>
-      <section className='flex flex-col gap-3 my-4'>
+      <section className='flex flex-col gap-3 my-4 w-full md:w-[90vw] '>
         <h1 className='text-xl font-bold border-b-2 py-2 md:py-4'>
           Posts by {username}
         </h1>

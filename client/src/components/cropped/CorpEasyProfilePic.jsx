@@ -2,7 +2,7 @@ import Cropper from "react-easy-crop";
 import { useState } from "react";
 import { IoClose } from "react-icons/io5";
 import getCroppedImg from "./cropimage";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation,useQueryClient } from "@tanstack/react-query";
 import { Toaster, toast } from 'sonner';
 import {useSelector } from "react-redux";
 import { HiOutlineSave } from "react-icons/hi";
@@ -14,7 +14,7 @@ const CropEasyProfile = ({ photo, setOpenCropProfilePic, setSelectedProfileImg }
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
     const user = useSelector((state) => state.user);
     const token = user.userInfo.token;
-
+const queryClient = useQueryClient()
     const mutation = useMutation({
         mutationFn: ({ token, formData }) => {
             return uploadProfilePic({
@@ -25,6 +25,7 @@ const CropEasyProfile = ({ photo, setOpenCropProfilePic, setSelectedProfileImg }
         onSuccess: () => {
             toast.success('Profile picture updated successfully');
             setOpenCropProfilePic(false)
+            queryClient.invalidateQueries(["user"])
             setTimeout(() => {
                 setSelectedProfileImg(null)
             }, 3500);

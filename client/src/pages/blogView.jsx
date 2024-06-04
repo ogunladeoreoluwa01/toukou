@@ -7,7 +7,6 @@ import { TbEditCircle } from 'react-icons/tb';
 import { MdDelete } from 'react-icons/md';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import getAPostData from '../services/index/postServices/getablogsdata';
-import getPostData from '../services/index/postServices/getPostData';
 import { useSelector } from 'react-redux';
 import PageLoader from '../components/loaders/pageLoader';
 import UpdatePostModal from '@/components/updatePostModal';
@@ -44,7 +43,7 @@ const openDeleteModalHandler = () =>{
 
   const blogQuery = useQuery({
     queryFn: () => getAPostData(blogId),
-    queryKey: ['blog', blogId]
+    queryKey: ['post', blogId]
   });
 
   // const postQuery = useQuery({
@@ -147,7 +146,7 @@ const openDeleteModalHandler = () =>{
                   </span>
 
                   
-                    <span className="flex">
+                    <span className="flex justify-between items-center">
     {userCheck && (
         <span onClick={openEditModalHandler} className="cursor-pointer text-xl hover:scale-105 mx-1 transition-all duration-300 ease-linear">
             <TbEditCircle />
@@ -162,9 +161,9 @@ const openDeleteModalHandler = () =>{
 
                 </p>
 
-                <div className="min-h-[30vh] lg:w-[85vw]">
-                  <h1 className="text-2xl font-semibold">{blogData.title}</h1>
-                  <p className="text-base">{blogData.content}</p>
+                <div className="min-h-[30vh] lg:w-[85vw] flex flex-col gap-2">
+                  <h1 className="text-2xl font-semibold border-b pb-2">{blogData.title}</h1>
+                  <p className="text-base text-pretty text-justify ">{blogData.content}</p>
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="relative mt-4 w-[100%]">

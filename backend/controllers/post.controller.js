@@ -147,6 +147,11 @@ const uploadPostImage = async (req, res, next) => {
     // Upload the image to Cloudinary
     const result = await cloudinary.uploader.upload(req.file.path, {
       folder: imgFolder,
+      transformation: [
+  {width: 1000, crop: "scale"},
+  {quality: "auto"},
+  {fetch_format: "auto"}
+      ]
     });
 
     // If the upload result is empty or invalid, return an error

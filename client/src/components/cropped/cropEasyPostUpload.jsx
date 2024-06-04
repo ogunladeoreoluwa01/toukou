@@ -2,7 +2,7 @@ import Cropper from "react-easy-crop";
 import { useState } from "react";
 import { IoClose } from "react-icons/io5";
 import getCroppedImg from "./cropimage";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation,useQueryClient } from "@tanstack/react-query";
 import { Toaster, toast } from 'sonner';
 import {useSelector } from "react-redux";
 import { HiOutlineSave } from "react-icons/hi";
@@ -13,7 +13,7 @@ const CropEasyPost = ({ photo, setOpenCropPostPic, setSelectedPostImg,postId }) 
     const [zoom, setZoom] = useState(1);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
     const user = useSelector((state) => state.user);
-
+const queryClient = useQueryClient()
     const token = user.userInfo.token;
     const mutation = useMutation({
         mutationFn: ({ token, formData,postId}) => {
@@ -26,6 +26,7 @@ const CropEasyPost = ({ photo, setOpenCropPostPic, setSelectedPostImg,postId }) 
         onSuccess: () => {
             toast.success('post updated successfully');
             setOpenCropPostPic(false)
+             queryClient.invalidateQueries(["post"])
             setTimeout(() => {
                 setSelectedPostImg(null)
             }, 3500);

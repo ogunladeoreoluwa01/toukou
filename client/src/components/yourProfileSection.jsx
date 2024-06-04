@@ -60,8 +60,8 @@ const openDeleteModalHandler = () =>{
 
   return (
     <>
-    {openDeleteModal && createPortal(<DeleteUserModal  setOpenDeleteModal={setOpenDeleteModal} />,document.getElementById("portal")) }
-    {openEditModal && createPortal(<UpdateUserModal  setOpenEditModal={setOpenEditModal} />,document.getElementById("portal")) }
+    {openDeleteModal && createPortal(<DeleteUserModal  setOpenDeleteModal={setOpenDeleteModal}  />,document.getElementById("portal")) }
+    {openEditModal && createPortal(<UpdateUserModal  setOpenEditModal={setOpenEditModal}  />,document.getElementById("portal")) }
       
     <section>
       

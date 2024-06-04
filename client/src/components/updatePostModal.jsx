@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { IoMdCloseCircle } from "react-icons/io";
 import { IoClose } from "react-icons/io5";
 import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { useMutation ,useQueryClient} from "@tanstack/react-query";
 import { Toaster, toast } from 'sonner';
 import { useSelector } from "react-redux";
 import { updatePost } from "../services/index/postServices/updatePost"; // Correct import statement
@@ -19,7 +19,7 @@ const UpdatePostModal = ({  setOpenPostModal,postId,setReloadData }) => {
   const [selectedPostImg, setSelectedPostImg] = useState();
   const user = useSelector((state) => state.user);
   const navigate = useNavigate();
-
+const queryClient = useQueryClient()
 
   const { register, handleSubmit, formState: { errors }, setValue } = useForm({
     defaultValues: {
@@ -33,7 +33,7 @@ const UpdatePostModal = ({  setOpenPostModal,postId,setReloadData }) => {
     mutationFn: updatePost,
     onSuccess: (postData) => {
       toast.success(`Post updated successfully`);
-      
+         queryClient.invalidateQueries(["post"])
     },
     onError: (error) => {
       toast.error(error.message);

@@ -518,6 +518,10 @@ const uploadUserProfilePic = async (req, res, next) => {
 
     const result = await cloudinary.uploader.upload(req.file.path, {
       folder: imgFolder,
+      crop: "scale",
+      width: 250,
+      quality: "auto",
+      fetch_format: "auto",
     });
 
     if (!result) {
@@ -567,6 +571,10 @@ const uploadUserBannerPic = async (req, res, next) => {
 
     const result = await cloudinary.uploader.upload(req.file.path, {
       folder: imgFolder,
+      crop: "scale",
+      width: 1000,
+      quality: "auto",
+      fetch_format: "auto",
     });
 
     if (!result) {
@@ -1035,7 +1043,7 @@ const permanentlyDeleteUserBySupAdmin = async (req, res, next) => {
 
     // Find the admin making the request
     const admin = await User.findById(req.user._id);
-    
+
     if (!admin) {
       return res.status(404).json({ message: "Admin not found" });
     }
