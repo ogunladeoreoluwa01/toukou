@@ -102,8 +102,16 @@ const editComment = async (req, res, next) => {
 
 const deleteComment = async (req, res, next) => {
   try {
-    const { commentId } = req.params; // Get the comment ID from URL params
+    const { commentId } = req.params; 
+  
+    // Get the comment ID from URL params
 
+
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
     // Find the comment by ID
     const comment = await Comment.findById(commentId);
 

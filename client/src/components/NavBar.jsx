@@ -35,9 +35,15 @@ const NavBarComp = () => {
         document.body.classList.toggle('overflow-hidden', !navToggle);
     };
 
+
+
+    const RemoveOverflow=()=>{
+            document.body.classList.remove('overflow-hidden')
+    }
     // Function to handle user logout
     const logOutHandler = () => {
         dispatch(logOut());
+        document.body.classList.remove('overflow-hidden')
         navigate("/");
     };
 
@@ -64,12 +70,12 @@ const NavBarComp = () => {
     return (
         <>
             {/* Desktop Navigation */}
-            <nav className='md:flex border-b-2 border-spacing-y-2 border-slate-900 dark:border-slate-100 justify-between items-end hidden py-3 '>
-                <NavLink to="/" className="font-black text-3xl uppercase">
+            <nav className='items-end justify-between hidden py-3 border-b-2 md:flex border-spacing-y-2 border-slate-900 dark:border-slate-100 '>
+                <NavLink to="/" className="text-3xl font-black uppercase">
                     <span>toukou</span><span>投稿</span>
                 </NavLink>
 
-                <ul className='flex gap-3 items-center'>
+                <ul className='flex items-center gap-3'>
                     {Navlinks.map((link, index) => (
                         <li key={index}>
                             <NavLink 
@@ -86,7 +92,7 @@ const NavBarComp = () => {
                         <>
                             {/* User Profile Link */}
                             <li className='font-medium'>
-                                <Link to={`/yourprofile/${userState?.userInfo?.username}`} className='flex items-center hover:bg-slate-200 dark:hover:bg-slate-700 transform py-1 px-3 rounded-md transition-colors duration-200 border-r-4 border-transparent'>
+                                <Link to={`/yourprofile/${userState?.userInfo?.username}`} className='flex items-center px-3 py-1 transition-colors duration-200 transform border-r-4 border-transparent rounded-md hover:bg-slate-200 dark:hover:bg-slate-700'>
                                     <div className="mr-3">
                                     <FaUser />
                                     </div>
@@ -95,7 +101,7 @@ const NavBarComp = () => {
                             </li>
 
                             {userState.userInfo.isAdmin || userState.userInfo.superAdmin?<li className='font-medium'>
-                                <Link to="/admindashboard" className='flex items-center hover:bg-slate-200 dark:hover:bg-slate-700 transform py-1 px-3 rounded-md transition-colors duration-200 border-r-4 border-transparent'>
+                                <Link to="/admindashboard" className='flex items-center px-3 py-1 transition-colors duration-200 transform border-r-4 border-transparent rounded-md hover:bg-slate-200 dark:hover:bg-slate-700'>
                                     <div className="mr-3">
                                     <RiAdminFill />
                                     </div>
@@ -104,8 +110,8 @@ const NavBarComp = () => {
                             </li>:<></>}
                             
                             {/* Logout Button */}
-                            <li className='font-medium mr-2'>
-                                <Button size="sm" variant="destructive" onClick={logOutHandler} className='flex items-center  hover:text-red-700 hover:font-bold hover:bg-red-400 transform py-1 px-3 rounded-md transition-colors duration-200 border-r-4 border-transparent'>
+                            <li className='mr-2 font-medium'>
+                                <Button size="sm" variant="destructive" onClick={logOutHandler} className='flex items-center px-3 py-1 transition-colors duration-200 transform border-r-4 border-transparent rounded-md hover:text-red-700 hover:font-bold hover:bg-red-400'>
                                     <div className="mr-3">
                                         <IoLogOut />
                                     </div>
@@ -134,12 +140,12 @@ const NavBarComp = () => {
             </nav>
 
             {/* Mobile Navigation */}
-            <nav className='flex flex-col md:hidden relative p-4 top-0 z-50  dark:bg-slate-900 bg-slate-100 w-full'>
-                <section className='border-b-2 border-spacing-y-2 border-slate-900 dark:border-slate-100 justify-between items-center w-full px-2 flex py-3'>
-                    <NavLink to="/" className="font-black text-2xl uppercase">
+            <nav className='relative top-0 z-50 flex flex-col w-full p-4 md:hidden dark:bg-slate-900 bg-slate-100'>
+                <section className='flex items-center justify-between w-full px-2 py-3 border-b-2 border-spacing-y-2 border-slate-900 dark:border-slate-100'>
+                    <NavLink to="/" className="text-2xl font-black uppercase">
                         <span>投稿</span>
                     </NavLink>
-                    <button onClick={handleToggle} className='transition-all text-slate-900 dark:text-slate-50 hover:scale-105 w-fit duration-300 px-2'>
+                    <button onClick={handleToggle} className='px-2 transition-all duration-300 text-slate-900 dark:text-slate-50 hover:scale-105 w-fit'>
                         {navToggle ? (
                             // Close icon
                             <svg width="20" height="23" viewBox="0 0 20 23" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -168,10 +174,10 @@ const NavBarComp = () => {
                             variants={navContainer}
                         >
                             <section className='h-[87vh] overflow-hidden flex flex-col mx-auto w-[350px] justify-around'>
-                                <ul className='flex flex-col items-start  py-10 gap-5'>
+                                <ul className='flex flex-col items-start gap-5 py-10'>
                                     {Navlinks.map((link, index) => (
                                         <li key={index}
-                                        onClick={()=>{ document.body.classList.remove('overflow-hidden');}}
+                                        onClick={RemoveOverflow}
                                          className='py-1'>
                                             
                                             <NavLink
@@ -192,7 +198,7 @@ const NavBarComp = () => {
                                         <>
                                          {userState.userInfo.isAdmin || userState.userInfo.superAdmin?
                                          
-                                         <NavLink to="/admindashboard">
+                                         <NavLink to="/admindashboard" onClick={RemoveOverflow}>
                                          <Button size="sm"  className="px-6 py-2 rounded-md w-[350px] font-bold text-lg transition-all duration-300 ">
                                          <div className="mr-3">
                                     <RiAdminFill />
@@ -201,7 +207,7 @@ const NavBarComp = () => {
                                          </NavLink>
                                         :<></>}
                                             {/* User Profile Link */}
-                                            <NavLink to={`/yourprofile/${userState?.userInfo?.username}`}>
+                                            <NavLink to={`/yourprofile/${userState?.userInfo?.username}`} onClick={RemoveOverflow}>
                                             <Button size="sm"  className="px-6 py-2 rounded-md w-[350px] font-bold text-lg transition-all duration-300 ">
                                             Profile
                                             </Button>

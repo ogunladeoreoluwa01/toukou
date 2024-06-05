@@ -31,6 +31,7 @@ const PermaDeleteByUser = () => {
       dispatch(userAction.resetUserInfo());
       queryClient.invalidateQueries(["user"]);
       localStorage.removeItem('account');
+          document.body.classList.remove('overflow-hidden')
       navigate("/login");
     },
     onError: (error) => {
@@ -83,18 +84,18 @@ const PermaDeleteByUser = () => {
                 aria-label="Toggle Password Visibility"
               >
                 {passwordToggle ? (
-                  <FaEyeSlash className="text-slate-900 dark:text-slate-400 text-2xl" />
+                  <FaEyeSlash className="text-2xl text-slate-900 dark:text-slate-400" />
                 ) : (
-                  <FaEye className="text-slate-900 dark:text-slate-400 text-2xl" />
+                  <FaEye className="text-2xl text-slate-900 dark:text-slate-400" />
                 )}
               </span>
               {errors.password?.message && (
-                <p id="password-error" className="text-red-500 text-xs mt-1">{errors.password?.message}</p>
+                <p id="password-error" className="mt-1 text-xs text-red-500">{errors.password?.message}</p>
               )}
             </div>
           </div>
         </section>
-        <div className="mt-4  flex gap-1 items-baseline accent-red-500 ">
+        <div className="flex items-baseline gap-1 mt-4 accent-red-500 ">
           <input 
             type="checkbox" 
             id="confirmDelete" 
@@ -106,7 +107,7 @@ const PermaDeleteByUser = () => {
         <div className="flex justify-end mt-4">
           <button
             type="submit"
-            className="disabled:opacity-70 flex gap-2 items-center transition-all duration-300 ease-linear bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
+            className="flex items-center gap-2 px-4 py-2 font-bold text-white transition-all duration-300 ease-linear bg-red-500 rounded disabled:opacity-70 hover:bg-red-600"
             disabled={mutation.isLoading || !isSure}
           >
             <span className="text-xl"><MdOutlineDelete /></span>

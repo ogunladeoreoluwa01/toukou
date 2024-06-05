@@ -1,35 +1,50 @@
-import { IoClose } from "react-icons/io5";
 import React, { useState, useEffect } from "react";
+
+import { IoClose } from "react-icons/io5";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Toaster, toast } from 'sonner';
 import { useSelector } from "react-redux";
-import { MdOutlineDelete, MdDelete } from "react-icons/md";
-import DeletePost from "../services/index/postServices/deletePost";
+import {  MdDelete } from "react-icons/md";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import { Button } from "@/components/ui/button";
 
-const DeletePostModal = ({ setOpenPostDeleteModal, postId }) => {
-  const [isSure, setIsSure] = useState(false); // State to manage the checkbox
+import { MdOutlineDelete } from "react-icons/md";
+import deleteComment from "../services/index/commentServices/deleteComment";
+
+
+
+const DeleteCommentModal = ({setOpenCommentDeleteModal, commentId}) => {
+
+
+     const [isSure, setIsSure] = useState(false); 
   const user = useSelector((state) => state.user);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   
-
-  useEffect(() => {
-    console.log(postId);
-  }, [postId]);
-
   const mutation = useMutation({
-    mutationFn: () => DeletePost(user.userInfo.token, postId),
+    mutationFn:() => deleteComment({ token:user.userInfo.token, commentId }),
     onSuccess: () => {
-       toast.success('Post Deleted');
-      setOpenPostDeleteModal(false); 
-      document.body.classList.remove('overflow-hidden');// Close the modal
-      navigate("/");
+      toast.success('comment deleted.')
+        setOpenCommentDeleteModal(false);
+            document.body.classList.remove('overflow-hidden')
+      queryClient.invalidateQueries(["post"]);
       
+     
     },
     onError: (error) => {
       toast.error(error.message);
     },
   });
+
+ const closeModal = () => {
+    setOpenCommentDeleteModal(false);
+    document.body.classList.remove('overflow-hidden');
+  };
+
+ 
 
   useEffect(() => {
     if (!user.userInfo) {
@@ -37,14 +52,9 @@ const DeletePostModal = ({ setOpenPostDeleteModal, postId }) => {
     }
   }, [navigate, user]);
 
-  const closeModal = () => {
-    setOpenPostDeleteModal(false);
-    document.body.classList.remove('overflow-hidden');
-  };
-
-  return (
-    <>
-      <section className="w-dvw h-dvh backdrop-blur-md fixed top-0 left-0 z-[100]">
+    return ( <>
+    
+     <section className="w-dvw h-dvh backdrop-blur-md fixed top-0 left-0 z-[100]">
         <section className="relative">
           <div className="absolute top-0 left-1/2 transform -translate-x-1/2 translate-y-[35%] md:translate-y-[40%]">
             <section className="md:p-3 p-3 dark:bg-slate-800 bg-slate-300 min-h-[350px] min-w-[350px] max-w-full md:w-fit rounded-lg">
@@ -57,7 +67,7 @@ const DeletePostModal = ({ setOpenPostDeleteModal, postId }) => {
                   >
                     <IoClose />
                   </button>
-                  <h1 className="text-lg font-bold">Delete Post</h1>
+                  <h1 className="text-lg font-bold">Delete Comments</h1>
                 </span>
               </section>
               <section className="flex flex-col justify-between gap-[50%] items-center">
@@ -78,7 +88,7 @@ const DeletePostModal = ({ setOpenPostDeleteModal, postId }) => {
                   </div>
                   <div className="flex justify-end mt-4">
                     <button
-                     onClick={mutation.mutate}
+                      onClick={mutation.mutate}
                       className="flex items-center gap-2 px-4 py-2 font-bold text-white transition-all duration-300 ease-linear bg-red-500 rounded disabled:opacity-70 hover:bg-red-600"
                       disabled={mutation.isLoading || !isSure}
                     >
@@ -92,9 +102,8 @@ const DeletePostModal = ({ setOpenPostDeleteModal, postId }) => {
           </div>
         </section>
       </section>
-      <Toaster richColors position="top-right" expand={true} closeButton />
-    </>
-  );
-};
-
-export default DeletePostModal;
+    
+    </> );
+}
+ 
+export default DeleteCommentModal;

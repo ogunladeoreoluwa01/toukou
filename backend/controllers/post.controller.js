@@ -148,10 +148,10 @@ const uploadPostImage = async (req, res, next) => {
     const result = await cloudinary.uploader.upload(req.file.path, {
       folder: imgFolder,
       transformation: [
-  {width: 1000, crop: "scale"},
-  {quality: "auto"},
-  {fetch_format: "auto"}
-      ]
+        { width: 1000, crop: "scale" },
+        { quality: "auto" },
+        { fetch_format: "auto" },
+      ],
     });
 
     // If the upload result is empty or invalid, return an error
@@ -189,9 +189,9 @@ const getAPost = async (req, res, next) => {
       path: "comments",
       populate: {
         path: "author",
-        select: "username profileImage", // Select the fields you need from the author
+        select: "username profileImage updatedAt", // Select the fields you need from the author
       },
-      select: "text", // Select the text field from comments
+      select: "text updatedAt", // Select the text field from comments
     });
 
     if (!post) {
