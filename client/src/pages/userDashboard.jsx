@@ -32,10 +32,8 @@ const UserProfile = () => {
     }
   }, [navigate, user.userInfo]);
   useEffect(() => {
-    if (!user.userInfo) {
-      navigate("/login");
-    }
-  }, [navigate, user.userInfo]);
+    console.log(userQuery)
+  }, [userQuery]);
  
   
 
@@ -62,7 +60,7 @@ const UserProfile = () => {
                 {!userQuery.isLoading?<YourProfileSection userQuery={userQuery} />: <YourProfileSectionLoader/>} 
            {/* ur post section */}
            <section className='flex w-full md:w-[90vw] mx-auto  justify-center items-center min-h-[200px]'>
-  <UserPostComponent username={userQuery.data?.user.username} authorId={userQuery.data?.user._id} className="mx-auto" />
+  <UserPostComponent username={userQuery.data?.user.username}  authorId={userQuery.data?.user._id} className="mx-auto" />
            </section>
           </>
         ) : (

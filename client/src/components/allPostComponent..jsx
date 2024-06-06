@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react';
 import BlogCard from '../components/BlogCard';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import getPostData from "../services/index/postServices/getPostData";
-import { Toaster, toast } from 'sonner';
+import allPostData from "../services/index/postServices/getAllPost.JS";
+import {  toast } from 'sonner';
 import NormalPostLoader from '../components/loaders/normalPostLoader';
 import { useInView } from 'react-intersection-observer';
+import { useSelector } from 'react-redux';
 
-const UserPostComponent = ({ authorId, username }) => {
+const AllPostComponent = () => {
+    const user = useSelector(state => state.user);
   const {
     data,
     error,
@@ -16,8 +18,8 @@ const UserPostComponent = ({ authorId, username }) => {
     isFetching,
     status,
   } = useInfiniteQuery({
-    queryKey: ['posts', authorId],
-    queryFn: ({ pageParam = 1 }) => getPostData({ authorId, pageParam }),
+    queryKey: ['posts'],
+    queryFn: ({ pageParam = 1 }) => allPostData({  pageParam }),
     getNextPageParam: (lastPage) => {
       const { currentPage, totalPages } = lastPage;
       return currentPage < totalPages ? currentPage + 1 : undefined;
@@ -27,28 +29,33 @@ const UserPostComponent = ({ authorId, username }) => {
   const { ref, inView } = useInView();
 
   useEffect(() => {
+   console.log(data)
+  }, [data]);
+
+
+  useEffect(() => {
     if (inView) {
       fetchNextPage();
     }
   }, [fetchNextPage, inView]);
 
   if (status === 'loading') {
-    return <div>Loading...</div>;
+   toast.warning("loading ")
   }
 
   if (status === 'error') {
-    return <div>Error: {error.message}</div>;
+    toast.error(`error loading: ${error.message}`)
   }
 
   let postIndex = 0; // To track the overall index of posts
 
   return (
     <>
-      <section className='flex flex-col gap-3 my-4 w-full md:w-[90vw] '>
-          <h1 className='text-xl font-bold border-b-2 py-2 md:py-4'>
-            Blogs by {username} 
-          </h1>
-        <div className='w-full md:my-6 flex flex-wrap items-center justify-start gap-3'>
+      <section className='flex flex-col gap-3 my-4 w-full md:w-full lg:w-[90vw] '>
+        <h1 className='text-xl font-bold border-b-2 py-2 md:py-4 lg:w-[87vw]'>
+          All Blogs 
+        </h1>
+        <div className='w-full flex-col md:flex-row md:my-6 flex flex-wrap items-center justify-start gap-3  lg:gap-5'>
           {isFetching && !isFetchingNextPage ? (
             Array(10).fill(0).map((_, index) => <NormalPostLoader key={index} />)
           ) : (
@@ -61,7 +68,7 @@ const UserPostComponent = ({ authorId, username }) => {
                     <BlogCard
                       key={post._id}
                       postUrl={`/blogview/${post._id}`}
-                      currentUser={username}
+                      currentUser={user.userInfo.username}
                       authorUrl={`/user/${post.authorId}`}
                       authorName={post.authorName}
                       title={post.title}
@@ -81,13 +88,15 @@ const UserPostComponent = ({ authorId, username }) => {
             disabled={!hasNextPage || isFetchingNextPage}
             className='disabled:opacity-70 flex gap-2 items-center transition-all duration-300 ease-linear bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded'
           >
-            {isFetchingNextPage ? 'Loading more...' : hasNextPage ? 'Load More' : 'Nothing more to load'}
+            {isFetchingNextPage ? 'Loading more...' : 'Nothing more to load'}
           </button>
         </div>
-        <div>{isFetching && !isFetchingNextPage ? 'Fetching...' : null}</div>
+        <div>{isFetching && !isFetchingNextPage ? (
+            Array(10).fill(0).map((_, index) => <NormalPostLoader key={index} />)
+          ) : null}</div>
       </section>
     </>
   );
 };
 
-export default UserPostComponent;
+export default AllPostComponent;
