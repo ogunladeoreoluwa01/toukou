@@ -12,13 +12,24 @@ import { ReloadIcon } from "@radix-ui/react-icons"
 import { Button } from "@/components/ui/button"
 
 const RegisterPage = () => {
-  
+
   const dispatch = useDispatch();
   const userState = useSelector(state => state.user);
   const navigate = useNavigate();
 
-  const { register, handleSubmit, watch, formState: { errors, isValid } } = useForm({
-    mode: "onChange"
+ 
+  const {
+    register,
+    handleSubmit,
+    watch, 
+    formState: { errors, isValid },
+  } = useForm({
+    defaultValues: {
+      username: "",
+      password: "",
+      email:""
+    },
+    mode: "onChange",
   });
 
   const password = watch("password");
@@ -33,8 +44,16 @@ const RegisterPage = () => {
      
     },
     onError: (error) => {
-      toast.error(error.message);
-     
+      try {
+      const errormsg = JSON.parse(error.message);
+      console.error(`Error ${errormsg.errorCode}: ${errormsg.errorMessage}`);
+      toast.error(errormsg.errorMessage); // Displaying the error message using toast
+
+      
+    } catch (parseError) {
+      console.error("Error parsing error message:", parseError);
+      toast.error("An unexpected error occurred");
+    }
     },
   });
 
@@ -46,7 +65,6 @@ const RegisterPage = () => {
 
   const submitHandler = (data) => {
     const { username, email, password } = data;
-    setLoader(true)
     mutation.mutate({ username, email, password });
   };
 
@@ -196,10 +214,10 @@ const RegisterPage = () => {
                   </Link>
                 </p>
               </div>
-              {mutation.isLoading ? <Button disabled className="w-full px-6 py-2 font-bold">
+              {mutation.isLoading ? <Button size="sm" disabled className="w-full px-6 py-2 font-bold">
       <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
       Please wait
-    </Button> :  <Button type="submit" disabled={!isValid || mutation.isLoading} className="disabled:opacity-70 px-6 py-2 w-full fontbold   transition-all duration-300   uppercase">
+    </Button> :  <Button type="submit" size="sm" disabled={!isValid || mutation.isLoading} className=" px-6 py-2 w-full uppercase">
                 Register
               </Button>}
             </form>

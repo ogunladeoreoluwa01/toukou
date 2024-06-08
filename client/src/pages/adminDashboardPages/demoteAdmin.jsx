@@ -4,11 +4,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Toaster, toast } from 'sonner';
 import { useSelector } from "react-redux";
 import demoteAdmin from "../../services/index/userServices/demoteAdmin"; // Correct import for demoteAdmin service
-
+import { useNavigate } from "react-router-dom";
 const DemoteAdmin = () => {
   const user = useSelector((state) => state.user);
   const queryClient = useQueryClient();
-
+const navigate =useNavigate()
   const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
       username: "",
@@ -23,8 +23,25 @@ const DemoteAdmin = () => {
       queryClient.invalidateQueries(["user"]);
     },
     onError: (error) => {
-      toast.error(error.message);
-    },
+    try {
+      const errormsg = JSON.parse(error.message);
+      console.error(`Error ${errormsg.errorCode}: ${errormsg.errorMessage}`);
+      toast.error(errormsg.errorMessage); // Displaying the error message using toast
+
+       if (errormsg.errorCode === 403) {
+        navigate("/error-403");
+      } else if (errormsg.errorCode === 452) {
+        navigate("/user-is-disabled");
+        } else if (errormsg.errorCode === 451) {
+        navigate("/user-is-ban");
+      } else if (errormsg.errorCode === 500) {
+        navigate("/oops");
+      } 
+    } catch (parseError) {
+      console.error("Error parsing error message:", parseError);
+      toast.error("An unexpected error occurred");
+    }
+  }
   });
 
   const submitHandler = (data) => {

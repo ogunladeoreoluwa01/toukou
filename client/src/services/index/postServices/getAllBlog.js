@@ -14,15 +14,16 @@ const getAllBlog = async (filter) => {
     return data;
   } catch (error) {
     // Enhanced error handling to provide more detailed error messages
-    if (error.response && error.response.data && error.response.data.message) {
-      throw new Error(error.response.data.message);
-    } else if (error.response) {
-      throw new Error(
-        `Error: ${error.response.status} ${error.response.statusText}`
-      );
-    } else {
-      throw new Error(error.message);
-    }
+   if (error.response) {
+     throw new Error(
+       JSON.stringify({
+         errorCode: error.response.status,
+         errorMessage: error.response.data.message,
+       })
+     );
+   } else {
+     throw new Error(error.message);
+   }
   }
 };
 

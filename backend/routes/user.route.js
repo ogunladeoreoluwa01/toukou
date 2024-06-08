@@ -85,7 +85,7 @@ router.put(
   checkSoftDelete,
   SoftDelete
 );
-router.put("/unSoftDelete", authGuard, checkBanStatus, unSoftDelete);
+router.put("/unSoftDelete", unSoftDelete);
 // Admin routes (requires additional authorization, ensure you have an admin guard)
 
 router.post("/ban", adminGuard, checkBanStatus, checkSoftDelete, banUser);
@@ -115,7 +115,7 @@ router.put(
   demoteAdmin
 );
 router.delete(
-  "/deleteSupAdmin",
+  "/deleteSupAdmin/:username",
   superAdminGuard,
   permanentlyDeleteUserBySupAdmin
 );

@@ -45,15 +45,39 @@ const openDeleteModalHandler = () =>{
 
   const blogQuery = useQuery({
     queryFn: () => getAPostData(blogId),
-    queryKey: ['post', blogId]
-  });
+    queryKey: ['post', blogId],
+     onError: (error) => {
+    try {
+      const errormsg = JSON.parse(error.message);
+      console.error(`Error ${errormsg.errorCode}: ${errormsg.errorMessage}`);
+      toast.error(errormsg.errorMessage); // Displaying the error message using toast
+
+      if (errormsg.errorCode === 404) {
+        navigate("/error404");
+      } else if (errormsg.errorCode === 403) {
+        navigate("/error403");
+      } else if (errormsg.errorCode === 452) {
+        navigate("/user-is-disabled");
+        } else if (errormsg.errorCode === 451) {
+        navigate("/user-is-ban");
+      } else if (errormsg.errorCode === 500) {
+        navigate("/oops");
+      } 
+    } catch (parseError) {
+      console.error("Error parsing error message:", parseError);
+      toast.error("An unexpected error occurred");
+    }
+  }
+  }
+   );
 
   
   useEffect(() => {
-    if (blogQuery.data?.post) {
-      setBlogData(blogQuery.data?.post);
-      console.log(blogData)
-      const date = new Date(blogQuery.data.post.createdAt);
+     console.log(blogQuery);
+    if (blogQuery?.data) {
+    setBlogData(blogQuery?.data?.post);
+      console.log(blogQuery)
+      const date = new Date(blogQuery?.data?.post.createdAt);
       setYear(date.getFullYear());
       setMonth(new Intl.DateTimeFormat('en', { month: 'long' }).format(date));
       setDay(date.getDate().toString());
@@ -61,24 +85,12 @@ const openDeleteModalHandler = () =>{
   }, [blogQuery]);
 
   useEffect(() => {
-    if (user.userInfo._id === blogQuery.data?.post.authorId) {
+    if (user.userInfo._id === blogQuery?.data?.post.authorId) {
       setUserCheck(true);
     }
   }, [blogQuery, user.userInfo._id]);
 
 
-
-
-
-  // useEffect(() => {
-  //   if (!blogData) {
-  //     const timer = setTimeout(() => {
-  //       navigate('/notfound');
-  //     }, 3000);
-
-  //     return () => clearTimeout(timer); // Cleanup the timer on component unmount
-  //   }
-  // }, [blogData, navigate]);
 
   useEffect(() => {
     if (!user.userInfo) {
@@ -86,8 +98,25 @@ const openDeleteModalHandler = () =>{
     }
   }, [navigate, user]);
   if (blogQuery.isLoading ) return <PageLoader />;
-  if (!blogData){
-    return <div>No blog data available</div>;} 
+  if (blogQuery.isError) {
+    try {
+      const error = JSON.parse(blogQuery.error.message);
+      console.error(`Error ${error.errorCode}: ${error.errorMessage}`);
+      if (error.errorCode === 404) {
+        navigate("/error-404");
+      } else if (error.errorCode === 403) {
+        navigate("/error-403");
+      } else if (error.errorCode === 452) {
+        navigate("/user-is-disabled");
+      } else if (error.errorCode === 451) {
+        navigate("/user-is-ban");
+      } else if (error.errorCode === 500) {
+        navigate("/oops");
+      }
+    } catch (parseError) {
+      console.error("Error parsing error message:", parseError);
+    }
+  }
 
  
 
@@ -101,7 +130,7 @@ const openDeleteModalHandler = () =>{
         <div className="w-full">
           <p className="p-2 text-sm">
             <Link to="/">Home</Link>&nbsp;/&nbsp;
-            <Link to="/blog">Blog</Link>&nbsp;/&nbsp;{blogData.title}
+            <Link to="/blog">Blog</Link>&nbsp;/&nbsp;{blogData?.title}
           </p>
         </div>
 
@@ -113,8 +142,8 @@ const openDeleteModalHandler = () =>{
                 decoding="async"
                 fetchpriority="high"
                 className="h-[200px] lg:h-[350px] lg:w-[85vw] w-full object-cover rounded-lg"
-                src={blogData.postImage.postImgUrl}
-                alt={blogData.postImage.postImgName}
+                src={blogData?.postImage.postImgUrl}
+                alt={blogData?.postImage.postImgName}
               />
             </div>
 
@@ -122,7 +151,7 @@ const openDeleteModalHandler = () =>{
               <div className="flex flex-col gap-4 my-4">
                 <p className="flex gap-5 text-sm">
                   <span className="flex items-center bg-slate-200 w-fit px-4 py-[1.5px] rounded-lg font-bold capitalize text-slate-700">
-                    <Link to="/author" className="flex items-center">{blogData.authorName}</Link>&nbsp;&#9679;&nbsp; {year}&nbsp; {month}&nbsp; {day}
+                    <Link to="/author" className="flex items-center">{blogData?.authorName}</Link>&nbsp;&#9679;&nbsp; {year}&nbsp; {month}&nbsp; {day}
                   </span>
 
                   
@@ -142,8 +171,8 @@ const openDeleteModalHandler = () =>{
                 </p>
 
                 <div className="min-h-[30vh] lg:w-[85vw] flex flex-col gap-2">
-                  <h1 className="pb-2 text-2xl font-semibold border-b">{blogData.title}</h1>
-                  <p className="text-base text-justify text-pretty ">{blogData.content}</p>
+                  <h1 className="pb-2 text-2xl font-semibold border-b">{blogData?.title}</h1>
+                  <p className="text-base text-justify text-pretty ">{blogData?.content}</p>
                 </div>
 {/* comment section  */}
               <CommentSection postId={blogId} blogsData={blogData}/>

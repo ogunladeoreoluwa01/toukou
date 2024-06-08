@@ -13,13 +13,16 @@ const getPostData = async ({ authorId, pageParam = 1 }) => {
     // Returning the data received from the API
     return data;
   } catch (error) {
-
-    const errorMessage =
-      error.response?.data?.message ||
-      `Error: ${error.response?.status} ${error.response?.statusText}` ||
-      error.message;
-
-    throw new Error(errorMessage);
+if (error.response) {
+  throw new Error(
+    JSON.stringify({
+      errorCode: error.response.status,
+      errorMessage: error.response.data.message,
+    })
+  );
+} else {
+  throw new Error(error.message);
+}
   }
 };
 

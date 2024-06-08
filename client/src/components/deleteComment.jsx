@@ -33,7 +33,24 @@ const DeleteCommentModal = ({setOpenCommentDeleteModal, commentId}) => {
      
     },
     onError: (error) => {
-      toast.error(error.message);
+       try {
+      const errormsg = JSON.parse(error.message);
+      console.error(`Error ${errormsg.errorCode}: ${errormsg.errorMessage}`);
+      toast.error(errormsg.errorMessage); // Displaying the error message using toast
+
+     if (errormsg.errorCode === 403) {
+        navigate("/error-403");
+      } else if (errormsg.errorCode === 452) {
+        navigate("/user-is-disabled");
+        } else if (errormsg.errorCode === 451) {
+        navigate("/user-is-ban");
+      } else if (errormsg.errorCode === 500) {
+        navigate("/oops");
+      } 
+    } catch (parseError) {
+      console.error("Error parsing error message:", parseError);
+      toast.error("An unexpected error occurred");
+    }
     },
   });
 
@@ -85,14 +102,14 @@ const DeleteCommentModal = ({setOpenCommentDeleteModal, commentId}) => {
                     </label>
                   </div>
                   <div className="flex justify-end mt-4">
-                    <button
-                      onClick={mutation.mutate}
-                      className="flex items-center gap-2 px-4 py-2 font-bold text-white transition-all duration-300 ease-linear bg-red-500 rounded disabled:opacity-70 hover:bg-red-600"
-                      disabled={mutation.isLoading || !isSure}
-                    >
-                      <span className="text-xl"><MdOutlineDelete /></span>
-                      {mutation.isLoading ? "Processing..." : "Delete Post"}
-                    </button>
+                  {mutation.isLoading ? <Button disabled size="sm" className="w-full px-6 py-2 font-bold">
+      <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+      Please wait
+    </Button> :  <Button type="submit" size="sm" variant="destructive" onClick={mutation.mutate} disabled={ mutation.isLoading} className=" px-6 py-2 w-full uppercase flex items-center gap-2">
+              <span className="text-xl"><MdOutlineDelete /></span>
+               Delete
+              
+              </Button>}
                   </div>
                 </div>
               </section>

@@ -18,6 +18,19 @@ const registerUser = async (req, res) => {
       User.findOne({ username }),
       User.findOne({ email }),
     ]);
+
+    if (userName) {
+      return res.status(400).json({
+        message: "User with the username already exists. Try another username.",
+      });
+    }
+
+    if (userEmail) {
+      return res.status(400).json({
+        message: "User with the email already exists. Try another email.",
+      });
+    }
+
     const bannerImg = [
       {
         imgUrl:
@@ -150,27 +163,11 @@ const registerUser = async (req, res) => {
       },
     ];
 
-    if (userName) {
-      return res.status(400).json({
-        message: "User with the username already exists. Try another username.",
-      });
-    }
-
-    if (userEmail) {
-      return res.status(400).json({
-        message: "User with the email already exists. Try another email.",
-      });
-    }
-
     const randomBannerIndex = Math.floor(Math.random() * bannerImg.length);
-    // Randomly select an index for the profile image
     const randomProfileIndex = Math.floor(Math.random() * profileImg.length);
-
-    // Retrieve the randomly selected banner and profile images
     const randomBanner = bannerImg[randomBannerIndex];
     const randomProfile = profileImg[randomProfileIndex];
 
-    // Hash the password before saving
 
     // Create a new user
     const newUser = new User({
@@ -188,6 +185,7 @@ const registerUser = async (req, res) => {
         bannerImgName: randomBanner.imgName,
       },
     });
+
     await newUser.save();
 
     // Generate JWT token for the newly registered user
@@ -205,14 +203,19 @@ const registerUser = async (req, res) => {
         isAdmin: newUser.isAdmin,
         superAdmin: newUser.superAdmin,
         bio: newUser.bio,
-        noOfPosts: user.noOfPosts,
+        noOfPosts: newUser.noOfPosts,
         createdAt: newUser.createdAt,
-        achievments: newUser.achievements,
+        achievements: newUser.achievements,
         sex: newUser.sex,
         token: token,
+        banned: newUser.banned,
+        banReason: newUser.banReason,
+        softdeleted: newUser.deleted,
+        softdeletionReason: newUser.deletionReason,
       },
     });
   } catch (error) {
+    console.error("Error during user registration:", error); // Log the error details
     res
       .status(500)
       .json({ message: "Internal Server Error", error: error.message });
@@ -234,8 +237,12 @@ const loginUser = async (req, res) => {
         .json({ message: "User with the provided credential does not exist." }); // Use 404 for not found
     }
 
+    
     // Check if password matches
     const passwordMatch = await bcrypt.compare(password, user.password);
+   // Debugging log
+
+
     if (!passwordMatch) {
       return res.status(401).json({ message: "Incorrect password" }); // Use 401 for unauthorized
     } else {
@@ -260,9 +267,6 @@ const loginUser = async (req, res) => {
           achievments: user.achievements,
           sex: user.sex,
           token: token,
-        },
-
-        suspensions: {
           banned: user.banned,
           banReason: user.banReason,
           softdeleted: user.deleted,
@@ -314,6 +318,10 @@ const getAllUsers = async (req, res) => {
         bio: user.bio,
         createdAt: user.createdAt,
         sex: user.sex,
+        banned: user.banned,
+        banReason: user.banReason,
+        softdeleted: user.deleted,
+        softdeletionReason: user.deletionReason,
       };
       return acc;
     }, {});
@@ -352,13 +360,11 @@ const getProfile = async (req, res, next) => {
           bio: user.bio,
           createdAt: user.createdAt,
           achievments: user.achievements,
-        },
-        suspensions: {
           banned: user.banned,
           banReason: user.banReason,
           softdeleted: user.deleted,
           softdeletionReason: user.deletionReason,
-        },
+        }
       });
     } else {
       let error = new Error("User not found");
@@ -394,13 +400,11 @@ const getUserProfile = async (req, res, next) => {
           bio: user.bio,
           createdAt: user.createdAt,
           achievements: user.achievements,
-        },
-        suspensions: {
           banned: user.banned,
           banReason: user.banReason,
           softdeleted: user.deleted,
           softdeletionReason: user.deletionReason,
-        },
+        }
       });
     } else {
       let error = new Error("User not found");
@@ -430,18 +434,16 @@ const getUserProfileByName = async (req, res, next) => {
           verified: user.verified,
           admin: user.isAdmin,
           superAdmin: user.superAdmin,
-           noOfPosts:user.noOfPosts,
+          noOfPosts: user.noOfPosts,
           sex: user.sex,
           bio: user.bio,
           createdAt: user.createdAt,
           achievements: user.achievements,
-        },
-        suspensions: {
           banned: user.banned,
           banReason: user.banReason,
           softdeleted: user.deleted,
           softdeletionReason: user.deletionReason,
-        },
+        }
       });
     } else {
       let error = new Error("User not found");
@@ -506,6 +508,10 @@ const updateProfile = async (req, res, next) => {
         sex: updatedUserProfile.sex,
         bio: updatedUserProfile.bio,
         token: token,
+        banned: updatedUserProfile.banned,
+        banReason: updatedUserProfile.banReason,
+        softdeleted: updatedUserProfile.deleted,
+        softdeletionReason: updatedUserProfile.deletionReason,
       },
     });
   } catch (error) {
@@ -556,11 +562,15 @@ const uploadUserProfilePic = async (req, res, next) => {
         email: user.email,
         verified: user.verified,
         admin: user.isAdmin,
-        noOfPosts:user.noOfPosts,
+        noOfPosts: user.noOfPosts,
         superAdmin: user.superAdmin,
         sex: user.sex,
         bio: user.bio,
         token: token,
+        banned: user.banned,
+        banReason: user.banReason,
+        softdeleted: user.deleted,
+        softdeletionReason: user.deletionReason,
       },
     });
   } catch (error) {
@@ -613,6 +623,10 @@ const uploadUserBannerPic = async (req, res, next) => {
         sex: user.sex,
         bio: user.bio,
         token: token,
+        banned: user.banned,
+        banReason: user.banReason,
+        softdeleted: user.deleted,
+        softdeletionReason: user.deletionReason,
       },
     });
   } catch (error) {
@@ -682,11 +696,15 @@ const changePassword = async (req, res, next) => {
         sex: updatedUserProfile.sex,
         bio: updatedUserProfile.bio,
         token: token,
+        banned: updatedUserProfile.banned,
+        banReason: updatedUserProfile.banReason,
+        softdeleted: updatedUserProfile.deleted,
+        softdeletionReason: updatedUserProfile.deletionReason,
       },
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error", error: error.message });
+ error.statusCode = 500;
+ next(error);
   }
 };
 
@@ -731,21 +749,27 @@ const SoftDelete = async (req, res, next) => {
   }
 };
 
-const unSoftDelete = async (req, res, next) => {
+const unSoftDelete = async (req, res) => {
   try {
+
+     const { password, userInfo } = req.body;
     // Find the user by ID
-    let user = await User.findById(req.user._id);
+  const user = await User.findOne({
+    $or: [{ username: userInfo }, { email: userInfo }],
+  });
+
     if (!user) {
+      console.log("no user")
       return res.status(404).json({ message: "User not found" });
     }
-
-    // Destructure the password from the request body
-    const { password } = req.body;
-
+    console.log("user found");
     // Check if the provided password matches the current password
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       return res.status(401).json({ message: "Incorrect password" });
+    }
+    if(!user.deleted){
+      return res.status(405).json({ message: "user is not disabled" });
     }
 
     // Unmark the user as deleted and clear the deletion reason
@@ -766,16 +790,21 @@ const unSoftDelete = async (req, res, next) => {
         username: updatedUserProfile.username,
         email: updatedUserProfile.email,
         verified: updatedUserProfile.verified,
-        admin: updatedUserProfile.isAdmin,
+        isAdmin: updatedUserProfile.isAdmin,
         superAdmin: updatedUserProfile.superAdmin,
         sex: updatedUserProfile.sex,
         bio: updatedUserProfile.bio,
         token: token,
+        banned: updatedUserProfile.banned,
+        banReason: updatedUserProfile.banReason,
+        softdeleted: updatedUserProfile.deleted,
+        softdeletionReason: updatedUserProfile.deletionReason,
       },
     });
   } catch (error) {
-    error.statusCode = 500;
-    next(error); // Pass the error to the error handling middleware
+        console.error(error);
+        res.status(500).json({ message: "Server error", error: error.message });
+    // Pass the error to the error handling middleware
   }
 };
 
@@ -1059,14 +1088,14 @@ const demoteAdmin = async (req, res, next) => {
 };
 const permanentlyDeleteUserBySupAdmin = async (req, res, next) => {
   try {
-    const { username } = req.body;
 
-    // Find the admin making the request
     const admin = await User.findById(req.user._id);
-
+    
     if (!admin) {
       return res.status(404).json({ message: "Admin not found" });
     }
+
+    const { username } = req.params;
 
     // Find the user to be deleted
     const user = await User.findOne({ username });

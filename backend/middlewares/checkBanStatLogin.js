@@ -30,7 +30,7 @@ const checkBanStatusLogin = async (req, res, next) => {
     if (user && user.banned) {
       let banMessage = "You are banned.";
       if (user.banExpiration) {
-        const banDuration = user.banExpiration.date - new Date();
+        const banDuration = user.banExpiration - new Date();
         if (banDuration > 0) {
           // Convert ban duration from milliseconds to human-readable format
           const durationInMinutes = Math.floor(
@@ -62,7 +62,14 @@ const checkBanStatusLogin = async (req, res, next) => {
         banMessage += `. Reason: ${user.banReason}`;
       }
 
-      return res.status(451).json({ message: banMessage });
+      return res
+        .status(451)
+        .json({
+          message: banMessage,
+          username:user.username,
+          banDuration: user.banExpiration,
+          banReason: user.banReason,
+        });
     }
 
     // If the user is not banned, continue to the next middleware/controller

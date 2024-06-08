@@ -2,13 +2,16 @@
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Toaster, toast } from 'sonner';
-import { useSelector } from "react-redux";
-import deleteUser from "../../services/index/userServices/deletebyAdmin"; // Correct import for deleteUser service
+import {useSelector } from "react-redux";
+import deleteUser from "../../services/index/userServices/deletebyAdmin"; 
+import { useNavigate } from "react-router-dom";
+
+// Correct import for deleteUser service
 
 const DeleteUserBySupAdmin = () => {
   const user = useSelector((state) => state.user);
   const queryClient = useQueryClient();
-
+const navigate = useNavigate()
   const { register, handleSubmit, formState: { errors } } = useForm({
     defaultValues: {
       username: "",
@@ -17,19 +20,38 @@ const DeleteUserBySupAdmin = () => {
   });
 
   const mutation = useMutation({
-    mutationFn: ({ token, username }) => deleteUser(token, { username }), // Correct service function call
+    mutationFn:({ token, username }) => deleteUser(token, {username}), // Correct service function call
     onSuccess: () => {
       toast.success("User deleted successfully");
       queryClient.invalidateQueries(["user"]);
+      console.log(user.userInfo.token)
     },
     onError: (error) => {
-      toast.error(error.message);
-    },
+    try {
+      const errormsg = JSON.parse(error.message);
+      console.error(`Error ${errormsg.errorCode}: ${errormsg.errorMessage}`);
+      toast.error(errormsg.errorMessage); // Displaying the error message using toast
+
+       if (errormsg.errorCode === 403) {
+        navigate("/error-403");
+      } else if (errormsg.errorCode === 452) {
+        navigate("/user-is-disabled");
+        } else if (errormsg.errorCode === 451) {
+        navigate("/user-is-ban");
+      } else if (errormsg.errorCode === 500) {
+        navigate("/oops");
+      } 
+    } catch (parseError) {
+      console.error("Error parsing error message:", parseError);
+      toast.error("An unexpected error occurred");
+    }
+  }
   });
 
   const submitHandler = (data) => {
     const { username } = data;
-    mutation.mutate({ token: user.userInfo.token, username });
+    console.log(user.userInfo.token)
+    mutation.mutate( {token:user.userInfo.token, username  });
   };
 
   return (

@@ -38,7 +38,21 @@ const UserProfileSection = ({ userQuery }) => {
     }
 
     if (userQuery.isError) {
-      toast.error("Error getting user data");
+      try {
+      const error = JSON.parse(userQuery.error.message);
+      console.error(`Error ${error.errorCode}: ${error.errorMessage}`);
+      if (error.errorCode === 403) {
+        navigate("/error-403");
+      } else if (error.errorCode === 452) {
+        navigate("/user-is-disabled");
+      } else if (error.errorCode === 451) {
+        navigate("/user-is-ban");
+      } else if (error.errorCode === 500) {
+        navigate("/oops");
+      }
+    } catch (parseError) {
+      console.error("Error parsing error message:", parseError);
+    }
     }
   }, [userQuery.data, userQuery.isError]);
 
@@ -51,8 +65,11 @@ const UserProfileSection = ({ userQuery }) => {
       <div className='relative mb-5'>
         <span className={`${roleBadge} scale-[0.7] w-fit px-3 rounded-md font-extrabold capitalize opacity-100 z-50 absolute right-1 top-2 flex items-center`}>
           <span className='text-3xl font-extrabold'>
-            {userQuery.data?.user.isAdmin && <GiSpikedSnail className="pr-2" />}
-            {userQuery.data?.user.superAdmin && <GiCrenelCrown className="pr-2" />}
+            {userQuery.data?.user.superAdmin ? (
+    <GiCrenelCrown className="pr-2" />
+  ) : userQuery.data?.user.isAdmin ? (
+    <GiSpikedSnail className="pr-2" />
+  ) : <></>}
           </span>
           <span>{authorRole}</span>
         </span>

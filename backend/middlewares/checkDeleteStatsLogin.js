@@ -27,7 +27,9 @@ const checkSoftDeletedLogin = async (req, res, next) => {
         deleteMessage += `. Reason: ${user.deletionReason}`;
       }
 
-      return res.status(452).json({ message: deleteMessage });
+      return res
+        .status(452)
+        .json({ message: deleteMessage, username: user.username });
     }
 
     // If the user is not soft deleted, continue to the next middleware/controller

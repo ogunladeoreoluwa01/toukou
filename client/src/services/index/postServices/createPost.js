@@ -15,10 +15,16 @@ const createPost = async ({ token, title, content }) => {
 
     return data;
   } catch (error) {
-    if (error.response && error.response.data.message) {
-      throw new Error(error.response.data.message);
+    if (error.response) {
+      throw new Error(
+        JSON.stringify({
+          errorCode: error.response.status,
+          errorMessage: error.response.data.message,
+        })
+      );
+    } else {
+      throw new Error(error.message);
     }
-    throw new Error(error.message);
   }
 };
 

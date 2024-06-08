@@ -28,7 +28,7 @@ const BlogCard = ({ postUrl, authorName, title, date, image }) => {
     }, [date]);
 
     return (
-        <Link to={postUrl} className="hover:-translate-y-2   transition-all duration-300 ease-linear">
+        <Link to={postUrl} className="hover:-translate-y-2  transition-all duration-300 ease-linear">
             <Card className="w-[270px] dark:bg-slate-900  bg-slate-100 ">
                 <CardHeader className="py-6 px-3">
                     <CardTitle className="text-xl h-[50px] line-clamp-2"> {title}</CardTitle>

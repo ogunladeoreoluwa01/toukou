@@ -22,7 +22,7 @@ const GetUsersProfile = () => {
   
   const userQuery = useQuery({
     queryFn: () => getUserData(user.userInfo.token, userId),
-    queryKey: ["user", userId]
+    queryKey: ["user", userId],
   });
 
   useEffect(() => {
@@ -30,6 +30,26 @@ const GetUsersProfile = () => {
       navigate("/login");
     }
   }, [navigate, user]);
+
+  if (userQuery.isError) {
+    try {
+      const error = JSON.parse(userQuery.error.message);
+      console.error(`Error ${error.errorCode}: ${error.errorMessage}`);
+      if (error.errorCode === 404) {
+        navigate("/error-404");
+      } else if (error.errorCode === 403) {
+        navigate("/error-403");
+      } else if (error.errorCode === 452) {
+        navigate("/user-is-disabled");
+      } else if (error.errorCode === 451) {
+        navigate("/user-is-ban");
+      } else if (error.errorCode === 500) {
+        navigate("/oops");
+      }
+    } catch (parseError) {
+      console.error("Error parsing error message:", parseError);
+    }
+  }
 
 
   return (

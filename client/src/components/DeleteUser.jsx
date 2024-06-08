@@ -53,6 +53,8 @@ const DeleteUserModal = ({ setOpenDeleteModal }) => {
                   </span>
                   Disable
                 </button>
+
+               
                 <button
                   onClick={permaDeleteHandler}
                   className={`flex gap-2  items-center transition-all duration-300 ease-linear py-2 px-4 rounded font-bold ${

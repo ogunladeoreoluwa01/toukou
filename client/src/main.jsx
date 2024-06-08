@@ -30,6 +30,10 @@ import DeleteUserBySupAdmin from "./pages/adminDashboardPages/deleteUser";
 import CreatePost from "./pages/createPostPage";
 import AddPostImage from "./pages/addPostImage";
 import Demos from "./pages/demos";
+import Error403 from "./pages/error403";
+import UserIsBan from "./pages/userIsBan";
+import UserIsDisabled from "./pages/userIsDisabled";
+import SomethingWentWrong from "./pages/oppspage";
 
 
 const queryClient = new QueryClient();
@@ -38,6 +42,31 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+    errorElement: <Error404 />,
+  },
+    {
+    path: "/error-404",
+    element:<Error404 />,
+    errorElement: <Error404 />,
+  },
+   {
+    path: "/error-403",
+    element:<Error403 />,
+    errorElement: <Error404 />,
+  },
+    {
+    path: "/oops",
+    element:<SomethingWentWrong />,
+    errorElement: <Error404 />,
+  },
+  {
+    path: "/user-is-ban",
+    element:<UserIsBan />,
+    errorElement: <Error404 />,
+  },
+   {
+    path: "/user-is-disabled",
+    element:<UserIsDisabled />,
     errorElement: <Error404 />,
   },
   {

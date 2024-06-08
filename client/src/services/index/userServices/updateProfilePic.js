@@ -16,10 +16,16 @@ const updateUserProfilePic = async ({ token, formData }) => {
     );
     return data;
   } catch (error) {
-    if (error.response && error.response.data.message) {
-      throw new Error(error.response.data.message);
-    }
-    throw new Error(error.message);
+   if (error.response) {
+     throw new Error(
+       JSON.stringify({
+         errorCode: error.response.status,
+         errorMessage: error.response.data.message,
+       })
+     );
+   } else {
+     throw new Error(error.message);
+   }
   }
 };
 

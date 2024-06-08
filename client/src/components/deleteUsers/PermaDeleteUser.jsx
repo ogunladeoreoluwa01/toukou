@@ -8,6 +8,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { MdOutlineDelete } from "react-icons/md";
 import { userAction } from "../../stores/reducers/userReducer";
 import permaDeleteUser from "../../services/index/userServices/permaDeleteUser";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import { Button } from "@/components/ui/button";
 
 const PermaDeleteByUser = () => {
   const [passwordToggle, setPasswordToggle] = useState(false);
@@ -17,7 +19,7 @@ const PermaDeleteByUser = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors,isValid } } = useForm({
     defaultValues: {
       password: "",
     },
@@ -35,7 +37,24 @@ const PermaDeleteByUser = () => {
       navigate("/login");
     },
     onError: (error) => {
-      toast.error(error.message);
+       try {
+      const errormsg = JSON.parse(error.message);
+      console.error(`Error ${errormsg.errorCode}: ${errormsg.errorMessage}`);
+      toast.error(errormsg.errorMessage); // Displaying the error message using toast
+
+     if (errormsg.errorCode === 403) {
+        navigate("/error-403");
+      } else if (errormsg.errorCode === 452) {
+        navigate("/user-is-disabled");
+        } else if (errormsg.errorCode === 451) {
+        navigate("/user-is-ban");
+      } else if (errormsg.errorCode === 500) {
+        navigate("/oops");
+      } 
+    } catch (parseError) {
+      console.error("Error parsing error message:", parseError);
+      toast.error("An unexpected error occurred");
+    }
     },
   });
 
@@ -105,14 +124,14 @@ const PermaDeleteByUser = () => {
           <label htmlFor="confirmDelete" className="ml-2  text-justify md:w-[350px] ">Are you sure you want to delete your account permanently?</label>
         </div>
         <div className="flex justify-end mt-4">
-          <button
-            type="submit"
-            className="flex items-center gap-2 px-4 py-2 font-bold text-white transition-all duration-300 ease-linear bg-red-500 rounded disabled:opacity-70 hover:bg-red-600"
-            disabled={mutation.isLoading || !isSure}
-          >
-            <span className="text-xl"><MdOutlineDelete /></span>
-            {mutation.isLoading ? "Processing..." : "Delete Account"}
-          </button>
+           {mutation.isLoading ? <Button disabled size="sm" className="w-full px-6 py-2 font-bold">
+      <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+      Please wait
+    </Button> :  <Button type="submit" size="sm" variant="destructive"  disabled={!isValid || mutation.isLoading} className=" px-6 py-2 w-full uppercase flex items-center gap-2">
+              <span className="text-xl"><MdOutlineDelete /></span>
+               Delete
+              
+              </Button>}
         </div>
       </form>
       <Toaster richColors position="top-right" expand={true} closeButton />

@@ -7,7 +7,9 @@ import { Toaster, toast } from 'sonner';
 import { useDispatch, useSelector } from "react-redux";
 import { userAction } from "../../stores/reducers/userReducer";
 import softDeleteUser from "../../services/index/userServices/softDeleteUser";
-import { RiUserForbidFill } from "react-icons/ri";
+import { MdOutlineDelete } from "react-icons/md";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import { Button } from "@/components/ui/button";
 
 const SoftDeleteByUser = () => {
   const [passwordToggle, setPasswordToggle] = useState(false);
@@ -16,7 +18,7 @@ const SoftDeleteByUser = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors,isValid } } = useForm({
     defaultValues: {
       password: "",
       deleteReason: "",
@@ -28,14 +30,29 @@ const SoftDeleteByUser = () => {
     mutationFn: softDeleteUser,
     onSuccess: () => {
       toast.success('Oh, we\'re sad to see you leave. Hope you come back soon.');
-      dispatch(userAction.resetUserInfo());
       queryClient.invalidateQueries(["user"]);
-      localStorage.removeItem('account');
       document.body.classList.remove('overflow-hidden')
       navigate("/login");
     },
     onError: (error) => {
-      toast.error(error.message);
+       try {
+      const errormsg = JSON.parse(error.message);
+      console.error(`Error ${errormsg.errorCode}: ${errormsg.errorMessage}`);
+      toast.error(errormsg.errorMessage); // Displaying the error message using toast
+
+     if (errormsg.errorCode === 403) {
+        navigate("/error-403");
+      } else if (errormsg.errorCode === 452) {
+        navigate("/user-is-disabled");
+        } else if (errormsg.errorCode === 451) {
+        navigate("/user-is-ban");
+      } else if (errormsg.errorCode === 500) {
+        navigate("/oops");
+      } 
+    } catch (parseError) {
+      console.error("Error parsing error message:", parseError);
+      toast.error("An unexpected error occurred");
+    }
     },
   });
 
@@ -114,14 +131,14 @@ const SoftDeleteByUser = () => {
           </div>
         </section>
         <div className="flex justify-end mt-4">
-          <button
-            type="submit"
-            className="flex items-center gap-2 px-4 py-2 font-bold text-white transition-all duration-300 ease-linear bg-red-500 rounded disabled:opacity-70 hover:bg-red-600"
-            disabled={mutation.isLoading}
-          >
-            <span className="text-xl"><RiUserForbidFill /></span>
-            {mutation.isLoading ? "Processing..." : "Disable"}
-          </button>
+           {mutation.isLoading ? <Button disabled size="sm" className="w-full px-6 py-2 font-bold">
+      <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+      Please wait
+    </Button> :  <Button type="submit" size="sm" variant="destructive" disabled={!isValid || mutation.isLoading} className=" px-6 py-2 w-full uppercase flex items-center gap-2">
+              <span className="text-xl"><MdOutlineDelete /></span>
+               Disable
+              
+              </Button>}
         </div>
       </form>
       <Toaster richColors position="top-right" expand={true} closeButton />

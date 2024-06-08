@@ -39,10 +39,27 @@ const LoginPage = () => {
         console.log("User logged in successfully and dispatched:", data.user);
     },
     onError: (error) => {
-      toast.error(error.message);
-      console.error("Error logging in user:", error);
-      
-    },
+    try {
+      const errormsg = JSON.parse(error.message);
+      console.error(`Error ${errormsg.errorCode}: ${errormsg.errorMessage}`);
+      toast.error(errormsg.errorMessage); // Displaying the error message using toast
+
+      if (errormsg.errorCode === 404) {
+        navigate("/error-404");
+      } else if (errormsg.errorCode === 403) {
+        navigate("/error-403");
+      } else if (errormsg.errorCode === 452) {
+        navigate("/user-is-disabled");
+        } else if (errormsg.errorCode === 451) {
+        navigate("/user-is-ban");
+      } else if (errormsg.errorCode === 500) {
+        navigate("/oops");
+      } 
+    } catch (parseError) {
+      console.error("Error parsing error message:", parseError);
+      toast.error("An unexpected error occurred");
+    }
+  }
   });
 
   useEffect(() => {
@@ -53,7 +70,7 @@ const LoginPage = () => {
 
   const submitHandler = (data) => {
     const { userInfo, password } = data;
-    setLoader(true)
+  
     mutation.mutate({ userInfo, password });
   };
 
@@ -145,10 +162,10 @@ const LoginPage = () => {
                   </Link>
                 </p>
               </div>
-              { mutation.isLoading ? <Button disabled className="w-full px-6 py-2 font-bold">
+              { mutation.isLoading ? <Button size="sm" disabled className="w-full px-6 py-2 font-bold">
       <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
       Please wait
-    </Button> :  <Button type="submit" disabled={!isValid || mutation.isLoading} className="disabled:opacity-70 px-6 py-2 w-full   transition-all duration-300 uppercase">
+    </Button> :  <Button type="submit" size="sm" disabled={!isValid || mutation.isLoading} className=" px-6 py-2 w-full uppercase">
                 login
               </Button>}
             </form>

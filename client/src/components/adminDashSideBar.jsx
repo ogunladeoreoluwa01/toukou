@@ -102,7 +102,7 @@ const AdminSideBar = () => {
 
             {/* Mobile View */}
             <nav className='flex flex-col md:hidden relative px-4 top-0 z-50 dark:bg-slate-900 bg-slate-100 w-full'>
-                <section className='justify-between items-end w-full flex'>
+                <section className='justify-between items-end w-full py-4 flex'>
                     <span className="font-bold text-2xl capitalize">{adminRole}</span>
                     <button onClick={handleToggle} className='transition-all text-slate-900 dark:text-slate-50 hover:scale-105 w-fit duration-300 px-2'>
                         {navToggle ? (

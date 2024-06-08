@@ -10,6 +10,7 @@ const UserPostComponent = ({ authorId, username }) => {
   const {
     data,
     error,
+    isError,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
@@ -36,19 +37,33 @@ const UserPostComponent = ({ authorId, username }) => {
     return <div>Loading...</div>;
   }
 
-  if (status === 'error') {
-    return <div>Error: {error.message}</div>;
-  }
+  if (isError) {
+      try {
+      const errormsg = JSON.parse(error.message);
+      console.error(`Error ${errormsg.errorCode}: ${errormsg.errorMessage}`);
+      if (errormsg.errorCode === 403) {
+        navigate("/error-403");
+      } else if (errormsg.errorCode === 452) {
+        navigate("/user-is-disabled");
+      } else if (errormsg.errorCode === 451) {
+        navigate("/user-is-ban");
+      } else if (errormsg.errorCode === 500) {
+        navigate("/oops");
+      }
+    } catch (parseError) {
+      console.error("Error parsing error message:", parseError);
+    }
+    }
 
   let postIndex = 0; // To track the overall index of posts
 
   return (
     <>
-      <section className='flex flex-col gap-3 my-4 w-full md:w-[90vw] '>
+      <section className='flex flex-col gap-3 my-4  w-full md:w-[90vw] '>
           <h1 className='text-xl font-bold border-b-2 py-2 md:py-4'>
             Blogs by {username} 
           </h1>
-        <div className='w-full md:my-6 flex flex-wrap items-center justify-start gap-3'>
+        <div className='w-full md:my-6 flex flex-wrap flex-col md:flex-row items-center justify-start gap-3'>
           {isFetching && !isFetchingNextPage ? (
             Array(10).fill(0).map((_, index) => <NormalPostLoader key={index} />)
           ) : (
@@ -64,7 +79,7 @@ const UserPostComponent = ({ authorId, username }) => {
                       currentUser={username}
                       authorUrl={`/user/${post.authorId}`}
                       authorName={post.authorName}
-                      title={post.title}
+                      title={post?.title}
                       date={post.createdAt}
                       image={post.postImage.postImgUrl}
                       ref={isRef ? ref : null} // Conditionally add ref

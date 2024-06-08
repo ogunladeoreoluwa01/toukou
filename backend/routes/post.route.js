@@ -67,7 +67,7 @@ router.post(
 // Route for deleting a post
 router.delete(
   "/delete/:postId",
-  adminGuard,
+  authGuard,
   checkSoftDelete,
   checkBanStatus,
   deleteAPost
