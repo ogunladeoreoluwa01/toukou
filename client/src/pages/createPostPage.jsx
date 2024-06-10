@@ -4,7 +4,7 @@ import { Toaster, toast } from 'sonner';
 import { useSelector } from "react-redux";
 import createPost from "../services/index/postServices/createPost"; 
 import { useState, useEffect } from "react";
-import { IoMdCloseCircle } from "react-icons/io";
+
 import { useNavigate } from "react-router-dom";
 import NavBarComp from "../components/NavBar";
 import { ReloadIcon } from "@radix-ui/react-icons"

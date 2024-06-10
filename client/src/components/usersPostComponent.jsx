@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import BlogCard from '../components/BlogCard';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import getPostData from "../services/index/postServices/getPostData";
-import { Toaster, toast } from 'sonner';
+import {  toast } from 'sonner';
 import NormalPostLoader from '../components/loaders/normalPostLoader';
 import { useInView } from 'react-intersection-observer';
 
@@ -41,6 +41,7 @@ const UserPostComponent = ({ authorId, username }) => {
       try {
       const errormsg = JSON.parse(error.message);
       console.error(`Error ${errormsg.errorCode}: ${errormsg.errorMessage}`);
+      toast.error(errormsg.errorMessage)
       if (errormsg.errorCode === 403) {
         navigate("/error-403");
       } else if (errormsg.errorCode === 452) {

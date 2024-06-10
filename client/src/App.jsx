@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom';
 import NavBarComp from "./components/NavBar";
 import SectionHeader from './components/SectionHeader';
 import FeaturedPost from './components/FeaturedPost';
@@ -17,6 +18,12 @@ function App() {
     <>
         <NavBarComp/>
         <main className=' mx-auto relative px-4 '>
+            <div className="w-full">
+          <p className="p-2 text-sm">
+            <Link to="/">Home</Link>&nbsp;/
+          </p>
+        </div>
+
           <section className='mb-6'>
           <SectionHeader/>
         <FeaturedPost/>

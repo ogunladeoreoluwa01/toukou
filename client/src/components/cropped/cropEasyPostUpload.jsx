@@ -7,12 +7,14 @@ import { Toaster, toast } from 'sonner';
 import {useSelector } from "react-redux";
 import { HiOutlineSave } from "react-icons/hi";
 import uploadPostPic from "../../services/index/postServices/uploadPostPic";
+import { useNavigate } from "react-router-dom";
 
 const CropEasyPost = ({ photo, setOpenCropPostPic, setSelectedPostImg,postId }) => {
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
     const user = useSelector((state) => state.user);
+    const navigate =useNavigate()
 const queryClient = useQueryClient()
     const token = user.userInfo.token;
     const mutation = useMutation({

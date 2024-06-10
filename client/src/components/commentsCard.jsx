@@ -8,7 +8,7 @@ import EditCommentModal from '@/components/editComment';
 import DeleteCommentModal from '@/components/deleteComment';
 
 
-const CommentCard = ({ comment }) => {
+const CommentCard = ({ comment,postAuthor}) => {
     const user = useSelector((state) => state.user);
     const [userCheckStyle, setUserCheckStyle] = useState("place-self-start");
     const [openCommentModal,setOpenCommentModal ] =useState(false)
@@ -24,6 +24,12 @@ const CommentCard = ({ comment }) => {
     if (comment.author.username === user.userInfo.username) {
     setUserCheckStyle("place-self-end")
     setUserCheck(true)
+    console.log(comment)
+    
+    }
+  }, [comment.author.username,user.userInfo.username]);
+   useEffect(() => {
+    if (comment.author._id === postAuthor) {
     setPostOwner(true)
     }
   }, [comment.author.username,user.userInfo.username]);

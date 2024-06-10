@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 
 import { useQuery} from '@tanstack/react-query';
 import getUserData from "../services/index/userServices/getUserData";
-import { Toaster, toast } from 'sonner';
+import { Toaster } from 'sonner';
 
 import PageLoader from '../components/loaders/pageLoader';
 

@@ -1,13 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import NavBarComp from "../components/NavBar";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import BlogCard from '../components/BlogCard';
-import { GiCrownedExplosion, GiCrenelCrown, GiSpikedSnail } from "react-icons/gi";
 import { useQuery } from '@tanstack/react-query';
-import getPostData from "../services/index/postServices/getPostData";
 import getUserData from "../services/index/userServices/getUserData";
-import { Toaster, toast } from 'sonner';
-import NormalPostLoader from '../components/loaders/normalPostLoader';
+import { Toaster } from 'sonner';
 import { useSelector } from 'react-redux';
 import PageLoader from '../components/loaders/pageLoader';
 import YourProfileSectionLoader from '@/components/loaders/userProfileSection';
@@ -56,6 +52,7 @@ const GetUsersProfile = () => {
     <>
       <NavBarComp />
       <main className='px-4'>
+
         {userQuery.isError ? (
           <div>Oops, there is an error. Please try again.</div>
         ) : !userQuery.isLoading ? (

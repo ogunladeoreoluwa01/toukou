@@ -1,10 +1,17 @@
 import NavBarComp from "../components/NavBar";
 import Footer from "../components/footer";
+import { Link } from "react-router-dom";
 
 const ContactUs = () => {
     return ( <>
         <NavBarComp/>
         <main className="mx-auto px-4">
+              <div className="w-full">
+          <p className="p-2 text-sm">
+            <Link to="/">Home</Link>&nbsp;/&nbsp;
+            Contact me&nbsp;/&nbsp;
+          </p>
+        </div>
   <section className="border-b pb-6 md:pb-8 border-spacing-y-5  border-slate-900 dark:border-slate-100">
   <div className="w-full max-h-[400px] scale-90 relative">
   <div className="bg-slate-900 w-full max-h-[400px] rounded-lg">

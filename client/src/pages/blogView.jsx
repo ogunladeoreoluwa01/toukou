@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import NavBarComp from '../components/NavBar';
 import { Link, useParams,useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import CommentCard from '../components/commentsCard';
 import { TbEditCircle } from 'react-icons/tb';
 import { MdDelete } from 'react-icons/md';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {  useQuery, useQueryClient } from '@tanstack/react-query';
 import getAPostData from '../services/index/postServices/getablogsdata';
 import { useSelector } from 'react-redux';
 import PageLoader from '../components/loaders/pageLoader';
@@ -14,6 +12,8 @@ import { createPortal } from "react-dom";
 import DeletePostModal from '@/components/deletePostModal';
 import CommentSection from '@/components/commentSection';
 import { Toaster, toast } from 'sonner';
+import LikeDislikePost from '@/components/likeDislikePostButton';
+
 // import submitComment from '../services/index/postServices/submitComment';
 
 const Blog = () => {
@@ -130,7 +130,7 @@ const openDeleteModalHandler = () =>{
         <div className="w-full">
           <p className="p-2 text-sm">
             <Link to="/">Home</Link>&nbsp;/&nbsp;
-            <Link to="/blog">Blog</Link>&nbsp;/&nbsp;{blogData?.title}
+            Blog&nbsp;/&nbsp;<Link to={`/user/${blogData?.authorId}`}>{blogData?.authorName}</Link> &nbsp;/&nbsp;{blogData?.title}
           </p>
         </div>
 
@@ -151,7 +151,7 @@ const openDeleteModalHandler = () =>{
               <div className="flex flex-col gap-4 my-4">
                 <p className="flex gap-5 text-sm">
                   <span className="flex items-center bg-slate-200 w-fit px-4 py-[1.5px] rounded-lg font-bold capitalize text-slate-700">
-                    <Link to="/author" className="flex items-center">{blogData?.authorName}</Link>&nbsp;&#9679;&nbsp; {year}&nbsp; {month}&nbsp; {day}
+                    <Link to={`/user/${blogData?.authorId}`} className="flex items-center">{blogData?.authorName}</Link>&nbsp;&#9679;&nbsp; {year}&nbsp; {month}&nbsp; {day}
                   </span>
 
                   
@@ -170,10 +170,16 @@ const openDeleteModalHandler = () =>{
 
                 </p>
 
-                <div className="min-h-[30vh] lg:w-[85vw] flex flex-col gap-2">
+                <div className="min-h-[30vh] lg:w-[85vw] flex flex-col gap-2  border-b">
                   <h1 className="pb-2 text-2xl font-semibold border-b">{blogData?.title}</h1>
                   <p className="text-base text-justify text-pretty ">{blogData?.content}</p>
                 </div>
+<div className='my-1 border-b '>
+<LikeDislikePost postId={blogId} blogsData={blogData} />
+
+
+</div>
+
 {/* comment section  */}
               <CommentSection postId={blogId} blogsData={blogData}/>
               </div>

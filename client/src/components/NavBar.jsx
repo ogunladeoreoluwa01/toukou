@@ -140,7 +140,7 @@ const NavBarComp = () => {
             </nav>
 
             {/* Mobile Navigation */}
-            <nav className='relative top-0 z-50 flex flex-col w-full p-4 md:hidden dark:bg-slate-900 bg-slate-100'>
+            <nav className='relative top-0 z-50 flex flex-col w-full p-4 md:hidden dark:bg-slate-900 bg-slate-100 '>
                 <section className='flex items-center justify-between w-full px-2 py-3 border-b-2 border-spacing-y-2 border-slate-900 dark:border-slate-100'>
                     <NavLink to="/" className="text-2xl font-black uppercase">
                         <span>投稿</span>
@@ -167,7 +167,7 @@ const NavBarComp = () => {
                 <AnimatePresence>
                     {navToggle && (
                         <motion.div
-                            className="navbar"
+                            className="navbar h-screen"
                             initial="hidden"
                             animate={navToggle ? "visible" : "hidden"}
                             exit="hidden"

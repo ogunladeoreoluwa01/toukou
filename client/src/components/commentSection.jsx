@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import createComment from '@/services/index/commentServices/createComment';
 import { toast } from 'sonner';
+import CommentLoader from './loaders/commentLoader';
 
 const CommentSection = ({ postId, blogsData }) => {
   const [showComments, setShowComments] = useState(false);
@@ -62,7 +63,8 @@ const CommentSection = ({ postId, blogsData }) => {
   const commentsToDisplay = showComments ? blogData?.comments : blogData?.comments.slice(0, 3);
 
   return (
-    <section>
+    <>
+     <section>
       <form onSubmit={handleSubmit(submitHandler)} className="relative mt-4 w-[100%]">
         <textarea
           name="comment"
@@ -77,11 +79,17 @@ const CommentSection = ({ postId, blogsData }) => {
           Comment
         </button>
       </form>
-
-      {blogData && (
+        {!blogData ? (
+        <div className="lg:w-[60vw] w-full flex flex-col justify-start gap-4 mt-4 min-h-[200px]">
+          <h1 className="text-lg font-semibold">Loading Comments...</h1>
+          {Array(10).fill(0).map((_, index) => (
+            <CommentLoader key={index} right={index % 4 ? true : false} />
+          ))}
+        </div>
+      ) : (
         <section className="lg:w-[60vw] w-full flex flex-col justify-start gap-4 mt-4 min-h-[200px]">
           <div className="flex justify-between">
-            <h1 className="text-xl font-bold">Comments ({blogData?.comments.length})</h1>
+            <h1 className="text-lg font-semibold">Comments <span className=''>{blogData.comments.length}</span> </h1>
             {blogData?.comments.length > 3 && (
               <button
                 onClick={toggleComments}
@@ -92,12 +100,18 @@ const CommentSection = ({ postId, blogsData }) => {
             )}
           </div>
 
-          {commentsToDisplay.map((comment) => (
-            <CommentCard key={comment._id} comment={comment} />
+          {commentsToDisplay.map((comment, index) => (
+            <CommentCard key={comment?._id} comment={comment} postAuthor={blogData.authorId} />
           ))}
         </section>
       )}
+
+     
     </section>
+
+    
+    </>
+   
   );
 };
 

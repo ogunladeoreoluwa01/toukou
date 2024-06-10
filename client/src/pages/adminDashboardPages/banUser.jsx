@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Toaster, toast } from 'sonner';
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import banUser from "../../services/index/userServices/banUser";
 
 const BanUser = () => {

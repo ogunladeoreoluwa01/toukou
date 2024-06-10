@@ -47,7 +47,7 @@ router.get("/postallUsers/:authorId", getAllPostByAUser);
 router.get("/postsFilters", getAllPostsFilters);
 
 // Route for liking a post
-router.post(
+router.put(
   "/like/:postId",
   authGuard,
   checkSoftDelete,
@@ -56,7 +56,7 @@ router.post(
 );
 
 // Route for disliking a post
-router.post(
+router.put(
   "/dislike/:postId",
   authGuard,
   checkSoftDelete,

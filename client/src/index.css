@@ -74,3 +74,53 @@
       @apply bg-background text-foreground;
     }
   }
+
+
+  @keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-15px);
+  }
+  60% {
+    transform: translateY(-10px);
+  }
+}
+
+.bounce {
+  animation: bounce 0.5s;
+}
+
+@keyframes fadeScaleColor {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    color: #FF69B4; /* Start color */
+  }
+  25% {
+    transform: scale(1.5);
+    opacity: 0.7;
+    color: #32CD32; /* Second color */
+  }
+  50% {
+    transform: scale(1.7);
+    opacity: 0.9;
+    color: #87CEEB; /* Third color */
+  }
+  75% {
+    transform: scale(1.5);
+    opacity: 0.7;
+    color: #FFA500; /* Fourth color */
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    color: inherit; /* Back to start color */
+  }
+}
+
+.fadeScaleColor {
+  animation: fadeScaleColor 1s linear;
+}
+

@@ -3,6 +3,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import NavBarComp from '../components/NavBar';
 import AdminSideBar from '../components/adminDashSideBar';
+import { Toaster} from 'sonner';
 
 const AdminDashboard = () => {
   const location = useLocation();
@@ -35,6 +36,7 @@ const AdminDashboard = () => {
           )}
         </section>
       </main>
+      <Toaster richColors position="top-right" expand={true} closeButton />
     </>
   );
 };

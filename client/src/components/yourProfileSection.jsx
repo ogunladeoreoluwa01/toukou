@@ -47,6 +47,7 @@ const YourProfileSection = ({ userQuery }) => {
     if (userQuery.isError) {
       try {
       const error = JSON.parse(userQuery.error.message);
+      toast.error(errorMessage);
       console.error(`Error ${error.errorCode}: ${error.errorMessage}`);
       if (error.errorCode === 403) {
         navigate("/error-403");
