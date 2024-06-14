@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import NavBarComp from '../components/NavBar';
 import AdminSideBar from '../components/adminDashSideBar';
 import { Toaster} from 'sonner';
+import Footer from '@/components/footer';
 
 const AdminDashboard = () => {
   const location = useLocation();
@@ -36,6 +37,7 @@ const AdminDashboard = () => {
           )}
         </section>
       </main>
+      <Footer/>
       <Toaster richColors position="top-right" expand={true} closeButton />
     </>
   );

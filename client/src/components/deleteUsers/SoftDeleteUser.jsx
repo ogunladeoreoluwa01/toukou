@@ -10,6 +10,7 @@ import softDeleteUser from "../../services/index/userServices/softDeleteUser";
 import { MdOutlineDelete } from "react-icons/md";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
+import logOut from '../../stores/actions/userAction';
 
 const SoftDeleteByUser = () => {
   const [passwordToggle, setPasswordToggle] = useState(false);
@@ -32,6 +33,7 @@ const SoftDeleteByUser = () => {
       toast.success('Oh, we\'re sad to see you leave. Hope you come back soon.');
       queryClient.invalidateQueries(["user"]);
       document.body.classList.remove('overflow-hidden')
+       dispatch(logOut());
       navigate("/login");
     },
     onError: (error) => {

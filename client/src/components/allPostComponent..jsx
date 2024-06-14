@@ -65,11 +65,11 @@ const AllPostComponent = () => {
 
   return (
     <>
-      <section className='flex flex-col gap-3 my-4 w-full md:w-full lg:w-[90vw] '>
-        <h1 className='text-xl font-bold border-b-2 py-2 md:py-4 lg:w-[87vw]'>
+      <section className='flex flex-col gap-3 my-4 w-full  md:w-full lg:w-[95vw] '>
+        <h1 className='text-xl font-bold border-b-2 py-2 md:py-4  lg:w-[95vw]'>
           All Blogs 
         </h1>
-        <div className='w-full flex-col md:flex-row md:my-6 flex flex-wrap items-center justify-start gap-3  lg:gap-5'>
+        <div className='w-full flex-col md:flex-row lg:my-6 flex flex-wrap items-center justify-start md:justify-center lg:justify-start gap-3 lg:gap-5'>
           {isFetching && !isFetchingNextPage ? (
             Array(10).fill(0).map((_, index) => <NormalPostLoader key={index} />)
           ) : (
@@ -82,19 +82,23 @@ const AllPostComponent = () => {
                     <BlogCard
                       key={post._id}
                       postUrl={`/blogview/${post._id}`}
-                      currentUser={user.userInfo.username}
+                      currentUser={user?.userInfo?.username ||"no user logged in"}
                       authorUrl={`/user/${post.authorId}`}
                       authorName={post.authorName}
                       title={post.title}
                       date={post.createdAt}
                       image={post.postImage.postImgUrl}
                       ref={isRef ? ref : null} // Conditionally add ref
+
                     />
                   );
                 })}
               </React.Fragment>
             ))
           )}
+           <div>{isFetching && !isFetchingNextPage ? (
+            Array(10).fill(0).map((_, index) => <NormalPostLoader key={index} />)
+          ) : null}</div>
         </div>
         <div className='flex justify-center mt-4'>
           <button
@@ -105,9 +109,7 @@ const AllPostComponent = () => {
             {isFetchingNextPage ? 'Loading more...' : 'Nothing more to load'}
           </button>
         </div>
-        <div>{isFetching && !isFetchingNextPage ? (
-            Array(10).fill(0).map((_, index) => <NormalPostLoader key={index} />)
-          ) : null}</div>
+       
       </section>
     </>
   );

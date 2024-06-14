@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema(
     superAdmin: { type: Boolean, default: false },
     verified: { type: Boolean, default: false },
     verificationCode: { type: String, required: false },
+    VerifiedCodeExpireDate:{type: Date, required: false},
     sex: { type: String, default: "" },
     noOfPosts: { type: Number, default: 0 },
     profileImage: {
@@ -48,7 +49,10 @@ userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
     try {
   
-      const hashedPassword = await bcrypt.hash(this.password, 10);
+      const hashedPassword = await bcrypt.hash(
+        this.password,
+        parseInt(process.env.SALT)
+      );
       this.password = hashedPassword;
       return next();
     } catch (error) {
@@ -59,5 +63,6 @@ userSchema.pre("save", async function (next) {
 });
 
 const User = mongoose.model("User", userSchema);
+
 
 module.exports = User;

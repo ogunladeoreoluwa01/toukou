@@ -35,18 +35,27 @@ const AboutMePage = () => {
 </section>
 <section className="mx-6  flex-col flex md:flex-row flex-shrink-0 py-6 md:py-10 gap-5">
 <div className="text-2xl md:text-3xl  md:w-1/3 font-NotoSans">
-      <h1>About Me</h1>
+      <h1>About Me 🌟</h1>
 
 </div>
 <div className="md:w-1/3 text-pretty md:text-sm font-NotoSans
 ">
-<p>
-Eum fuga reprehenderit tempore quidem suscipit fugiat a recusandae minima. Debitis et exercitationem. Nisi vero deserunt. Expedita aut fugiat autem similique officiis. Qui quo repellendus voluptatum. Quia nemo voluptatem cumque aut blanditiis neque.
+<p className=" text-pretty text-justify">
+Hey there! 👋 I'm a 20-year-old Computer Science graduate with an insatiable passion for technology and all things computers. My journey in the tech world began early, and throughout my academic career, I've leveled up my skills in various programming languages and tools. 🎮👾
+
+Here's a quick snapshot of my skills:<br/>
+
+ <strong>Frontend:</strong> HTML, CSS, JavaScript, React, Vue.js, Tailwind CSS<br/>
+ <strong>Backend:</strong>  Node.js, Express, MongoDB<br/>
+<strong>Other Tools:</strong>  Python, Photoshop, DaVinci Resolve, Figma, a little bit of SQL<br/>
+ <strong>Currently Learning: </strong> TypeScript, Next.js
 </p>
 </div>
 
 <div className="md:w-1/3 text-pretty md:text-sm font-NotoSans">
-<p>Eum fuga reprehenderit tempore quidem suscipit fugiat a recusandae minima. Debitis et exercitationem. Nisi vero deserunt. Expedita aut fugiat autem similique officiis. Qui quo repellendus voluptatum. Quia nemo voluptatem cumque aut blanditiis neque.</p>
+<p className=" text-pretty text-justify">I'm also a huge anime and light novel enthusiast, and you'll often find me diving into the latest episodes or chapters. My favorite games include Apex Legends (let's drop into the action! 🪂), Rainbow Six Siege, Overwatch, and occasionally, some Valorant (pew pew! 💥).<br/>
+
+My latest venture is an exciting blog post application called TOUKOU投稿, where users can share their thoughts and insights on anime, light novels, tech, and more. It's a platform for fellow "men of culture" to unite and share their wisdom. 📚✨.</p>
 </div>
 
 </section>

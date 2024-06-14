@@ -10,6 +10,7 @@ import { userAction } from "../../stores/reducers/userReducer";
 import permaDeleteUser from "../../services/index/userServices/permaDeleteUser";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
+import logOut from '../../stores/actions/userAction';
 
 const PermaDeleteByUser = () => {
   const [passwordToggle, setPasswordToggle] = useState(false);
@@ -33,6 +34,7 @@ const PermaDeleteByUser = () => {
       dispatch(userAction.resetUserInfo());
       queryClient.invalidateQueries(["user"]);
       localStorage.removeItem('account');
+      dispatch(logOut)
           document.body.classList.remove('overflow-hidden')
       navigate("/login");
     },

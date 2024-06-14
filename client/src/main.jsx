@@ -34,6 +34,8 @@ import Error403 from "./pages/error403";
 import UserIsBan from "./pages/userIsBan";
 import UserIsDisabled from "./pages/userIsDisabled";
 import SomethingWentWrong from "./pages/oppspage";
+import ChangePasswordPage from "./pages/changePassword"
+import FAQPage from "./pages/faqPage";
 
 
 const queryClient = new QueryClient();
@@ -70,8 +72,8 @@ const router = createBrowserRouter([
     errorElement: <Error404 />,
   },
   {
-    path: "/demos",
-    element: <Demos />,
+    path: "/FAQ",
+    element: <FAQPage />,
   },
   {
     path: "/about",
@@ -92,6 +94,10 @@ const router = createBrowserRouter([
   {
     path: "/allblogs",
     element: <AllBlogs />,
+  },
+  {
+    path: "/change-password",
+    element: <ChangePasswordPage/>,
   },
   {
     path: "/blogview/:blogId",

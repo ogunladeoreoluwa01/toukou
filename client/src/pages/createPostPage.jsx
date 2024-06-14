@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import NavBarComp from "../components/NavBar";
 import { ReloadIcon } from "@radix-ui/react-icons"
 import { Button } from "@/components/ui/button"
+import Footer from "@/components/footer";
 
 const CreatePost = () => {
  
@@ -69,7 +70,7 @@ const CreatePost = () => {
 
     useEffect(() => {
         if (!user.userInfo) {
-            navigate("/login");
+            navigate("/");
         }
     }, [user, navigate]);
  
@@ -126,6 +127,7 @@ const CreatePost = () => {
                     </section>
                 </section>
             </main>
+            <Footer/>
 
             <Toaster richColors position="top-right" expand={true} closeButton />
         </>

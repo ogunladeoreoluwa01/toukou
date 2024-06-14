@@ -8,6 +8,7 @@ import { IoMdCloseCircle } from "react-icons/io";
 import { useNavigate,useParams } from "react-router-dom";
 import CropEasyPostPic from "../components/cropped/cropEasyPostUpload"
 import NavBarComp from "../components/NavBar";
+import Footer from '@/components/footer';
 
 
 
@@ -27,7 +28,7 @@ const AddPostImage = () => {
     
       useEffect(() => {
         if (!user.userInfo) {
-          navigate("/login");
+          navigate("/");
         }
       }, [navigate, user]);
     
@@ -140,7 +141,7 @@ const AddPostImage = () => {
                     </section>
                 </section>
             </main>
-    
+    <Footer/>
       <Toaster richColors position="top-right" expand={true} closeButton />
     
     

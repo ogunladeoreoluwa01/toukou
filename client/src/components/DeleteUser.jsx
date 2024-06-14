@@ -5,6 +5,7 @@ import PermaDeleteByUser from "./deleteUsers/PermaDeleteUser";
 import { MdOutlineDelete } from "react-icons/md";
 import { RiUserForbidFill } from "react-icons/ri";
 
+
 const DeleteUserModal = ({ setOpenDeleteModal }) => {
   const [typeOfDelete, setTypeOfDelete] = useState(true);
 

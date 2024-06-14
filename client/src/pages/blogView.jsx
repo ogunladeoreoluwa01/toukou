@@ -13,6 +13,8 @@ import DeletePostModal from '@/components/deletePostModal';
 import CommentSection from '@/components/commentSection';
 import { Toaster, toast } from 'sonner';
 import LikeDislikePost from '@/components/likeDislikePostButton';
+import Footer from '@/components/footer';
+import MakeaPost from '@/components/makeapost';
 
 // import submitComment from '../services/index/postServices/submitComment';
 
@@ -90,13 +92,6 @@ const openDeleteModalHandler = () =>{
     }
   }, [blogQuery, user.userInfo._id]);
 
-
-
-  useEffect(() => {
-    if (!user.userInfo) {
-      navigate("/login");
-    }
-  }, [navigate, user]);
   if (blogQuery.isLoading ) return <PageLoader />;
   if (blogQuery.isError) {
     try {
@@ -186,7 +181,9 @@ const openDeleteModalHandler = () =>{
             </div>
           </section>
         </section>
+        <MakeaPost/>
       </main>
+      <Footer/>
 <Toaster richColors position="top-right" expand={true} closeButton />
     </>
   );

@@ -1,16 +1,12 @@
 import api from "../../api";
 
 // Function to reactivate a user account
-const reactivateUser = async ({ token, userInfo, password }) => {
+const reactivateUser = async ({ userInfo, password }) => {
   try {
     const { data } = await api.put(
       "/api/users/unSoftDelete",
       { userInfo, password },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+
     );
     return data;
   } catch (error) {

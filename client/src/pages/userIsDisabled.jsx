@@ -61,18 +61,9 @@ const UserIsDisabled = () => {
 
   const submitHandler = (data) => {
     const { userInfo, password } = data;
-    mutation.mutate({ token: user.userInfo.token, userInfo,password});
+    mutation.mutate({  userInfo,password});
   };
-useEffect(() => {
-    if (!user.userInfo) {
-      navigate("/login");
-    }
-  }, [navigate, user]);
-  useEffect(() => {
-    if (!user.userInfo) {
-      navigate("/login");
-    }
-  }, [navigate, user]);
+
 
   return (
     <>

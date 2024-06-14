@@ -7,6 +7,7 @@ const checkBanStatus = require("../middlewares/checkBanStatus");
 const checkSoftDelete = require("../middlewares/softDeleteStatus");
 const checkSoftDeleteLogin = require("../middlewares/checkDeleteStatsLogin");
 const checkBanStatusLogin = require("../middlewares/checkBanStatLogin");
+
 const upload = require("../middlewares/upload");
 
 const {
@@ -19,6 +20,10 @@ const {
   updateProfile,
   uploadUserProfilePic,
   uploadUserBannerPic,
+  getVerificationCode,
+  verifyOTPCode ,
+  createOTPCode,
+  userVerification,
   changePassword,
   unSoftDelete,
   SoftDelete,
@@ -35,7 +40,7 @@ const {
 router.post("/register", registerUser);
 router.post("/login", checkBanStatusLogin, checkSoftDeleteLogin, loginUser);
 router.get("/all", getAllUsers);
-
+router.post("/createOTP", authGuard, checkSoftDelete, checkBanStatus, createOTPCode,);
 // Protected routes (requires authentication)
 router.get("/profile", authGuard, checkSoftDelete, checkBanStatus, getProfile);
 router.get(
@@ -85,7 +90,23 @@ router.put(
   checkSoftDelete,
   SoftDelete
 );
-router.put("/unSoftDelete", unSoftDelete);
+router.post(
+  "/verify",
+  authGuard,
+  checkBanStatus,
+  checkSoftDelete,
+ getVerificationCode
+);
+router.put(
+  "/verify",
+  authGuard,
+  checkBanStatus,
+  checkSoftDelete,
+  userVerification
+);
+
+
+    router.put("/unSoftDelete", unSoftDelete);
 // Admin routes (requires additional authorization, ensure you have an admin guard)
 
 router.post("/ban", adminGuard, checkBanStatus, checkSoftDelete, banUser);

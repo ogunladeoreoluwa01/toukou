@@ -3,6 +3,8 @@ import NavBarComp from "../components/NavBar";
 import { Link} from "react-router-dom";
 import { Toaster} from 'sonner';
 import AllPostComponent from "@/components/allPostComponent.";
+import Footer from "@/components/footer";
+import MakeaPost from "@/components/makeapost";
 
 const AllBlogs = () => {
     
@@ -18,12 +20,13 @@ const AllBlogs = () => {
           </p>
         </div>
   
-<section className="flex  items-center justify-center w-full ">
+<section className="flex items-center lg:px-14 md:px-6 justify-center w-full ">
 <AllPostComponent/>
 </section>
 
-
+<MakeaPost/>
     </main> 
+    <Footer/>
     <Toaster richColors position="top-right" expand={true} closeButton />
     </>);
 }

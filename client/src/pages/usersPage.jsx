@@ -9,6 +9,8 @@ import PageLoader from '../components/loaders/pageLoader';
 import YourProfileSectionLoader from '@/components/loaders/userProfileSection';
 import UserPostComponent from '@/components/usersPostComponent';
 import UserProfileSection from '@/components/userProfileSection';
+import Footer from '@/components/footer';
+import MakeaPost from '@/components/makeapost';
 
 const GetUsersProfile = () => {
   const user = useSelector(state => state.user);
@@ -23,7 +25,7 @@ const GetUsersProfile = () => {
 
   useEffect(() => {
     if (!user.userInfo) {
-      navigate("/login");
+      navigate("/");
     }
   }, [navigate, user]);
 
@@ -50,13 +52,14 @@ const GetUsersProfile = () => {
 
   return (
     <>
-      <NavBarComp />
-      <main className='px-4'>
+     
 
         {userQuery.isError ? (
           <div>Oops, there is an error. Please try again.</div>
         ) : !userQuery.isLoading ? (
           <>
+           <NavBarComp />
+      <main className='px-4'>
             <section>
               <div>
                 <p className="text-sm p-2 capitalize">
@@ -75,13 +78,16 @@ const GetUsersProfile = () => {
            </section>
             
 
-
+   <MakeaPost/>
+        
+      </main>
+       <Footer/>
           </>
         ) : (
           <PageLoader />
         )}
-        <Toaster richColors position="top-right" expand={false} closeButton />
-      </main>
+      
+       <Toaster richColors position="top-right" expand={false} closeButton />
     </>
   );
 }

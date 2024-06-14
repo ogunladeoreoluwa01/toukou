@@ -122,9 +122,6 @@ useEffect(() => {
     } else {
       setFormattedLikes(blogsData?.likes.length)
     }
-  
-
-  // Update state with formatted likes count
  
 }, [blogsData,isLiked,blogsData?.likes.length]);
  

@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { userAction } from "../stores/reducers/userReducer";
 import { ReloadIcon } from "@radix-ui/react-icons"
 import { Button } from "@/components/ui/button"
+import resetPassword from '../stores/actions/passwordRetriesAction';
+import Footer from '@/components/footer';
 
 const RegisterPage = () => {
 
@@ -39,6 +41,7 @@ const RegisterPage = () => {
     onSuccess: (data) => {
       toast.success(`Welcome ${data.message}`);
       dispatch(userAction.setUserInfo(data.user));
+      dispatch(resetPassword());
       localStorage.setItem('account', JSON.stringify(data.user));
       navigate("/");
      
@@ -76,7 +79,7 @@ const RegisterPage = () => {
 
   return (
     <>
-      <main className="h-screen">
+      <main className="h-screen overflow-hidden">
         <NavBarComp/>
         <section className="flex justify-center items-center relative w-screen h-[90vh] bg-black">
         <img loading="lazy"
@@ -224,6 +227,7 @@ const RegisterPage = () => {
           </section>
         </section>
       </main>
+      <Footer/>
       <Toaster richColors position="top-right" expand={true} closeButton />
     </>
   );

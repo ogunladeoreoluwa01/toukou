@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import { FaPenAlt } from "react-icons/fa";
+import { useSelector } from "react-redux";
 const MakeaPost = () => {
+  const user = useSelector(state => state.user);
     return ( <>
-    
-    <Link to="/createpost" className="fixed bottom-[5%] right-[4.5%] z-30 "> 
+    {!user.userInfo.isVerified ?<Link to="/createpost" className="fixed bottom-[5%] right-[4.5%] z-30 "> 
     <button
     href="/"
     className="group flex justify-center p-3  drop-shadow-xl  font-semibold rounded-full transition-all duration-500 bg-slate-700 dark:bg-slate-500"
@@ -19,10 +20,7 @@ const MakeaPost = () => {
     </span>
   </button>
     
-    </Link>
-    
-    
-    
+    </Link>:<></>}
     </> );
 }
  

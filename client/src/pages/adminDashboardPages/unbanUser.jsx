@@ -5,6 +5,7 @@ import { Toaster, toast } from 'sonner';
 import { useSelector } from "react-redux";
 import unbanUser from "../../services/index/userServices/unbanUser"; // Correct import for unbanUser service
 import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 const UnBanUser = () => {
   const user = useSelector((state) => state.user);
   const queryClient = useQueryClient();
@@ -72,9 +73,12 @@ const navigate =useNavigate()
             </div>
           </section>
 
-          <button disabled={mutation.isLoading} type="submit" className="disabled:opacity-70 px-3 py-[0.5px] rounded-md font-bold dark:bg-slate-100 dark:hover:bg-slate-200 transition-all duration-300 hover:bg-slate-800 dark:text-slate-900 bg-slate-900 text-slate-50 uppercase">
-            UnBan User
-          </button>
+            { mutation.isLoading ? <Button size="sm" disabled className="w-full px-6 py-2 font-bold">
+      <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+      Please wait
+    </Button> :  <Button  type="submit" size="sm" disabled={ mutation.isLoading } className=" px-6 py-2 w-full uppercase">
+                Unban User
+              </Button>}
         </form>
       </section>
 

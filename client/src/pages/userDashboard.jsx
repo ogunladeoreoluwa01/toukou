@@ -13,6 +13,8 @@ import PageLoader from '../components/loaders/pageLoader';
 import UserPostComponent from '@/components/usersPostComponent';
 import YourProfileSection from '@/components/yourProfileSection';
 import YourProfileSectionLoader from '@/components/loaders/userProfileSection';
+import Footer from '@/components/footer';
+import MakeaPost from '@/components/makeapost';
 
 
 const UserProfile = () => {
@@ -29,7 +31,7 @@ const UserProfile = () => {
 
    useEffect(() => {
     if (!user.userInfo) {
-      navigate("/login");
+      navigate("/");
     }
   }, [navigate, user.userInfo]);
   useEffect(() => {
@@ -62,12 +64,13 @@ const UserProfile = () => {
   
   return (
     <>
-      <NavBarComp />
-      <main className='px-4'>
+      
       {userQuery.isError ? (
           <div>Oops, there is an error. Please try again.</div>
         ) : !userQuery.isLoading ? (
           <>
+          <NavBarComp />
+      <main className='px-4'>
             <section>
               <div>
                 <p className="text-sm p-2 capitalize">
@@ -81,6 +84,11 @@ const UserProfile = () => {
            <section className='flex w-full md:w-[90vw] mx-auto  justify-center items-center min-h-[200px]'>
   <UserPostComponent username={userQuery.data?.user.username}  authorId={userQuery.data?.user._id} className="mx-auto" />
            </section>
+   <MakeaPost/>
+           </main>
+        
+      
+       <Footer/>
           </>
         ) : (
           <PageLoader />
@@ -88,7 +96,7 @@ const UserProfile = () => {
 
        
         <Toaster richColors position="top-right" expand={false} closeButton />
-      </main>
+     
     </>
   );
 }

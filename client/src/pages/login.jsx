@@ -8,14 +8,28 @@ import login from '../services/index/userServices/login';
 import { Toaster, toast } from 'sonner';
 import { useDispatch, useSelector } from "react-redux";
 import { userAction } from "../stores/reducers/userReducer";
+import { passwordRetriesAction } from "../stores/reducers/passwordRetriesReducer";
 import { ReloadIcon } from "@radix-ui/react-icons"
 import { Button } from "@/components/ui/button"
+import resetPassword from '../stores/actions/passwordRetriesAction';
+import Footer from '@/components/footer';
 
 const LoginPage = () => {
- 
+ const[noTries ,setNoTries] = useState(false)
   const dispatch = useDispatch();
   const userState = useSelector(state => state.user);
+  const passwordTries =useSelector(state => state.passwordRetries)
   const navigate = useNavigate();
+
+   useEffect(() => {
+
+    if(passwordTries.passwordRetriesCount <=7){
+     setNoTries(true)
+    }
+    if(passwordTries.passwordRetriesCount <=0){
+     navigate("/forgot-password")
+    }
+  }, [passwordTries.passwordRetriesCount]);
 
   const {
     register,
@@ -29,11 +43,14 @@ const LoginPage = () => {
     mode: "onChange",
   });
 
+  
+
   const mutation = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
       console.log("Login successful. Data received:", data);
         toast.success(`Welcome ${data.message}`);
+        dispatch(resetPassword());
         dispatch(userAction.setUserInfo(data.user));
         localStorage.setItem('account', JSON.stringify(data.user));
         console.log("User logged in successfully and dispatched:", data.user);
@@ -44,17 +61,20 @@ const LoginPage = () => {
       console.error(`Error ${errormsg.errorCode}: ${errormsg.errorMessage}`);
       toast.error(errormsg.errorMessage); // Displaying the error message using toast
 
-      if (errormsg.errorCode === 404) {
-        navigate("/error-404");
+      if (errormsg.errorCode === 410) {
+       let newCount = passwordTries.passwordRetriesCount - 1;
+    dispatch(passwordRetriesAction.setPasswordRetriesCount(newCount));
+    localStorage.setItem('passwordRetries', JSON.stringify(newCount));
+    console.log(newCount);
       } else if (errormsg.errorCode === 403) {
         navigate("/error-403");
       } else if (errormsg.errorCode === 452) {
         navigate("/user-is-disabled");
         } else if (errormsg.errorCode === 451) {
         navigate("/user-is-ban");
-      } else if (errormsg.errorCode === 500) {
-        navigate("/oops");
-      } 
+      }  else if(errormsg.errorCode ===500){
+        navigate("/oops")
+      }
     } catch (parseError) {
       console.error("Error parsing error message:", parseError);
       toast.error("An unexpected error occurred");
@@ -82,7 +102,7 @@ const LoginPage = () => {
 
   return (
     <>
-      <main className="h-screen  ">
+      <main className="h-screen overflow-hidden  ">
         <NavBarComp />
         <section className="flex items-center justify-center  relative h-[90vh] bg-black">
         <img loading="lazy"
@@ -147,7 +167,7 @@ const LoginPage = () => {
               </div>
               <div className="">
                 <Link
-                  to="/forgotPassword"
+                  to="/forgot-password"
                   className="text-sm text-blue-500 dark:text-blue-300 hover:underline mb-0.5"
                 >
                   Forgot password?
@@ -165,14 +185,16 @@ const LoginPage = () => {
               { mutation.isLoading ? <Button size="sm" disabled className="w-full px-6 py-2 font-bold">
       <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
       Please wait
-    </Button> :  <Button type="submit" size="sm" disabled={!isValid || mutation.isLoading} className=" px-6 py-2 w-full uppercase">
+    </Button> :  <Button  type="submit" size="sm" disabled={!isValid || mutation.isLoading } className=" px-6 py-2 w-full uppercase">
                 login
               </Button>}
+              {noTries ? <p className="text-red-500 text-sm mt-1 mb-4">you have , {passwordTries.passwordRetriesCount} retries left </p>:<></>}
             </form>
           </section>
         </section>
         <Toaster richColors position="top-right" expand={true} closeButton />
       </main>
+      <Footer/>
     </>
   );
 };
