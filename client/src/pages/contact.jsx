@@ -43,11 +43,11 @@ const ContactUs = () => {
 <p className=" text-pretty text-justify ">
 I am always eager to connect with like-minded individuals and collaborate on interesting projects. Whether you have questions about my work, want to discuss potential collaborations, or simply want to chat about anime, tech, or gaming, feel free to reach out to me. Here’s how you can get in touch:
 <br />
-Email: your-email@example.com 📧 <br />
-LinkedIn: Your LinkedIn Profile 🔗<br />
-GitHub: Your GitHub Profile 🐙<br />
-Twitter: Your Twitter Handle 🐦<br />
+ <a href="mailto:emaore0707@gmail.com" >Email</a> 📧 <br />
+<a href="https://github.com/ogunladeoreoluwa01" >GitHub</a> 🐙 <br />
+ <a href="https://x.com/saltydreamer1?t=4i3Mb08kZAL2fgiW2fZdkA&s=09">Twitter:</a> 🐦<br />
 </p>
+
 </div>
 
 <div className="md:w-1/3 text-pretty md:text-sm font-NotoSans">

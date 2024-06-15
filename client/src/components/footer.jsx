@@ -5,7 +5,9 @@ const Footer = () => {
         { url: "/", urlName: "Home" },
         { url: "/about", urlName: "About" },
         { url: "/contact", urlName: "Contact" },
-        { url: "/FAQ", urlName: "Most asked?" }
+         { url: "/allblogs", urlName: "Blogs" },
+        {url:"/createpost",urlName:"Post"},
+        { url: "/FAQ", urlName: "Most asked?" },
     ];
     const othersLinks = [
         { url: "/", urlName: "Terms of Service" },

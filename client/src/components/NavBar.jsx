@@ -25,6 +25,7 @@ const NavBarComp = () => {
         { url: "/", urlName: "Home" },
         { url: "/about", urlName: "About" },
         { url: "/allblogs", urlName: "Blogs" },
+        {url:"/createpost",urlName:"Post"},
         { url: "/FAQ", urlName: "FAQ" },
         { url: "/contact", urlName: "Contact" },
     ];
@@ -191,7 +192,7 @@ const NavBarComp = () => {
                                         </li>
                                     ))}
                                 </ul>
-                                <div className='flex flex-col gap-3'>
+                                <div className='flex flex-col gap-2'>
                                
                                     
                                     {userState.userInfo ? (
