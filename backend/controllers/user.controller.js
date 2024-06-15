@@ -8,7 +8,7 @@ const mailer = require("../utils/sendMailConfig");
 
 const generateJwt = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-    expiresIn: "30d",
+    expiresIn: "14d",
   });
 };
 
@@ -1360,7 +1360,7 @@ const forgotPassword = async (req, res) => {
    const user = await User.findOne({
      $or: [{ username: userInfo }, { email: userInfo }],
    });
-   
+
    // Handle case where user is not found
    if (!user) {
      return res.status(404).json({
