@@ -96,7 +96,7 @@ const CommentCard = ({ comment,postAuthor}) => {
         <CardDescription className="text-pretty">{comment?.text} </CardDescription>
       </CardContent>
 
-      <span className='flex gap-2'>
+      <span className='flex gap-2 sticky bottom-0 '>
           {userCheck && (
         <span onClick={openCommentEditModal}  className="text-lg transition-all duration-300 ease-linear cursor-pointer hover:scale-105">
             <TbEditCircle />
