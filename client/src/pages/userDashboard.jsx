@@ -31,7 +31,8 @@ const UserProfile = () => {
 
    useEffect(() => {
     if (!user.userInfo) {
-      navigate("/");
+      navigate("/error-403");
+       toast.error("you need to be logged in to view this page")
     }
   }, [navigate, user.userInfo]);
   useEffect(() => {

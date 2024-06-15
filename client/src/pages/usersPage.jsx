@@ -3,7 +3,7 @@ import NavBarComp from "../components/NavBar";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery } from '@tanstack/react-query';
 import getUserData from "../services/index/userServices/getUserData";
-import { Toaster } from 'sonner';
+import { Toaster, toast } from 'sonner';
 import { useSelector } from 'react-redux';
 import PageLoader from '../components/loaders/pageLoader';
 import YourProfileSectionLoader from '@/components/loaders/userProfileSection';
@@ -25,7 +25,8 @@ const GetUsersProfile = () => {
 
   useEffect(() => {
     if (!user.userInfo) {
-      navigate("/");
+      navigate("/error-403");
+      toast.error("you need to be logged in to view this page")
     }
   }, [navigate, user]);
 

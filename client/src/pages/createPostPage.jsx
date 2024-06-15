@@ -70,7 +70,9 @@ const CreatePost = () => {
 
     useEffect(() => {
         if (!user.userInfo) {
-            navigate("/");
+            navigate("/error-403");
+             toast.error("you need to be logged in to view this page")
+            toast.warning("log in first befor you can post")
         }
     }, [user, navigate]);
  

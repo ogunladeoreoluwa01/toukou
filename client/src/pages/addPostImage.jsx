@@ -28,7 +28,7 @@ const AddPostImage = () => {
     
       useEffect(() => {
         if (!user.userInfo) {
-          navigate("/");
+          navigate("/error-403");
         }
       }, [navigate, user]);
     
