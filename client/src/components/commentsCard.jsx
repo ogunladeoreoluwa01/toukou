@@ -82,7 +82,7 @@ const CommentCard = ({ comment,postAuthor}) => {
           
         />, document.getElementById("portal")
       )}
-     <Card className={`${userCheckStyle} relative flex items-start justify-start md:w-[80%] w-[90%]  gap-3 p-3 min-h-[100px] h-fit`}>
+     <Card className={`${userCheckStyle} relative flex items-start justify-start md:w-[80%] w-[90%]  gap-3 p-3 min-h-[100px] max-h-[200px] overflow-auto  h-fit`}>
       <img src={comment.author?.profileImage.profileImgUrl} alt={comment.author?.profileImage.profileImgName} className="w-12 h-12 rounded-full" />
       <CardContent className="p-0">
         <CardTitle className="max-w-[80%] truncate">{comment.author?.username} </CardTitle>
