@@ -56,13 +56,13 @@ const TopBlogsComponent = () => {
             data?.posts.map((post, index) => (
               <BlogCard
                 key={post._id}
-                postUrl={`/blogview/${post._id}`}
+                postUrl={`/blogview/${post?._id}`}
                 currentUser={user?.userInfo?.username ||"no user logged in"}
-                authorUrl={`/user/${post.authorId}`}
-                authorName={post.authorName}
-                title={post.title}
-                date={post.createdAt}
-                image={post.postImage.postImgUrl}
+                authorUrl={`/user/${post?.authorId}`}
+                authorName={post?.authorName}
+                title={post?.title}
+                date={post?.createdAt}
+                image={post?.postImage?.postImgUrl}
                 ref={index === 9 ? ref : null} // Add ref to the last post for future reference
               />
             ))
