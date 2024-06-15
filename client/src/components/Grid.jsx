@@ -58,7 +58,7 @@ const Grid = () => {
 </div>
 <div className="col-span-6 instagram  transform   md:col-span-3 hover:rotate-[4.5deg] hover:scale-[0.9] rounded-lg  transition-all duration-300 ease-linear ">
 <a
-        href="#"
+        href="https://www.instagram.com/saltz_jorney?igsh=MXc3cHJzZWRzN2txeQ=="
         className="grid h-full place-content-center text-3xl text-white p-12"
       >
         <RiInstagramFill />
@@ -66,7 +66,7 @@ const Grid = () => {
 </div>
 <div className="col-span-6 bg-stone-950 hover:bg-stone-900 md:col-span-3 hover:rotate-[5.5deg] hover:scale-[1.1] rounded-lg  transition-all duration-300 ease-linear ">
 <a
-        href="#"
+        href="https://x.com/saltydreamer1?t=4i3Mb08kZAL2fgiW2fZdkA&s=09"
         className="grid h-full place-content-center text-3xl text-white p-12"
       >
       <RiTwitterXLine />

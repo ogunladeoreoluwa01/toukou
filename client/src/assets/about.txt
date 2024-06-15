@@ -1,0 +1,6 @@
+This favicon was generated using the following font:
+
+- Font Title: Noto Emoji
+- Font Author: Copyright 2013, 2022 Google Inc. All Rights Reserved.
+- Font Source: https://fonts.gstatic.com/s/notoemoji/v50/bMrnmSyK7YY-MEu6aWjPDs-ar6uWaGWuob9M1TwvS-FGJCMY.ttf
+- Font License: SIL Open Font License, 1.1 (http://scripts.sil.org/OFL))

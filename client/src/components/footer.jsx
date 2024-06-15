@@ -5,7 +5,7 @@ const Footer = () => {
         { url: "/", urlName: "Home" },
         { url: "/about", urlName: "About" },
         { url: "/contact", urlName: "Contact" },
-        { url: "/Faq", urlName: "Most asked?" }
+        { url: "/FAQ", urlName: "Most asked?" }
     ];
     const othersLinks = [
         { url: "/", urlName: "Terms of Service" },
@@ -13,10 +13,10 @@ const Footer = () => {
         { url: "/contact", urlName: "Donate" },
     ];
     const contactLinks = [
-        { url: "/", urlName: "Twitter" },
-        { url: "/about", urlName: "Discord" },
+        { url: "https://x.com/saltydreamer1?t=4i3Mb08kZAL2fgiW2fZdkA&s=09", urlName: "Twitter" },
+        { url: "https://www.instagram.com/saltz_jorney?igsh=MXc3cHJzZWRzN2txeQ==", urlName: "Instagram" },
         { url: "https://github.com/ogunladeoreoluwa01", urlName: "Github" },
-        { url: "/Faq", urlName: "My portfolio" }
+        { url: "https://wa.me/+2347069310594?text=I'm%20interested%20in%20working%20with%20you%20my%20name%20is", urlName: "Whats app" }
     ];
 
     return ( <>
