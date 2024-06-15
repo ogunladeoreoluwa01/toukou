@@ -1,6 +1,6 @@
 import { IoClose } from "react-icons/io5";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { Toaster, toast } from 'sonner';
 import { useSelector } from "react-redux";
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
 import {
   Form,
   FormControl,
@@ -112,6 +113,7 @@ console.log("Form values:", form.getValues());
 
   return (
     <>
+    <h1>this is not working for now click the link to go home <Link to="/">home</Link>  </h1> 
       <section className="w-dvw h-dvh backdrop-blur-md fixed top-0 left-0 z-[100]">
         <section className="relative">
           <div className="absolute top-0 left-1/2 transform -translate-x-1/2 translate-y-[35%] md:translate-y-[40%]">
