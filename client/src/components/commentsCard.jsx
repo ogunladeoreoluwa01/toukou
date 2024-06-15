@@ -85,7 +85,7 @@ const CommentCard = ({ comment,postAuthor}) => {
      <Card className={`${userCheckStyle} relative flex items-start justify-start md:w-[70%] w-[80%]  gap-3 p-3 min-h-[100px] h-fit`}>
       <img src={comment.author?.profileImage.profileImgUrl} alt={comment.author?.profileImage.profileImgName} className="w-12 h-12 rounded-full" />
       <CardContent className="p-0">
-        <CardTitle className="">{comment.author?.username} </CardTitle>
+        <CardTitle className="max-w-[80%] truncate">{comment.author?.username} </CardTitle>
 
         {postOwner? <span className='scale-[0.7] absolute px-2 text-sm font-bold rounded-md py-[0.5px] right-1 top-2 bg-slate-400 text-slate-600'>Author</span> 
         :<></>}
@@ -93,10 +93,10 @@ const CommentCard = ({ comment,postAuthor}) => {
         <CardDescription className="p-0 text-[0.7rem] mt-1">
           {day} {month} {year}
         </CardDescription>
-        <CardDescription className="text-justify text-pretty">{comment?.text} </CardDescription>
+        <CardDescription className="text-pretty">{comment?.text} </CardDescription>
       </CardContent>
 
-      <span className='absolute flex gap-2 bottom-2 right-4'>
+      <span className='flex gap-2'>
           {userCheck && (
         <span onClick={openCommentEditModal}  className="text-lg transition-all duration-300 ease-linear cursor-pointer hover:scale-105">
             <TbEditCircle />

@@ -157,7 +157,7 @@ const openDeleteModalHandler = () =>{
       <div className='flex flex-col gap-1 mt-12 md:mt-24 md:pl-7 pb-2 md:pb-5 border-b'>
         <div className='flex justify-between items-center'>
           <span className='flex gap-3 items-center '>
-            <h1 className={`w-fit  rounded-md font-extrabold capitalize opacity-100 text-base   flex items-center`}>{userQuery.data?.user.username}</h1>
+            <h1 className={`max-w-[70%] truncate  rounded-md font-extrabold capitalize opacity-100 text-base   flex items-center`}>{userQuery.data?.user.username}</h1>
             {userQuery.data?.user.verified ? 
               <p className={`${roleBadge} w-fit p-1 rounded-full font-bold md:font-semibold capitalize scale-90`}>
                 <GiCrownedExplosion />

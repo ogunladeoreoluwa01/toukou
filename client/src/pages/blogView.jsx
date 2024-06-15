@@ -87,10 +87,10 @@ const openDeleteModalHandler = () =>{
   }, [blogQuery]);
 
   useEffect(() => {
-    if (user.userInfo._id === blogQuery?.data?.post.authorId) {
+    if (user?.userInfo?._id === blogQuery?.data?.post.authorId) {
       setUserCheck(true);
     }
-  }, [blogQuery, user.userInfo._id]);
+  }, [blogQuery, user?.userInfo?._id]);
 
   if (blogQuery.isLoading ) return <PageLoader />;
   if (blogQuery.isError) {
@@ -145,7 +145,7 @@ const openDeleteModalHandler = () =>{
             <div className="lg:w-[60vw] w-full flex flex-col justify-start">
               <div className="flex flex-col gap-4 my-4">
                 <p className="flex gap-5 text-sm">
-                  <span className="flex items-center bg-slate-200 w-fit px-4 py-[1.5px] rounded-lg font-bold capitalize text-slate-700">
+                  <span className="flex items-center max-w-[70%] truncate bg-slate-200 w-fit px-4 py-[1.5px] rounded-lg font-bold capitalize text-slate-700">
                     <Link to={`/user/${blogData?.authorId}`} className="flex items-center">{blogData?.authorName}</Link>&nbsp;&#9679;&nbsp; {year}&nbsp; {month}&nbsp; {day}
                   </span>
 
@@ -167,7 +167,7 @@ const openDeleteModalHandler = () =>{
 
                 <div className="min-h-[30vh] lg:w-[85vw] flex flex-col gap-2  border-b">
                   <h1 className="pb-2 text-2xl font-semibold border-b">{blogData?.title}</h1>
-                  <p className="text-base text-justify text-pretty ">{blogData?.content}</p>
+                  <p className="text-base text-pretty ">{blogData?.content}</p>
                 </div>
 <div className='my-1 border-b '>
 <LikeDislikePost postId={blogId} blogsData={blogData} />
