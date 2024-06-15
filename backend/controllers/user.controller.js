@@ -1240,6 +1240,249 @@ The TOUKOU投稿 Team`;
   }
 };
 
+const forgotPasswordOTP = async (req, res) => {
+  try {
+    const { userInfo } = req.body;
+
+    // Check if the provided credential matches a username or an email
+    const user = await User.findOne({
+      $or: [{ username: userInfo }, { email: userInfo }],
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User with the provided credential does not exist.",
+      });
+    }
+
+    // Find and delete existing OTP for the user
+    const existingOTP = await OTP.findOne({ userId: user._id });
+    if (existingOTP) {
+      await existingOTP.deleteOne();
+    }
+
+    // Generate a new OTP
+    const OTPCode = crypto.randomInt(100000, 1000000).toString();
+    const OTPExpireDate = new Date(Date.now() + 60 * 60 * 1000); // 1 hour from now
+    const hashedOTPCode = await bcrypt.hash(
+      OTPCode,
+      parseInt(process.env.SALT)
+    );
+
+    // Create new OTP entry
+    const newOTP = new OTP({
+      userId: user._id,
+      OTP: hashedOTPCode,
+      OTPExpireDate: OTPExpireDate,
+    });
+    await newOTP.save();
+
+    // Prepare email content
+    const email = user.email;
+    const subject = `OTP Token for ${user.username}`;
+    const text = `Your OTP code is: ${OTPCode}`;
+    const html = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Email Verification</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+          }
+          .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          }
+          h1, h2 {
+            color: #333;
+          }
+          p {
+            color: #666;
+          }
+          .icon {
+            display: inline-block;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+          .icon svg {
+            width: 45%;
+            height: 45%;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="icon">
+            <!-- SVG icon here -->
+          </div>
+          <h1>TOUKOU投稿</h1>
+          <h1>Your One-Time Password (OTP) Code</h1>
+          <p>Dear ${user.username},</p>
+          <p>Your one-time password (OTP) code is <strong>${OTPCode}</strong>. Use it quickly before it vanishes like a ninja in the night. Just remember, this code is more precious than a rare drop and only lasts an hour – keep it safe!</p>
+          <p>Best regards,</p>
+          <p>The TOUKOU投稿 Team</p>
+        </div>
+      </body>
+      </html>
+    `;
+
+    // Send email
+    await mailer(email, subject, text, html);
+
+    res.status(200).json({
+      message: "OTP Code sent to your email.",
+      verifytest: OTPCode, // Should be `OTPCode` not `verifyCode`
+      salt: parseInt(process.env.SALT),
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error", error: error.message }); // Ensure `next` is available in your Express setup
+  }
+};
+
+const forgotPassword = async (req, res) => {
+  try {
+    // Destructure newPassword, OTPCode, and userInfo from the request body
+    const { newPassword, OTPCode, userInfo } = req.body;
+
+   const user = await User.findOne({
+     $or: [{ username: userInfo }, { email: userInfo }],
+   });
+   
+   // Handle case where user is not found
+   if (!user) {
+     return res.status(404).json({
+       message: "User with the provided credential does not exist." ,
+     
+     });
+   }
+
+    // Check if the new password is the same as the current password
+    const samePasswordMatch = await bcrypt.compare(newPassword, user.password);
+    if (samePasswordMatch) {
+      return res.status(401).json({ message: "Please change your password" });
+    }
+
+    // Check if the new password has been used previously
+    const isOldPassword = await Promise.all(
+      user.oldPassword.map(
+        async (oldPwd) => await bcrypt.compare(newPassword, oldPwd)
+      )
+    ).then((results) => results.includes(true));
+
+    if (isOldPassword) {
+      return res
+        .status(401)
+        .json({ message: "Cannot use an already used password" });
+    }
+
+    // Find the OTP entry using user ID
+    const OTPEntry = await OTP.findOne({ userId: user._id });
+    if (!OTPEntry) {
+      return res.status(404).json({ message: "No OTP code found" });
+    }
+
+    // Check if the OTP has expired
+    if (new Date() > OTPEntry.OTPExpireDate) {
+      await OTPEntry.deleteOne();
+      return res.status(412).json({ message: "OTP code has expired" });
+    }
+
+    // Check if the provided OTP code matches
+    const OTPCheck = await bcrypt.compare(OTPCode, OTPEntry.OTP);
+    if (!OTPCheck) {
+      await OTPEntry.deleteOne();
+      return res.status(401).json({ message: "Incorrect OTP code" });
+    }
+
+    // Set the new password and update oldPassword array
+    user.oldPassword.push(user.password); // Save the current password to the oldPassword array
+    user.password = newPassword; // The new password will be hashed in the pre-save hook
+
+    // Delete the OTP entry after successful OTP check
+    await OTPEntry.deleteOne();
+
+    // Generate a new JWT token
+    const token = generateJwt(user._id);
+
+    // Save the updated user profile
+    const updatedUserProfile = await user.save();
+
+    // Prepare email content
+    const email = user.email;
+    const subject = "Password Change Notice";
+    const text = `Dear ${user.username},
+
+Your password has been successfully changed. It's like upgrading your armor in an RPG – more security for your epic quests. If you didn't make this change, please contact our support team immediately.
+
+Best regards,
+The TOUKOU投稿 Team`;
+
+    const html = `
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Change Notice</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 20px;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      h1, p {
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>TOUKOU投稿</h1>
+      <h1>Password Change Notice</h1>
+      <p>Dear ${user.username},</p>
+      <p>Your password has been successfully changed. It's like upgrading your armor in an RPG – more security for your epic quests. If you didn't make this change, please contact our support team immediately.</p>
+      <p>Best regards,</p>
+      <p>The TOUKOU投稿 Team</p>
+    </div>
+  </body>
+  </html>
+  `;
+
+    // Send email notification
+    await mailer(email, subject, text, html);
+
+    // Respond with a success message
+    res.status(200).json({
+      message: "Password updated successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error", error: error.message }); // Ensure proper error handling
+  }
+};
+
 const SoftDelete = async (req, res, next) => {
   try {
     // Find the user by ID
@@ -2073,6 +2316,8 @@ module.exports = {
   userVerification,
   createOTPCode,
   verifyOTPCode,
+  forgotPasswordOTP,
+  forgotPassword,
   getAllUsers,
   getProfile,
   getUserProfile,

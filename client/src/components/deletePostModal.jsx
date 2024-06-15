@@ -50,11 +50,7 @@ const DeletePostModal = ({ setOpenPostDeleteModal, postId }) => {
     },
   });
 
-  useEffect(() => {
-    if (!user.userInfo) {
-      navigate("/login");
-    }
-  }, [navigate, user]);
+
 
   const closeModal = () => {
     setOpenPostDeleteModal(false);

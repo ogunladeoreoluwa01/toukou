@@ -61,12 +61,7 @@ const EditCommentModal = ({ setOpenCommentModal, commentId, initialContent }) =>
     mutation.mutate({ commentId, content, token: user.userInfo.token });
   };
 
-  useEffect(() => {
-    if (!user.userInfo) {
-      navigate("/login");
-    }
-    
-  }, [navigate, user,]);
+
 
   return (
     <>

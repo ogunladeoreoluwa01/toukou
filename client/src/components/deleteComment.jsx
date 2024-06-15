@@ -61,12 +61,7 @@ const DeleteCommentModal = ({setOpenCommentDeleteModal, commentId}) => {
 
  
 
-  useEffect(() => {
-    if (!user.userInfo) {
-      navigate("/login");
-    }
-  }, [navigate, user]);
-
+  
     return ( <>
     
      <section className="w-dvw h-dvh backdrop-blur-md fixed top-0 left-0 z-[100]">

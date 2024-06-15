@@ -36,7 +36,7 @@ const PermaDeleteByUser = () => {
       localStorage.removeItem('account');
       dispatch(logOut)
           document.body.classList.remove('overflow-hidden')
-      navigate("/login");
+      navigate("/");
     },
     onError: (error) => {
        try {
@@ -68,12 +68,7 @@ const PermaDeleteByUser = () => {
     const { password } = deleteData;
     mutation.mutate({ token: user.userInfo.token, deleteData });
   };
-
-  useEffect(() => {
-    if (!user.userInfo) {
-      navigate("/login");
-    }
-  }, [navigate, user]);
+    
 
   return (
     <>

@@ -1,10 +1,16 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { RiInstagramFill } from "react-icons/ri";
 import { FiArrowRight, FiMail, FiMapPin } from "react-icons/fi";
 import { SiYoutube } from "react-icons/si";
 import { SlSocialGithub } from "react-icons/sl";
 import { SlSocialSteam } from "react-icons/sl";
 import { SlSocialTwitter } from "react-icons/sl";
+import { RiTwitterXLine } from "react-icons/ri";
+import { RiWhatsappFill } from "react-icons/ri";
+import { RiGithubFill } from "react-icons/ri";
+
+
 const Grid = () => {
     return ( <>
 
@@ -34,36 +40,36 @@ const Grid = () => {
 
 
 
-<div className="col-span-6 bg-red-500 hover:bg-red-600 md:col-span-3 hover:rotate-[2.5deg] hover:scale-[0.9] rounded-lg    transition-all duration-300 ease-linear">
+<div className="col-span-6 bg-green-500 hover:bg-green-600 md:col-span-3 hover:rotate-[2.5deg] hover:scale-[0.9] rounded-lg    transition-all duration-300 ease-linear">
 <a
-        href="#"
+        href="https://wa.me/+2347069310594?text=I'm%20interested%20in%20working%20with%20you%20my%20name%20is"
         className="grid h-full place-content-center text-3xl text-white p-12"
       >
-        <SiYoutube />
+        <RiWhatsappFill />
       </a>
 </div>
-<div className="col-span-6 bg-slate-800 hover:bg-slate-950 md:col-span-3 hover:rotate-[-3.5deg] hover:scale-[1.1] rounded-lg  transition-all duration-300 ease-linear ">
+<div className="col-span-6 bg- bg-neutral-800 hover:bg-neutral-950 md:col-span-3 hover:rotate-[-3.5deg] hover:scale-[1.1] rounded-lg  transition-all duration-300 ease-linear ">
 <a
-        href="#"
+        href="https://github.com/ogunladeoreoluwa01"
         className="grid h-full place-content-center text-3xl text-white p-12"
       >
-        <SlSocialGithub />
+       <RiGithubFill />
       </a>
 </div>
-<div className="col-span-6  bg-blue-800 hover:bg-blue-700 md:col-span-3 hover:rotate-[4.5deg] hover:scale-[0.9] rounded-lg  transition-all duration-300 ease-linear ">
+<div className="col-span-6 instagram  transform   md:col-span-3 hover:rotate-[4.5deg] hover:scale-[0.9] rounded-lg  transition-all duration-300 ease-linear ">
 <a
         href="#"
         className="grid h-full place-content-center text-3xl text-white p-12"
       >
-        <SlSocialSteam />
+        <RiInstagramFill />
       </a>
 </div>
-<div className="col-span-6 bg-blue-600 hover:bg-blue-500 md:col-span-3 hover:rotate-[5.5deg] hover:scale-[1.1] rounded-lg  transition-all duration-300 ease-linear ">
+<div className="col-span-6 bg-stone-950 hover:bg-stone-900 md:col-span-3 hover:rotate-[5.5deg] hover:scale-[1.1] rounded-lg  transition-all duration-300 ease-linear ">
 <a
         href="#"
         className="grid h-full place-content-center text-3xl text-white p-12"
       >
-       <SlSocialTwitter />
+      <RiTwitterXLine />
       </a>
 </div>
 <div className="col-span-12 text-3xl leading-snug  rounded-lg  hover:rotate-[1.5deg] hover:scale-[1.1]  bg-slate-300  dark:bg-slate-600 p-6 transition-all duration-300 ease-linear">

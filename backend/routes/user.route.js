@@ -21,8 +21,10 @@ const {
   uploadUserProfilePic,
   uploadUserBannerPic,
   getVerificationCode,
-  verifyOTPCode ,
+  verifyOTPCode,
   createOTPCode,
+  forgotPasswordOTP,
+  forgotPassword,
   userVerification,
   changePassword,
   unSoftDelete,
@@ -104,9 +106,17 @@ router.put(
   checkSoftDelete,
   userVerification
 );
+router.post(
+  "/forgotPasswordOTP",
+  forgotPasswordOTP
+);
+router.post(
+  "/forgotpassword",
+ forgotPassword
+);
 
 
-    router.put("/unSoftDelete", unSoftDelete);
+ router.put("/unSoftDelete", unSoftDelete);
 // Admin routes (requires additional authorization, ensure you have an admin guard)
 
 router.post("/ban", adminGuard, checkBanStatus, checkSoftDelete, banUser);

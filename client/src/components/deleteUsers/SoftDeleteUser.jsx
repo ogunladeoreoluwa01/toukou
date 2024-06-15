@@ -34,7 +34,7 @@ const SoftDeleteByUser = () => {
       queryClient.invalidateQueries(["user"]);
       document.body.classList.remove('overflow-hidden')
        dispatch(logOut());
-      navigate("/login");
+      navigate("/");
     },
     onError: (error) => {
        try {
@@ -67,11 +67,7 @@ const SoftDeleteByUser = () => {
     mutation.mutate({ token: user.userInfo.token, deleteData });
   };
 
-  useEffect(() => {
-    if (!user.userInfo) {
-      navigate("/login");
-    }
-  }, [navigate, user]);
+  
 
   return (
     <>

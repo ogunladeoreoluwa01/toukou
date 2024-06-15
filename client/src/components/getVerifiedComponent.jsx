@@ -98,11 +98,7 @@ const GetVerifiedModal = ({ setOpenVerifiedModal }) => {
     verifyOTP({ token: user.userInfo.token, pin:data.pin });
   };
 
-  useEffect(() => {
-    if (!user.userInfo) {
-      navigate("/login");
-    }
-  }, [navigate, user]);
+
 
   const closeModal = () => {
     setOpenVerifiedModal(false);

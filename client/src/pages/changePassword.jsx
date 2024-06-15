@@ -117,7 +117,7 @@ const ChangePasswordPage = () => {
   return (
     <>
      <Toaster richColors position="top-right" expand={true} closeButton />
-    {loading?  <PageLoader />: <main className="h-screen">
+    {loading?  <PageLoader />:<> <main className="h-screen">
        
         <NavBarComp />
         <section className="flex items-center justify-center relative h-[90vh] bg-black">
@@ -132,9 +132,12 @@ const ChangePasswordPage = () => {
              <ChangePasswordComponent setRegetOTP={setRegetOTP} setRegOTPCheck={setRegOTPCheck} />
           </section>
         </section>
-      </main>}
+      </main>
+       <Footer/>
+       </>
+      }
      
-     <Footer/>
+    
     </>
   );
 };
