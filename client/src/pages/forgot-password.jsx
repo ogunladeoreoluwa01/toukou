@@ -113,8 +113,9 @@ console.log("Form values:", form.getValues());
 
   return (
     <>
-    <h1>this is not working for now click the link to go home <Link to="/">home</Link>  </h1> 
+
       <section className="w-dvw h-dvh backdrop-blur-md fixed top-0 left-0 z-[100]">
+            <h1>this is not working for now click the link to go home <Link className="text-blue-500 underline" to="/">home</Link>  </h1> 
         <section className="relative">
           <div className="absolute top-0 left-1/2 transform -translate-x-1/2 translate-y-[35%] md:translate-y-[40%]">
             <section className="md:p-3 p-3 dark:bg-slate-800 bg-slate-300 min-h-[300px] min-w-[350px] max-w-full md:w-fit rounded-lg">
