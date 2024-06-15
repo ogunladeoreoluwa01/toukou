@@ -21,7 +21,7 @@ function App() {
         <main className=' mx-auto relative px-4 '>
             <section className='my-6 md:px-6  flex md:flex-row flex-wrap flex-col  items-center justify-center w-full'>
          <div className='w-full md:w-2/3 h-1/3 flex flex-col gap-5 p-3 md:p-6 justify-start'>
-    <h1 className='w-full md:w-2/3 text-3xl md:text-5xl text-center md:text-justify text-pretty font-bold'>Read the Most Interesting Articles</h1>
+    <h1 className='w-full md:w-2/3 text-3xl md:text-5xl text-center md:text-left text-pretty  font-bold'>Read the Most Interesting Articles</h1>
     <p className='w-full md:w-2/3 text-lg text-center md:text-justify text-pretty'>
       Discover captivating stories and insightful articles on a variety of topics. Dive into a world of knowledge and entertainment.
     </p>
